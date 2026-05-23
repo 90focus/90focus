@@ -1,11 +1,27 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { supabase } from '@/app/supabase'
+import { useRouter } from 'next/navigation'
 
 export default function UploadPage() {
   const [files, setFiles] = useState<FileList | null>(null)
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        router.push('/login')
+      } else {
+        setLoading(false)
+      }
+    }
+    checkUser()
+  }, [router])
 
   const handleUpload = async () => {
     if (!files || files.length === 0) {
@@ -34,6 +50,8 @@ export default function UploadPage() {
       setUploading(false)
     }
   }
+
+  if (loading) return <p style={{ padding: '40px' }}>Lade...</p>
 
   return (
     <div style={{ padding: '40px', maxWidth: '600px', margin: '0 auto' }}>
