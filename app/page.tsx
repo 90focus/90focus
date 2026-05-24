@@ -72,14 +72,27 @@ export default function Home() {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {events.map((ev) => (
-              <div key={ev.id} style={{ background: "#0d1219", border: "1px solid #1c2a38", borderRadius: 4, padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
-                  <div style={{ fontSize: 10, color: "#e8ff00", fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 6 }}>{ev.liga}</div>
-                  <div style={{ fontSize: 20, fontWeight: 800, textTransform: "uppercase" }}>{ev.home_team} vs {ev.away_team}</div>
-                  <div style={{ color: "#445566", fontSize: 13, marginTop: 4 }}>📍 {ev.ort} · 📅 {ev.date} {ev.time && `· 🕐 ${ev.time}`}</div>
+              <div key={ev.id} style={{ background: "#0d1219", border: "1px solid #1c2a38", borderRadius: 4, padding: "20px 24px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <div style={{ fontSize: 10, color: "#e8ff00", fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 6 }}>{ev.liga}</div>
+                    <div style={{ fontSize: 20, fontWeight: 800, textTransform: "uppercase" }}>{ev.home_team} vs {ev.away_team}</div>
+                    <div style={{ color: "#445566", fontSize: 13, marginTop: 4 }}>📍 {ev.ort} · 📅 {ev.date} {ev.time && `· 🕐 ${ev.time}`}</div>
+                    {ev.sponsor_name && (
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10, background: "#131e2a", padding: "6px 12px", borderRadius: 4, width: "fit-content" }}>
+                        {ev.sponsor_logo_url && (
+                          <img src={ev.sponsor_logo_url} alt={ev.sponsor_name}
+                            style={{ height: "24px", objectFit: "contain" }} />
+                        )}
+                        <span style={{ fontSize: 12, color: "#e8eef4", fontWeight: 700, letterSpacing: 1 }}>
+                          ⭐ Powered by {ev.sponsor_name}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <button style={{ background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "10px 20px", fontWeight: 900, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap" }}
+                    onClick={() => router.push(`/suche?eventId=${ev.id}`)}>Fotos finden →</button>
                 </div>
-                <button style={{ background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "10px 20px", fontWeight: 900, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap" }}
-                  onClick={() => router.push(`/suche?eventId=${ev.id}`)}>Fotos finden →</button>
               </div>
             ))}
           </div>
