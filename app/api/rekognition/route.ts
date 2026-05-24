@@ -19,6 +19,7 @@ const COLLECTION_ID = '90focus-gesichter'
 
 export async function POST(req: NextRequest) {
   const { filename } = await req.json()
+  const externalImageId = filename.replace(/[^a-zA-Z0-9_\-:]/g, '_')
 
   try {
     try {
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
     await rekognition.send(new IndexFacesCommand({
       CollectionId: COLLECTION_ID,
       Image: { S3Object: { Bucket: '90focus-fotos-ireland', Name: filename } },
-      ExternalImageId: filename,
+      ExternalImageId: externalImageId,
       DetectionAttributes: [],
     }))
 
@@ -56,18 +57,29 @@ export async function PUT(req: NextRequest) {
       FaceMatchThreshold: 80,
     }))
 
-    const allMatches = result.FaceMatches?.map(m => m.Face?.ExternalImageId) || []
+    const allMatches = result.FaceMatches?.map(m => {
+      const id = m.Face?.ExternalImageId || ''
+      return id
+    }) || []
 
-    // Filter nach Event wenn eventId vorhanden
     if (eventId && allMatches.length > 0) {
       const { data: eventFotos } = await supabase
         .from('event_fotos')
         .select('filename')
         .eq('event_id', eventId)
 
-      const eventFilenames = eventFotos?.map(f => f.filename) || []
-      const filtered = allMatches.filter(f => eventFilenames.includes(f as string))
-      return NextResponse.json({ matches: filtered })
+      const eventFilenames = eventFotos?.map(f =>
+        f.filename.replace(/[^a-zA-Z0-9_\-:]/g, '_')
+      ) || []
+
+      const filtered = allMatches.filter(f => eventFilenames.includes(f))
+      const originalFilenames = filtered.map(f => {
+        const match = eventFotos?.find(ef =>
+          ef.filename.replace(/[^a-zA-Z0-9_\-:]/g, '_') === f
+        )
+        return match?.filename || f
+      })
+      return NextResponse.json({ matches: originalFilenames })
     }
 
     return NextResponse.json({ matches: allMatches })
