@@ -2,7 +2,7 @@ import { RekognitionClient, IndexFacesCommand, SearchFacesByImageCommand, Create
 import { NextRequest, NextResponse } from 'next/server'
 
 const rekognition = new RekognitionClient({
-  region: process.env.AWS_REGION!,
+  region: 'eu-west-1',
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
@@ -11,31 +11,28 @@ const rekognition = new RekognitionClient({
 
 const COLLECTION_ID = '90focus-gesichter'
 
-// Gesicht in Sammlung hinzufügen (nach Upload)
 export async function POST(req: NextRequest) {
   const { filename } = await req.json()
 
   try {
-    // Collection erstellen falls nicht vorhanden
     try {
       await rekognition.send(new CreateCollectionCommand({ CollectionId: COLLECTION_ID }))
     } catch {}
 
-    // Gesicht indexieren
     await rekognition.send(new IndexFacesCommand({
       CollectionId: COLLECTION_ID,
-      Image: { S3Object: { Bucket: '90focus-fotos', Name: filename } },
+      Image: { S3Object: { Bucket: '90focus-fotos-ireland', Name: filename } },
       ExternalImageId: filename,
       DetectionAttributes: [],
     }))
 
     return NextResponse.json({ success: true })
   } catch (error) {
+    console.error('Rekognition error:', error)
     return NextResponse.json({ error: 'Fehler beim Indexieren' }, { status: 500 })
   }
 }
 
-// Gesicht suchen (für Kunde)
 export async function PUT(req: NextRequest) {
   const formData = await req.formData()
   const file = formData.get('selfie') as File
@@ -55,6 +52,7 @@ export async function PUT(req: NextRequest) {
     const matches = result.FaceMatches?.map(m => m.Face?.ExternalImageId) || []
     return NextResponse.json({ matches })
   } catch (error) {
+    console.error('Rekognition search error:', error)
     return NextResponse.json({ error: 'Fehler bei der Suche' }, { status: 500 })
   }
 }

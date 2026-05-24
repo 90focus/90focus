@@ -96,7 +96,7 @@ export default function SuchePage() {
             {matches.map((filename, i) => (
               <img
                 key={i}
-                src={`https://90focus-fotos.s3.eu-north-1.amazonaws.com/${filename}`}
+                src={`https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${filename}`}
                 alt={`Foto ${i + 1}`}
                 style={{ width: '100%', borderRadius: '8px' }}
               />
