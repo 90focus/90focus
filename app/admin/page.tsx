@@ -124,13 +124,25 @@ export default function AdminPage() {
           onChange={(e) => setTime(e.target.value)}
           style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }}
         />
-        <input
-          type="text"
-          placeholder="Liga (z.B. 4. Liga)"
+
+        <select
           value={liga}
           onChange={(e) => setLiga(e.target.value)}
           style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }}
-        />
+        >
+          <option value="">Liga auswählen...</option>
+          <option value="Super League">Super League</option>
+          <option value="Challenge League">Challenge League</option>
+          <option value="Promotion League">Promotion League</option>
+          <option value="1. Liga">1. Liga</option>
+          <option value="2. Liga interregional">2. Liga interregional</option>
+          <option value="2. Liga regional">2. Liga regional</option>
+          <option value="3. Liga">3. Liga</option>
+          <option value="4. Liga">4. Liga</option>
+          <option value="5. Liga">5. Liga</option>
+          <option value="6. Liga">6. Liga</option>
+        </select>
+
         <input
           type="text"
           placeholder="Ort (optional)"
