@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/app/supabase'
 
-export default function SuchePage() {
+function SucheContent() {
   const [selfie, setSelfie] = useState<File | null>(null)
   const [searching, setSearching] = useState(false)
   const [matches, setMatches] = useState<string[]>([])
@@ -37,22 +37,15 @@ export default function SuchePage() {
       setMessage('Bitte zuerst ein Selfie aufnehmen!')
       return
     }
-
     setSearching(true)
     setMessage('Suche läuft...')
     setMatches([])
-
     const formData = new FormData()
     formData.append('selfie', selfie)
     if (eventId) formData.append('eventId', eventId)
-
     try {
-      const res = await fetch('/api/rekognition', {
-        method: 'PUT',
-        body: formData,
-      })
+      const res = await fetch('/api/rekognition', { method: 'PUT', body: formData })
       const data = await res.json()
-
       if (data.matches && data.matches.length > 0) {
         setMatches(data.matches)
         setMessage(`${data.matches.length} Foto(s) gefunden!`)
@@ -74,59 +67,34 @@ export default function SuchePage() {
           📅 {event.datum} {event.ort && `— 📍 ${event.ort}`}
         </div>
       )}
-
       <h1>🔍 Meine Fotos finden</h1>
       <p>Mach ein Selfie oder lade ein Foto von dir hoch!</p>
-
-      <input
-        type="file"
-        accept="image/*"
-        capture="user"
-        onChange={handleSelfie}
-        style={{ margin: '20px 0', display: 'block' }}
-      />
-
+      <input type="file" accept="image/*" capture="user" onChange={handleSelfie} style={{ margin: '20px 0', display: 'block' }} />
       {preview && (
-        <img
-          src={preview}
-          alt="Vorschau"
-          style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '50%', marginBottom: '20px' }}
-        />
+        <img src={preview} alt="Vorschau" style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '50%', marginBottom: '20px' }} />
       )}
-
-      <button
-        onClick={handleSearch}
-        disabled={searching}
-        style={{
-          padding: '12px 24px',
-          background: '#000',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          fontSize: '16px',
-        }}
-      >
+      <button onClick={handleSearch} disabled={searching} style={{ padding: '12px 24px', background: '#000', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '16px' }}>
         {searching ? 'Suche...' : '🔍 Fotos suchen'}
       </button>
-
       {message && <p style={{ marginTop: '20px', fontWeight: 'bold' }}>{message}</p>}
-
       {matches.length > 0 && (
         <div style={{ marginTop: '30px' }}>
           <h2>Deine Fotos:</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
             {matches.map((filename, i) => (
-              <img
-                key={i}
-                src={`https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`}
-                alt={`Foto ${i + 1}`}
-                style={{ width: '100%', borderRadius: '8px' }}
-              />
+              <img key={i} src={`https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`} alt={`Foto ${i + 1}`} style={{ width: '100%', borderRadius: '8px' }} />
             ))}
           </div>
         </div>
       )}
     </div>
+  )
+}
+
+export default function SuchePage() {
+  return (
+    <Suspense fallback={<p style={{ padding: '40px' }}>Lade...</p>}>
+      <SucheContent />
+    </Suspense>
   )
 }
