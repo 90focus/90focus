@@ -11,6 +11,7 @@ function SucheContent() {
   const [message, setMessage] = useState('')
   const [preview, setPreview] = useState<string | null>(null)
   const [event, setEvent] = useState<any>(null)
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const searchParams = useSearchParams()
   const eventId = searchParams.get('eventId')
 
@@ -23,6 +24,17 @@ function SucheContent() {
       loadEvent()
     }
   }, [eventId])
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (lightboxIndex === null) return
+      if (e.key === 'Escape') setLightboxIndex(null)
+      if (e.key === 'ArrowRight') setLightboxIndex(i => i !== null ? Math.min(i + 1, matches.length - 1) : null)
+      if (e.key === 'ArrowLeft') setLightboxIndex(i => i !== null ? Math.max(i - 1, 0) : null)
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [lightboxIndex, matches.length])
 
   const handleSelfie = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -59,10 +71,127 @@ function SucheContent() {
     }
   }
 
-  const watermarkText = event?.sponsor_logo_url ? null : '90focus ⚽'
+  const getImageUrl = (filename: string) =>
+    `https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`
+
+  const Watermark = () => (
+    <div style={{
+      position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+      display: 'flex', flexDirection: 'column', justifyContent: 'space-around',
+      pointerEvents: 'none', overflow: 'hidden',
+    }}>
+      {[...Array(6)].map((_, row) => (
+        <div key={row} style={{
+          display: 'flex', gap: '40px',
+          transform: 'rotate(-30deg) translateX(-20%)',
+          whiteSpace: 'nowrap',
+          marginLeft: row % 2 === 0 ? '0px' : '60px',
+        }}>
+          {[...Array(5)].map((_, col) => (
+            <span key={col} style={{
+              fontSize: '13px', fontWeight: 800,
+              color: 'rgba(255,255,255,0.25)',
+              letterSpacing: 1, userSelect: 'none',
+            }}>
+              90focus ⚽
+            </span>
+          ))}
+        </div>
+      ))}
+    </div>
+  )
+
+  const Logo = () => (
+    !event?.sponsor_logo_url ? (
+      <div style={{
+        position: 'absolute', bottom: 8, right: 8,
+        background: 'rgba(0,0,0,0.6)', borderRadius: 4, padding: '4px 8px',
+        display: 'flex', alignItems: 'center', gap: 4,
+      }}>
+        <div style={{ width: 18, height: 18, background: '#e8ff00', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 9 }}>90</span>
+        </div>
+        <span style={{ color: '#fff', fontWeight: 800, fontSize: 11, letterSpacing: 1 }}>FOCUS</span>
+      </div>
+    ) : (
+      <div style={{
+        position: 'absolute', bottom: 8, right: 8,
+        background: 'rgba(0,0,0,0.5)', borderRadius: 4, padding: '4px 8px',
+      }}>
+        <img src={event.sponsor_logo_url} alt={event.sponsor_name}
+          style={{ height: '20px', objectFit: 'contain', opacity: 0.9 }} />
+      </div>
+    )
+  )
 
   return (
     <div style={{ padding: '40px', maxWidth: '800px', margin: '0 auto', background: '#070b0f', minHeight: '100vh', color: '#e8eef4', fontFamily: 'sans-serif' }}>
+
+      {/* LIGHTBOX */}
+      {lightboxIndex !== null && (
+        <div
+          onClick={() => setLightboxIndex(null)}
+          style={{
+            position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+            background: 'rgba(0,0,0,0.95)', zIndex: 1000,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          {/* SCHLIESSEN */}
+          <button
+            onClick={() => setLightboxIndex(null)}
+            style={{
+              position: 'absolute', top: 20, right: 20,
+              background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff',
+              fontSize: 28, width: 44, height: 44, borderRadius: '50%',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>✕</button>
+
+          {/* LINKS */}
+          {lightboxIndex > 0 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1) }}
+              style={{
+                position: 'absolute', left: 20,
+                background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff',
+                fontSize: 28, width: 50, height: 50, borderRadius: '50%',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>‹</button>
+          )}
+
+          {/* FOTO */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}
+          >
+            <img
+              src={getImageUrl(matches[lightboxIndex])}
+              alt={`Foto ${lightboxIndex + 1}`}
+              style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 8 }}
+            />
+            <Watermark />
+            <Logo />
+          </div>
+
+          {/* RECHTS */}
+          {lightboxIndex < matches.length - 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1) }}
+              style={{
+                position: 'absolute', right: 20,
+                background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff',
+                fontSize: 28, width: 50, height: 50, borderRadius: '50%',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>›</button>
+          )}
+
+          {/* ZÄHLER */}
+          <div style={{
+            position: 'absolute', bottom: 20,
+            color: '#667788', fontSize: 14,
+          }}>{lightboxIndex + 1} / {matches.length}</div>
+        </div>
+      )}
 
       {/* NAV */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
@@ -111,66 +240,18 @@ function SucheContent() {
           <h2 style={{ fontSize: 24, fontWeight: 900, textTransform: 'uppercase', marginBottom: 16 }}>Deine Fotos:</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
             {matches.map((filename, i) => (
-              <div key={i} style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden' }}>
-                {/* FOTO */}
+              <div
+                key={i}
+                onClick={() => setLightboxIndex(i)}
+                style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', cursor: 'zoom-in' }}
+              >
                 <img
-                  src={`https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`}
+                  src={getImageUrl(filename)}
                   alt={`Foto ${i + 1}`}
                   style={{ width: '100%', display: 'block', borderRadius: '8px' }}
                 />
-
-                {/* WASSERZEICHEN DIAGONAL */}
-                <div style={{
-                  position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                  display: 'flex', flexDirection: 'column', justifyContent: 'space-around',
-                  pointerEvents: 'none', overflow: 'hidden',
-                }}>
-                  {[...Array(6)].map((_, row) => (
-                    <div key={row} style={{
-                      display: 'flex', gap: '40px',
-                      transform: 'rotate(-30deg) translateX(-20%)',
-                      whiteSpace: 'nowrap',
-                      marginLeft: row % 2 === 0 ? '0px' : '60px',
-                    }}>
-                      {[...Array(5)].map((_, col) => (
-                        <span key={col} style={{
-                          fontSize: '13px', fontWeight: 800,
-                          color: 'rgba(255,255,255,0.25)',
-                          letterSpacing: 1, userSelect: 'none',
-                          fontFamily: 'sans-serif',
-                        }}>
-                          90focus ⚽
-                        </span>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-
-                {/* SPONSOR LOGO unten rechts */}
-                {event?.sponsor_logo_url && (
-                  <div style={{
-                    position: 'absolute', bottom: 8, right: 8,
-                    background: 'rgba(0,0,0,0.5)', borderRadius: 4, padding: '4px 8px',
-                    display: 'flex', alignItems: 'center', gap: 6,
-                  }}>
-                    <img src={event.sponsor_logo_url} alt={event.sponsor_name}
-                      style={{ height: '20px', objectFit: 'contain', opacity: 0.9 }} />
-                  </div>
-                )}
-
-                {/* 90FOCUS LOGO unten rechts wenn kein Sponsor */}
-                {!event?.sponsor_logo_url && (
-                  <div style={{
-                    position: 'absolute', bottom: 8, right: 8,
-                    background: 'rgba(0,0,0,0.6)', borderRadius: 4, padding: '4px 8px',
-                    display: 'flex', alignItems: 'center', gap: 4,
-                  }}>
-                    <div style={{ width: 18, height: 18, background: '#e8ff00', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 9 }}>90</span>
-                    </div>
-                    <span style={{ color: '#fff', fontWeight: 800, fontSize: 11, letterSpacing: 1 }}>FOCUS</span>
-                  </div>
-                )}
+                <Watermark />
+                <Logo />
               </div>
             ))}
           </div>
