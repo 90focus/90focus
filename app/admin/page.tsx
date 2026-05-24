@@ -64,19 +64,13 @@ export default function AdminPage() {
       setMessage('Bitte Event auswählen!')
       return
     }
-
     setUploading(true)
     setMessage('Fotos werden hochgeladen...')
-
     const formData = new FormData()
     Array.from(files).forEach((file) => formData.append('files', file))
     formData.append('eventId', selectedEvent)
-
     try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      })
+      const res = await fetch('/api/upload', { method: 'POST', body: formData })
       const data = await res.json()
       setMessage(data.message || 'Fertig!')
     } catch {
@@ -102,7 +96,8 @@ export default function AdminPage() {
           style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }}
         />
         <input
-          type="date"
+          type="text"
+          placeholder="Datum (JJJJ-MM-TT, z.B. 2026-05-22)"
           value={eventDatum}
           onChange={(e) => setEventDatum(e.target.value)}
           style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }}
