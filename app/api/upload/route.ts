@@ -1,5 +1,6 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 
 const s3 = new S3Client({
   region: 'eu-west-1',
@@ -9,9 +10,15 @@ const s3 = new S3Client({
   },
 })
 
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+
 export async function POST(req: NextRequest) {
   const formData = await req.formData()
   const files = formData.getAll('files') as File[]
+  const eventId = formData.get('eventId') as string
 
   if (!files || files.length === 0) {
     return NextResponse.json({ message: 'Keine Dateien!' }, { status: 400 })
@@ -31,6 +38,13 @@ export async function POST(req: NextRequest) {
         ContentType: file.type,
       })
     )
+
+    if (eventId) {
+      await supabase.from('event_fotos').insert({
+        event_id: eventId,
+        filename: filename,
+      })
+    }
 
     try {
       await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/rekognition`, {

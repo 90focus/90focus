@@ -1,5 +1,6 @@
 import { RekognitionClient, IndexFacesCommand, SearchFacesByImageCommand, CreateCollectionCommand } from '@aws-sdk/client-rekognition'
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 
 const rekognition = new RekognitionClient({
   region: 'eu-west-1',
@@ -8,6 +9,11 @@ const rekognition = new RekognitionClient({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
   },
 })
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 const COLLECTION_ID = '90focus-gesichter'
 
@@ -36,6 +42,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   const formData = await req.formData()
   const file = formData.get('selfie') as File
+  const eventId = formData.get('eventId') as string
 
   if (!file) return NextResponse.json({ error: 'Kein Selfie!' }, { status: 400 })
 
@@ -45,12 +52,25 @@ export async function PUT(req: NextRequest) {
     const result = await rekognition.send(new SearchFacesByImageCommand({
       CollectionId: COLLECTION_ID,
       Image: { Bytes: buffer },
-      MaxFaces: 50,
+      MaxFaces: 100,
       FaceMatchThreshold: 80,
     }))
 
-    const matches = result.FaceMatches?.map(m => m.Face?.ExternalImageId) || []
-    return NextResponse.json({ matches })
+    const allMatches = result.FaceMatches?.map(m => m.Face?.ExternalImageId) || []
+
+    // Filter nach Event wenn eventId vorhanden
+    if (eventId && allMatches.length > 0) {
+      const { data: eventFotos } = await supabase
+        .from('event_fotos')
+        .select('filename')
+        .eq('event_id', eventId)
+
+      const eventFilenames = eventFotos?.map(f => f.filename) || []
+      const filtered = allMatches.filter(f => eventFilenames.includes(f as string))
+      return NextResponse.json({ matches: filtered })
+    }
+
+    return NextResponse.json({ matches: allMatches })
   } catch (error) {
     console.error('Rekognition search error:', error)
     return NextResponse.json({ error: 'Fehler bei der Suche' }, { status: 500 })
