@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(await file.arrayBuffer())
     const filename = `${Date.now()}-${file.name}`
 
+    // Foto zu S3 hochladen
     await s3.send(
       new PutObjectCommand({
         Bucket: '90focus-fotos',
@@ -31,6 +32,15 @@ export async function POST(req: NextRequest) {
         ContentType: file.type,
       })
     )
+
+    // Gesicht automatisch indexieren
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/rekognition`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename }),
+      })
+    } catch {}
 
     uploaded.push(filename)
   }
