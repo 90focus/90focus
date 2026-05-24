@@ -6,9 +6,12 @@ import { useRouter } from 'next/navigation'
 
 export default function AdminPage() {
   const [events, setEvents] = useState<any[]>([])
-  const [eventName, setEventName] = useState('')
-  const [eventDatum, setEventDatum] = useState('')
-  const [eventOrt, setEventOrt] = useState('')
+  const [homeTeam, setHomeTeam] = useState('')
+  const [awayTeam, setAwayTeam] = useState('')
+  const [date, setDate] = useState('')
+  const [time, setTime] = useState('')
+  const [liga, setLiga] = useState('')
+  const [ort, setOrt] = useState('')
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null)
   const [files, setFiles] = useState<FileList | null>(null)
   const [uploading, setUploading] = useState(false)
@@ -30,27 +33,34 @@ export default function AdminPage() {
   }, [router])
 
   const loadEvents = async () => {
-    const { data } = await supabase.from('events').select('*').order('datum', { ascending: false })
+    const { data } = await supabase.from('events').select('*').order('date', { ascending: false })
     setEvents(data || [])
   }
 
   const createEvent = async () => {
-    if (!eventName || !eventDatum) {
-      setMessage('Name und Datum sind Pflichtfelder!')
+    if (!homeTeam || !awayTeam || !date) {
+      setMessage('Heimteam, Gastteam und Datum sind Pflichtfelder!')
       return
     }
     const { error } = await supabase.from('events').insert({
-      name: eventName,
-      datum: eventDatum,
-      ort: eventOrt,
+      home_team: homeTeam,
+      away_team: awayTeam,
+      date: date,
+      time: time,
+      liga: liga,
+      ort: ort,
     })
     if (error) {
-      setMessage('Fehler beim Erstellen!')
+      console.error(error)
+      setMessage('Fehler: ' + error.message)
     } else {
-      setMessage('Event erstellt!')
-      setEventName('')
-      setEventDatum('')
-      setEventOrt('')
+      setMessage('✅ Spiel erstellt!')
+      setHomeTeam('')
+      setAwayTeam('')
+      setDate('')
+      setTime('')
+      setLiga('')
+      setOrt('')
       loadEvents()
     }
   }
@@ -61,7 +71,7 @@ export default function AdminPage() {
       return
     }
     if (!selectedEvent) {
-      setMessage('Bitte Event auswählen!')
+      setMessage('Bitte Spiel auswählen!')
       return
     }
     setUploading(true)
@@ -87,47 +97,66 @@ export default function AdminPage() {
       <h1>⚙️ Admin</h1>
 
       <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
-        <h2>Event erstellen</h2>
+        <h2>⚽ Spiel erstellen</h2>
         <input
           type="text"
-          placeholder="Event Name (z.B. FC Basel vs YB)"
-          value={eventName}
-          onChange={(e) => setEventName(e.target.value)}
+          placeholder="Heimteam (z.B. FC Kickers Luzern)"
+          value={homeTeam}
+          onChange={(e) => setHomeTeam(e.target.value)}
           style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }}
         />
         <input
           type="text"
-          placeholder="Datum (JJJJ-MM-TT, z.B. 2026-05-22)"
-          value={eventDatum}
-          onChange={(e) => setEventDatum(e.target.value)}
+          placeholder="Gastteam (z.B. FC Brunnen)"
+          value={awayTeam}
+          onChange={(e) => setAwayTeam(e.target.value)}
+          style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }}
+        />
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }}
+        />
+        <input
+          type="time"
+          value={time}
+          onChange={(e) => setTime(e.target.value)}
+          style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }}
+        />
+        <input
+          type="text"
+          placeholder="Liga (z.B. 4. Liga)"
+          value={liga}
+          onChange={(e) => setLiga(e.target.value)}
           style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }}
         />
         <input
           type="text"
           placeholder="Ort (optional)"
-          value={eventOrt}
-          onChange={(e) => setEventOrt(e.target.value)}
+          value={ort}
+          onChange={(e) => setOrt(e.target.value)}
           style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }}
         />
         <button
           onClick={createEvent}
           style={{ padding: '12px 24px', background: '#000', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '16px' }}
         >
-          Event erstellen
+          Spiel erstellen
         </button>
       </div>
 
       <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
-        <h2>Fotos hochladen</h2>
+        <h2>📸 Fotos hochladen</h2>
         <select
           value={selectedEvent || ''}
           onChange={(e) => setSelectedEvent(e.target.value)}
           style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }}
         >
-          <option value="">Event auswählen...</option>
+          <option value="">Spiel auswählen...</option>
           {events.map((event) => (
             <option key={event.id} value={event.id}>
-              {event.name} — {event.datum}
+              {event.home_team} vs {event.away_team} — {event.date}
             </option>
           ))}
         </select>
@@ -147,15 +176,16 @@ export default function AdminPage() {
         </button>
       </div>
 
-      {message && <p style={{ fontWeight: 'bold', color: 'green' }}>{message}</p>}
+      {message && <p style={{ fontWeight: 'bold', color: message.startsWith('Fehler') ? 'red' : 'green' }}>{message}</p>}
 
       <div>
-        <h2>Alle Events</h2>
-        {events.length === 0 && <p>Noch keine Events.</p>}
+        <h2>Alle Spiele</h2>
+        {events.length === 0 && <p>Noch keine Spiele.</p>}
         {events.map((event) => (
           <div key={event.id} style={{ padding: '15px', border: '1px solid #ddd', borderRadius: '8px', marginBottom: '10px' }}>
-            <strong>{event.name}</strong><br />
-            📅 {event.datum} {event.ort && `— 📍 ${event.ort}`}
+            <strong>⚽ {event.home_team} vs {event.away_team}</strong><br />
+            📅 {event.date} {event.time && `🕐 ${event.time}`}<br />
+            {event.liga && `🏆 ${event.liga}`} {event.ort && `— 📍 ${event.ort}`}
           </div>
         ))}
       </div>
