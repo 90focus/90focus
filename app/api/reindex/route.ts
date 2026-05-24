@@ -35,11 +35,12 @@ export async function GET() {
 
     for (const file of files) {
       if (!file.Key) continue
+      const externalImageId = file.Key.replace(/[^a-zA-Z0-9_\-:]/g, '_')
       try {
         await rekognition.send(new IndexFacesCommand({
           CollectionId: COLLECTION_ID,
           Image: { S3Object: { Bucket: '90focus-fotos-ireland', Name: file.Key } },
-          ExternalImageId: file.Key,
+          ExternalImageId: externalImageId,
           DetectionAttributes: [],
         }))
         results.push(`✅ ${file.Key}`)
