@@ -10,38 +10,34 @@ export default function Home() {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const { data } = await supabase.from('events').select('*')
+      const today = new Date().toISOString().split('T')[0]
+      const { data } = await supabase
+        .from('events')
+        .select('*')
+        .gte('date', today)
+        .order('date', { ascending: true })
+        .limit(3)
       if (data) setEvents(data)
     }
     fetchEvents()
   }, [])
 
   return (
-    <main style={{
-      minHeight: "100vh",
-      background: "#070b0f",
-      color: "#e8eef4",
-      fontFamily: "sans-serif",
-      padding: "0",
-    }}>
+    <main style={{ minHeight: "100vh", background: "#070b0f", color: "#e8eef4", fontFamily: "sans-serif", padding: "0" }}>
       {/* NAV */}
-      <nav style={{
-        background: "rgba(7,11,15,0.97)",
-        borderBottom: "1px solid #131e2a",
-        height: 60, padding: "0 24px",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-      }}>
+      <nav style={{ background: "rgba(7,11,15,0.97)", borderBottom: "1px solid #131e2a", height: 60, padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 34, height: 34, background: "#e8ff00", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <span style={{ color: "#070b0f", fontWeight: 900, fontSize: 14 }}>90</span>
           </div>
           <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
         </div>
-        <button style={{
-          background: "#e8ff00", color: "#070b0f", border: "none",
-          borderRadius: 2, padding: "8px 18px", fontWeight: 900,
-          fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer",
-        }} onClick={() => router.push('/suche')}>Meine Fotos →</button>
+        <div style={{ display: "flex", gap: 12 }}>
+          <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid #1c2a38", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+            onClick={() => router.push('/spiele')}>Alle Spiele</button>
+          <button style={{ background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "8px 18px", fontWeight: 900, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+            onClick={() => router.push('/suche')}>Meine Fotos →</button>
+        </div>
       </nav>
 
       {/* HERO */}
@@ -56,44 +52,43 @@ export default function Home() {
         <p style={{ color: "#667788", fontSize: 17, maxWidth: 440, lineHeight: 1.7, marginBottom: 36 }}>
           Professionelle Spielfotos für die Amateurliga. Gesichtserkennung findet automatisch alle Bilder von dir.
         </p>
-        <button style={{
-          background: "#e8ff00", color: "#070b0f", border: "none",
-          borderRadius: 2, padding: "15px 36px", fontWeight: 900,
-          fontSize: 16, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer",
-        }} onClick={() => router.push('/suche')}>Meine Fotos finden →</button>
+        <button style={{ background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "15px 36px", fontWeight: 900, fontSize: 16, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer" }}
+          onClick={() => router.push('/suche')}>Meine Fotos finden →</button>
       </section>
 
-      {/* EVENTS */}
+      {/* AKTUELLE SPIELE */}
       <section style={{ padding: "60px 32px", borderTop: "1px solid #131e2a" }}>
-        <div style={{ color: "#e8ff00", fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 8 }}>Aktuelle Spiele</div>
-        <h2 style={{ fontSize: 40, fontWeight: 900, textTransform: "uppercase", letterSpacing: -1, marginBottom: 32 }}>Events</h2>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 32 }}>
+          <div>
+            <div style={{ color: "#e8ff00", fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 8 }}>Nächste Spiele</div>
+            <h2 style={{ fontSize: 40, fontWeight: 900, textTransform: "uppercase", letterSpacing: -1, margin: 0 }}>Events</h2>
+          </div>
+          <button style={{ background: "transparent", color: "#e8ff00", border: "1px solid #e8ff00", borderRadius: 2, padding: "10px 20px", fontWeight: 800, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+            onClick={() => router.push('/spiele')}>Alle Spiele →</button>
+        </div>
 
         {events.length === 0 ? (
-          <div style={{ color: "#445566", fontSize: 16, padding: "40px 0" }}>
-            Noch keine Events verfügbar. Bald kommen die ersten Spiele! 🎯
-          </div>
+          <div style={{ color: "#445566", fontSize: 16, padding: "40px 0" }}>Keine kommenden Spiele. 🎯</div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {events.map((ev) => (
-              <div key={ev.id} style={{
-                background: "#0d1219", border: "1px solid #1c2a38",
-                borderRadius: 4, padding: "20px 24px",
-                display: "flex", justifyContent: "space-between", alignItems: "center",
-              }}>
+              <div key={ev.id} style={{ background: "#0d1219", border: "1px solid #1c2a38", borderRadius: 4, padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <div style={{ fontSize: 10, color: "#e8ff00", fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 6 }}>{ev.liga}</div>
                   <div style={{ fontSize: 20, fontWeight: 800, textTransform: "uppercase" }}>{ev.home_team} vs {ev.away_team}</div>
-                  <div style={{ color: "#445566", fontSize: 13, marginTop: 4 }}>📍 {ev.ort} · {ev.date}</div>
+                  <div style={{ color: "#445566", fontSize: 13, marginTop: 4 }}>📍 {ev.ort} · 📅 {ev.date} {ev.time && `· 🕐 ${ev.time}`}</div>
                 </div>
-                <button style={{
-                  background: "#e8ff00", color: "#070b0f", border: "none",
-                  borderRadius: 2, padding: "10px 20px", fontWeight: 900,
-                  fontSize: 13, cursor: "pointer", whiteSpace: "nowrap",
-                }} onClick={() => router.push(`/suche?eventId=${ev.id}`)}>Fotos finden →</button>
+                <button style={{ background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "10px 20px", fontWeight: 900, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap" }}
+                  onClick={() => router.push(`/suche?eventId=${ev.id}`)}>Fotos finden →</button>
               </div>
             ))}
           </div>
         )}
+
+        <div style={{ marginTop: 24, textAlign: "center" }}>
+          <button style={{ background: "transparent", color: "#667788", border: "1px solid #1c2a38", borderRadius: 2, padding: "12px 32px", fontWeight: 700, fontSize: 14, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+            onClick={() => router.push('/spiele')}>Alle Spiele anzeigen →</button>
+        </div>
       </section>
 
       {/* FOOTER */}
