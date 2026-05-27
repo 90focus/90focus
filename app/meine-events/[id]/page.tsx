@@ -13,6 +13,7 @@ export default function EventDetailPage() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
+  const [deleting, setDeleting] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [files, setFiles] = useState<FileList | null>(null)
   const [fileNames, setFileNames] = useState<string>('')
@@ -88,13 +89,29 @@ export default function EventDetailPage() {
 
   const deleteSelected = async () => {
     if (selected.length === 0) return
-    if (!confirm(`${selected.length} Foto(s) löschen?`)) return
-    for (const id of selected) {
-      await supabase.from('event_fotos').delete().eq('id', id)
+    if (!confirm(`${selected.length} Foto(s) löschen? Sie werden auch aus AWS entfernt.`)) return
+
+    setDeleting(true)
+    setMessage('Fotos werden gelöscht...')
+
+    const fotosToDelete = fotos.filter(f => selected.includes(f.id))
+
+    for (const foto of fotosToDelete) {
+      try {
+        await fetch('/api/delete-foto', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: foto.filename, fotoId: foto.id })
+        })
+      } catch (e) {
+        console.error('Delete error:', e)
+      }
     }
+
     setMessage(`✅ ${selected.length} Foto(s) gelöscht!`)
     setSelected([])
     setSelectMode(false)
+    setDeleting(false)
     loadFotos()
   }
 
@@ -215,19 +232,11 @@ export default function EventDetailPage() {
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '20px 24px', marginBottom: 24 }}>
           <h3 style={{ margin: '0 0 16px 0', color: '#e8eef4' }}>📸 Fotos hochladen</h3>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            <label style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              padding: '10px 20px', background: '#1c2a38', color: '#e8eef4',
-              borderRadius: 6, cursor: 'pointer', fontSize: 14, border: '1px solid #2a3a4a',
-              fontWeight: 600
-            }}>
+            <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 14, border: '1px solid #2a3a4a', fontWeight: 600 }}>
               📁 Dateien auswählen
-              <input type="file" multiple accept="image/*" onChange={handleFileChange}
-                style={{ display: 'none' }} />
+              <input type="file" multiple accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
             </label>
-            {fileNames && (
-              <span style={{ color: '#667788', fontSize: 13 }}>✓ {fileNames}</span>
-            )}
+            {fileNames && <span style={{ color: '#667788', fontSize: 13 }}>✓ {fileNames}</span>}
           </div>
           <button onClick={handleUpload} disabled={uploading}
             style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 6, padding: '10px 24px', cursor: 'pointer', fontSize: 14, fontWeight: 900, marginTop: 12 }}>
@@ -258,9 +267,9 @@ export default function EventDetailPage() {
                     {selected.length === fotos.length ? 'Alle abwählen' : 'Alle auswählen'}
                   </button>
                   {selected.length > 0 && (
-                    <button onClick={deleteSelected}
+                    <button onClick={deleteSelected} disabled={deleting}
                       style={{ background: '#ff4444', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>
-                      {selected.length} löschen
+                      {deleting ? 'Löscht...' : `${selected.length} löschen`}
                     </button>
                   )}
                   <button onClick={cancelSelect}
@@ -288,11 +297,8 @@ export default function EventDetailPage() {
                   border: selected.includes(foto.id) ? '3px solid #e8ff00' : '3px solid transparent',
                   transition: 'border 0.1s'
                 }}>
-                <img
-                  src={getImageUrl(foto.filename)}
-                  alt="Foto"
-                  style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }}
-                />
+                <img src={getImageUrl(foto.filename)} alt="Foto"
+                  style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }} />
                 {selectMode && selected.includes(foto.id) && (
                   <div style={{
                     position: 'absolute', top: 8, right: 8,
