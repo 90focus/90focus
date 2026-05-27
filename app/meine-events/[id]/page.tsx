@@ -15,6 +15,7 @@ export default function EventDetailPage() {
   const [message, setMessage] = useState('')
   const [uploading, setUploading] = useState(false)
   const [files, setFiles] = useState<FileList | null>(null)
+  const [fileNames, setFileNames] = useState<string>('')
   const router = useRouter()
   const params = useParams()
   const eventId = params.id as string
@@ -97,6 +98,14 @@ export default function EventDetailPage() {
     loadFotos()
   }
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files
+    if (f && f.length > 0) {
+      setFiles(f)
+      setFileNames(f.length === 1 ? f[0].name : `${f.length} Dateien ausgewählt`)
+    }
+  }
+
   const handleUpload = async () => {
     if (!files || files.length === 0) {
       setMessage('Bitte Fotos auswählen!')
@@ -111,6 +120,8 @@ export default function EventDetailPage() {
       const res = await fetch('/api/upload', { method: 'POST', body: formData })
       const data = await res.json()
       setMessage(data.message || 'Fertig!')
+      setFiles(null)
+      setFileNames('')
       loadFotos()
     } catch {
       setMessage('Fehler beim Hochladen!')
@@ -202,11 +213,24 @@ export default function EventDetailPage() {
 
         {/* UPLOAD */}
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '20px 24px', marginBottom: 24 }}>
-          <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4' }}>📸 Fotos hochladen</h3>
-          <input type="file" multiple accept="image/*" onChange={(e) => setFiles(e.target.files)}
-            style={{ margin: '8px 0', display: 'block', color: '#e8eef4' }} />
+          <h3 style={{ margin: '0 0 16px 0', color: '#e8eef4' }}>📸 Fotos hochladen</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+            <label style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '10px 20px', background: '#1c2a38', color: '#e8eef4',
+              borderRadius: 6, cursor: 'pointer', fontSize: 14, border: '1px solid #2a3a4a',
+              fontWeight: 600
+            }}>
+              📁 Dateien auswählen
+              <input type="file" multiple accept="image/*" onChange={handleFileChange}
+                style={{ display: 'none' }} />
+            </label>
+            {fileNames && (
+              <span style={{ color: '#667788', fontSize: 13 }}>✓ {fileNames}</span>
+            )}
+          </div>
           <button onClick={handleUpload} disabled={uploading}
-            style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px 24px', cursor: 'pointer', fontSize: 14, fontWeight: 900, marginTop: 8 }}>
+            style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 6, padding: '10px 24px', cursor: 'pointer', fontSize: 14, fontWeight: 900, marginTop: 12 }}>
             {uploading ? 'Lädt...' : 'Fotos hochladen'}
           </button>
         </div>
