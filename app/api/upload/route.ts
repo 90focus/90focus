@@ -28,6 +28,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Keine Dateien!' }, { status: 400 })
     }
 
+    // Event-Ordnername aus Supabase holen
+    let eventFolder = eventId
+    if (eventId) {
+      const { data: event } = await supabase
+        .from('events')
+        .select('home_team, away_team, date')
+        .eq('id', eventId)
+        .single()
+
+      if (event) {
+        const cleanHome = event.home_team.replace(/[^a-zA-Z0-9]/g, '-')
+        const cleanAway = event.away_team.replace(/[^a-zA-Z0-9]/g, '-')
+        eventFolder = `${cleanHome}-vs-${cleanAway}-${event.date}`
+      }
+    }
+
     const uploaded: string[] = []
 
     for (const file of files) {
@@ -35,9 +51,8 @@ export async function POST(req: NextRequest) {
       const timestamp = Date.now()
       const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
 
-      // Mit Event-Ordner wenn eventId vorhanden
       const filename = eventId
-        ? `events/${eventId}/${timestamp}-${cleanName}`
+        ? `events/${eventFolder}/${timestamp}-${cleanName}`
         : `${timestamp}-${cleanName}`
 
       await s3.send(
