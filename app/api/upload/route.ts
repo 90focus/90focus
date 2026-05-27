@@ -32,7 +32,13 @@ export async function POST(req: NextRequest) {
 
     for (const file of files) {
       const buffer = Buffer.from(await file.arrayBuffer())
-      const filename = `${Date.now()}-${file.name}`
+      const timestamp = Date.now()
+      const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+
+      // Mit Event-Ordner wenn eventId vorhanden
+      const filename = eventId
+        ? `events/${eventId}/${timestamp}-${cleanName}`
+        : `${timestamp}-${cleanName}`
 
       await s3.send(
         new PutObjectCommand({
