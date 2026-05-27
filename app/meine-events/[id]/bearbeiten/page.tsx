@@ -15,6 +15,7 @@ export default function EventBearbeitenPage() {
   const [sponsorName, setSponsorName] = useState('')
   const [sponsorLogo, setSponsorLogo] = useState<File | null>(null)
   const [sponsorLogoPreview, setSponsorLogoPreview] = useState<string | null>(null)
+  const [sponsorLogoName, setSponsorLogoName] = useState('')
   const [currentLogoUrl, setCurrentLogoUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
@@ -56,6 +57,7 @@ export default function EventBearbeitenPage() {
     if (file) {
       setSponsorLogo(file)
       setSponsorLogoPreview(URL.createObjectURL(file))
+      setSponsorLogoName(file.name)
     }
   }
 
@@ -74,13 +76,11 @@ export default function EventBearbeitenPage() {
       setMessage('Heimteam, Gastteam und Datum sind Pflichtfelder!')
       return
     }
-
     let sponsorLogoUrl = currentLogoUrl
     if (sponsorLogo) {
       setMessage('Logo wird hochgeladen...')
       sponsorLogoUrl = await uploadSponsorLogo(sponsorLogo)
     }
-
     const { error } = await supabase
       .from('events')
       .update({
@@ -111,7 +111,6 @@ export default function EventBearbeitenPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
-      {/* NAV */}
       <nav style={{ background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/dashboard')}>
           <div style={{ width: 34, height: 34, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -172,10 +171,15 @@ export default function EventBearbeitenPage() {
             <label style={{ display: 'block', margin: '8px 0 4px', fontSize: '14px', color: '#667788' }}>
               Neues Logo hochladen (optional):
             </label>
-            <input type="file" accept="image/*" onChange={handleSponsorLogo}
-              style={{ margin: '8px 0', display: 'block', color: '#e8eef4' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8 }}>
+              <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 14, border: '1px solid #2a3a4a', fontWeight: 600 }}>
+                📁 Logo auswählen
+                <input type="file" accept="image/*" onChange={handleSponsorLogo} style={{ display: 'none' }} />
+              </label>
+              {sponsorLogoName && <span style={{ color: '#667788', fontSize: 13 }}>✓ {sponsorLogoName}</span>}
+            </div>
             {sponsorLogoPreview && (
-              <img src={sponsorLogoPreview} alt="Vorschau" style={{ height: 50, objectFit: 'contain', background: '#131e2a', padding: 4, borderRadius: 4 }} />
+              <img src={sponsorLogoPreview} alt="Vorschau" style={{ height: 50, marginTop: 8, objectFit: 'contain', background: '#131e2a', padding: 4, borderRadius: 4 }} />
             )}
           </div>
 
