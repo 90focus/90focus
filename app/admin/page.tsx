@@ -5,6 +5,7 @@ import { supabase } from '@/app/supabase'
 import { useRouter } from 'next/navigation'
 
 export default function AdminPage() {
+  const [user, setUser] = useState<any>(null)
   const [events, setEvents] = useState<any[]>([])
   const [homeTeam, setHomeTeam] = useState('')
   const [awayTeam, setAwayTeam] = useState('')
@@ -28,15 +29,20 @@ export default function AdminPage() {
       if (!session) {
         router.push('/login')
       } else {
+        setUser(session.user)
         setLoading(false)
-        loadEvents()
+        loadEvents(session.user.id)
       }
     }
     checkUser()
   }, [router])
 
-  const loadEvents = async () => {
-    const { data } = await supabase.from('events').select('*').order('date', { ascending: false })
+  const loadEvents = async (userId: string) => {
+    const { data } = await supabase
+      .from('events')
+      .select('*')
+      .eq('user_id', userId)
+      .order('date', { ascending: false })
     setEvents(data || [])
   }
 
@@ -82,6 +88,7 @@ export default function AdminPage() {
       ort: ort,
       sponsor_name: sponsorName,
       sponsor_logo_url: sponsorLogoUrl,
+      user_id: user.id,
     })
     if (error) {
       console.error(error)
@@ -97,7 +104,7 @@ export default function AdminPage() {
       setSponsorName('')
       setSponsorLogo(null)
       setSponsorLogoPreview(null)
-      loadEvents()
+      loadEvents(user.id)
     }
   }
 
@@ -129,94 +136,106 @@ export default function AdminPage() {
   if (loading) return <p style={{ padding: '40px' }}>Lade...</p>
 
   return (
-    <div style={{ padding: '40px', maxWidth: '700px', margin: '0 auto' }}>
-      <h1>⚙️ Admin</h1>
+    <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
+      {/* NAV */}
+      <nav style={{ background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/dashboard')}>
+          <div style={{ width: 34, height: 34, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>90</span>
+          </div>
+          <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
+        </div>
+        <div style={{ display: 'flex', gap: 12 }}>
+          <button onClick={() => router.push('/dashboard')}
+            style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>
+            ← Dashboard
+          </button>
+          <button onClick={() => router.push('/meine-events')}
+            style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>
+            Meine Events
+          </button>
+        </div>
+      </nav>
 
-      <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
-        <h2>⚽ Spiel erstellen</h2>
-        <input type="text" placeholder="Heimteam (z.B. FC Kickers Luzern)" value={homeTeam}
-          onChange={(e) => setHomeTeam(e.target.value)}
-          style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }} />
-        <input type="text" placeholder="Gastteam (z.B. FC Brunnen)" value={awayTeam}
-          onChange={(e) => setAwayTeam(e.target.value)}
-          style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }} />
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-          style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }} />
-        <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
-          style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }} />
-        <select value={liga} onChange={(e) => setLiga(e.target.value)}
-          style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }}>
-          <option value="">Liga auswählen...</option>
-          <option value="Super League">Super League</option>
-          <option value="Challenge League">Challenge League</option>
-          <option value="Promotion League">Promotion League</option>
-          <option value="1. Liga">1. Liga</option>
-          <option value="2. Liga interregional">2. Liga interregional</option>
-          <option value="2. Liga regional">2. Liga regional</option>
-          <option value="3. Liga">3. Liga</option>
-          <option value="4. Liga">4. Liga</option>
-          <option value="5. Liga">5. Liga</option>
-          <option value="6. Liga">6. Liga</option>
-        </select>
-        <input type="text" placeholder="Ort (optional)" value={ort}
-          onChange={(e) => setOrt(e.target.value)}
-          style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }} />
+      <div style={{ padding: '40px', maxWidth: '700px', margin: '0 auto' }}>
+        <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Admin</div>
+        <h1 style={{ fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>⚽ Spiel erstellen</h1>
 
-        <div style={{ borderTop: '1px solid #ddd', marginTop: '16px', paddingTop: '16px' }}>
-          <h3 style={{ margin: '0 0 12px 0' }}>🏢 Sponsor (optional)</h3>
-          <input type="text" placeholder="Sponsor Name (z.B. Migros)" value={sponsorName}
-            onChange={(e) => setSponsorName(e.target.value)}
-            style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }} />
-          <label style={{ display: 'block', margin: '8px 0 4px', fontSize: '14px', color: '#555' }}>
-            Sponsor Logo (wird als Wasserzeichen verwendet):
-          </label>
-          <input type="file" accept="image/*" onChange={handleSponsorLogo}
-            style={{ margin: '8px 0', display: 'block' }} />
-          {sponsorLogoPreview && (
-            <img src={sponsorLogoPreview} alt="Logo Vorschau"
-              style={{ height: '60px', marginTop: '8px', objectFit: 'contain', background: '#fff', padding: '4px', borderRadius: '4px' }} />
-          )}
+        <div style={{ background: '#0d1219', border: '1px solid #1c2a38', padding: '24px', borderRadius: '8px', marginBottom: '24px' }}>
+          <input type="text" placeholder="Heimteam (z.B. FC Kickers Luzern)" value={homeTeam}
+            onChange={(e) => setHomeTeam(e.target.value)}
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+          <input type="text" placeholder="Gastteam (z.B. FC Brunnen)" value={awayTeam}
+            onChange={(e) => setAwayTeam(e.target.value)}
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+          <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+          <select value={liga} onChange={(e) => setLiga(e.target.value)}
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }}>
+            <option value="">Liga auswählen...</option>
+            <option value="Super League">Super League</option>
+            <option value="Challenge League">Challenge League</option>
+            <option value="Promotion League">Promotion League</option>
+            <option value="1. Liga">1. Liga</option>
+            <option value="2. Liga interregional">2. Liga interregional</option>
+            <option value="2. Liga regional">2. Liga regional</option>
+            <option value="3. Liga">3. Liga</option>
+            <option value="4. Liga">4. Liga</option>
+            <option value="5. Liga">5. Liga</option>
+            <option value="6. Liga">6. Liga</option>
+          </select>
+          <input type="text" placeholder="Ort (optional)" value={ort}
+            onChange={(e) => setOrt(e.target.value)}
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+
+          <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>
+            <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4' }}>🏢 Sponsor (optional)</h3>
+            <input type="text" placeholder="Sponsor Name (z.B. Migros)" value={sponsorName}
+              onChange={(e) => setSponsorName(e.target.value)}
+              style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+            <label style={{ display: 'block', margin: '8px 0 4px', fontSize: '14px', color: '#667788' }}>
+              Sponsor Logo (wird als Wasserzeichen verwendet):
+            </label>
+            <input type="file" accept="image/*" onChange={handleSponsorLogo}
+              style={{ margin: '8px 0', display: 'block', color: '#e8eef4' }} />
+            {sponsorLogoPreview && (
+              <img src={sponsorLogoPreview} alt="Logo Vorschau"
+                style={{ height: '60px', marginTop: '8px', objectFit: 'contain', background: '#131e2a', padding: '4px', borderRadius: '4px' }} />
+            )}
+          </div>
+
+          <button onClick={createEvent}
+            style={{ padding: '12px 32px', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '16px', fontWeight: 900, marginTop: '16px', textTransform: 'uppercase', letterSpacing: 1 }}>
+            Spiel erstellen
+          </button>
         </div>
 
-        <button onClick={createEvent}
-          style={{ padding: '12px 24px', background: '#000', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '16px', marginTop: '16px' }}>
-          Spiel erstellen
-        </button>
-      </div>
+        <div style={{ background: '#0d1219', border: '1px solid #1c2a38', padding: '24px', borderRadius: '8px', marginBottom: '24px' }}>
+          <h2 style={{ marginTop: 0, color: '#e8eef4' }}>📸 Fotos hochladen</h2>
+          <select value={selectedEvent || ''} onChange={(e) => setSelectedEvent(e.target.value)}
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }}>
+            <option value="">Spiel auswählen...</option>
+            {events.map((event) => (
+              <option key={event.id} value={event.id}>
+                {event.home_team} vs {event.away_team} — {event.date}
+              </option>
+            ))}
+          </select>
+          <input type="file" multiple accept="image/*" onChange={(e) => setFiles(e.target.files)}
+            style={{ margin: '10px 0', display: 'block', color: '#e8eef4' }} />
+          <button onClick={handleUpload} disabled={uploading}
+            style={{ padding: '12px 32px', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '16px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>
+            {uploading ? 'Lädt...' : 'Fotos hochladen'}
+          </button>
+        </div>
 
-      <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
-        <h2>📸 Fotos hochladen</h2>
-        <select value={selectedEvent || ''} onChange={(e) => setSelectedEvent(e.target.value)}
-          style={{ width: '100%', padding: '10px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' }}>
-          <option value="">Spiel auswählen...</option>
-          {events.map((event) => (
-            <option key={event.id} value={event.id}>
-              {event.home_team} vs {event.away_team} — {event.date}
-            </option>
-          ))}
-        </select>
-        <input type="file" multiple accept="image/*" onChange={(e) => setFiles(e.target.files)}
-          style={{ margin: '10px 0', display: 'block' }} />
-        <button onClick={handleUpload} disabled={uploading}
-          style={{ padding: '12px 24px', background: '#000', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '16px' }}>
-          {uploading ? 'Lädt...' : 'Fotos hochladen'}
-        </button>
-      </div>
-
-      {message && <p style={{ fontWeight: 'bold', color: message.startsWith('Fehler') ? 'red' : 'green' }}>{message}</p>}
-
-      <div>
-        <h2>Alle Spiele</h2>
-        {events.length === 0 && <p>Noch keine Spiele.</p>}
-        {events.map((event) => (
-          <div key={event.id} style={{ padding: '15px', border: '1px solid #ddd', borderRadius: '8px', marginBottom: '10px' }}>
-            <strong>⚽ {event.home_team} vs {event.away_team}</strong><br />
-            📅 {event.date} {event.time && `🕐 ${event.time}`}<br />
-            {event.liga && `🏆 ${event.liga}`} {event.ort && `— 📍 ${event.ort}`}<br />
-            {event.sponsor_name && `🏢 Sponsor: ${event.sponsor_name}`}
-            {event.sponsor_logo_url && <img src={event.sponsor_logo_url} alt="Logo" style={{ height: '30px', marginLeft: '10px', verticalAlign: 'middle' }} />}
+        {message && (
+          <div style={{ padding: '16px', background: message.startsWith('Fehler') ? 'rgba(255,68,68,0.1)' : 'rgba(68,255,136,0.1)', border: `1px solid ${message.startsWith('Fehler') ? '#ff4444' : '#44ff88'}`, borderRadius: '8px', color: message.startsWith('Fehler') ? '#ff4444' : '#44ff88', fontWeight: 'bold' }}>
+            {message}
           </div>
-        ))}
+        )}
       </div>
     </div>
   )

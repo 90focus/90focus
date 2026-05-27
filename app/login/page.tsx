@@ -8,50 +8,121 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [message, setMessage] = useState('')
+  const [mode, setMode] = useState<'login' | 'forgot'>('login')
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
 
   const handleLogin = async () => {
+    setLoading(true)
+    setError('')
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
       setError('Falsche Email oder Passwort!')
     } else {
-      router.push('/upload')
+      router.push('/admin')
     }
+    setLoading(false)
+  }
+
+  const handleForgot = async () => {
+    if (!email) {
+      setError('Bitte Email eingeben!')
+      return
+    }
+    setLoading(true)
+    setError('')
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    })
+    if (error) {
+      setError('Fehler beim Senden!')
+    } else {
+      setMessage('✅ Email gesendet! Prüfe dein Postfach.')
+    }
+    setLoading(false)
   }
 
   return (
-    <div style={{ padding: '40px', maxWidth: '400px', margin: '0 auto' }}>
-      <h1>🔐 Fotograf Login</h1>
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={{ width: '100%', padding: '10px', margin: '10px 0', fontSize: '16px' }}
-      />
-      <input
-        type="password"
-        placeholder="Passwort"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        style={{ width: '100%', padding: '10px', margin: '10px 0', fontSize: '16px' }}
-      />
-      <button
-        onClick={handleLogin}
-        style={{
-          width: '100%',
-          padding: '12px',
-          background: '#000',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          fontSize: '16px',
-        }}
-      >
-        Einloggen
-      </button>
-      {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+    <div style={{
+      minHeight: '100vh', background: '#070b0f', display: 'flex',
+      alignItems: 'center', justifyContent: 'center', fontFamily: 'sans-serif'
+    }}>
+      <div style={{
+        background: '#0d1219', border: '1px solid #1c2a38',
+        borderRadius: '12px', padding: '40px', width: '100%', maxWidth: '400px'
+      }}>
+        {/* LOGO */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
+          <div style={{ width: 40, height: 40, background: '#e8ff00', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 16 }}>90</span>
+          </div>
+          <span style={{ color: '#e8eef4', fontWeight: 900, fontSize: 22, letterSpacing: 2 }}>FOCUS</span>
+        </div>
+
+        <h1 style={{ color: '#e8eef4', fontSize: 24, fontWeight: 900, marginBottom: 8, textTransform: 'uppercase' }}>
+          {mode === 'login' ? '🔐 Fotograf Login' : '🔑 Passwort vergessen'}
+        </h1>
+        <p style={{ color: '#445566', fontSize: 14, marginBottom: 24 }}>
+          {mode === 'login' ? 'Melde dich mit deinen Zugangsdaten an.' : 'Wir senden dir einen Reset-Link per Email.'}
+        </p>
+
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={{
+            width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px',
+            background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px',
+            color: '#e8eef4', boxSizing: 'border-box'
+          }}
+        />
+
+        {mode === 'login' && (
+          <input
+            type="password"
+            placeholder="Passwort"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+            style={{
+              width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px',
+              background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px',
+              color: '#e8eef4', boxSizing: 'border-box'
+            }}
+          />
+        )}
+
+        <button
+          onClick={mode === 'login' ? handleLogin : handleForgot}
+          disabled={loading}
+          style={{
+            width: '100%', padding: '14px', background: '#e8ff00', color: '#070b0f',
+            border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '16px',
+            fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase', marginTop: '8px'
+          }}
+        >
+          {loading ? 'Lädt...' : mode === 'login' ? 'Einloggen' : 'Reset-Link senden'}
+        </button>
+
+        {error && <p style={{ color: '#ff4444', marginTop: '12px', fontSize: 14 }}>{error}</p>}
+        {message && <p style={{ color: '#44ff88', marginTop: '12px', fontSize: 14 }}>{message}</p>}
+
+        <div style={{ marginTop: 20, textAlign: 'center' }}>
+          {mode === 'login' ? (
+            <button onClick={() => { setMode('forgot'); setError(''); setMessage('') }}
+              style={{ background: 'none', border: 'none', color: '#445566', cursor: 'pointer', fontSize: 14, textDecoration: 'underline' }}>
+              Passwort vergessen?
+            </button>
+          ) : (
+            <button onClick={() => { setMode('login'); setError(''); setMessage('') }}
+              style={{ background: 'none', border: 'none', color: '#445566', cursor: 'pointer', fontSize: 14, textDecoration: 'underline' }}>
+              Zurück zum Login
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
