@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation'
 
 export default function AdminPage() {
   const [user, setUser] = useState<any>(null)
-  const [events, setEvents] = useState<any[]>([])
   const [homeTeam, setHomeTeam] = useState('')
   const [awayTeam, setAwayTeam] = useState('')
   const [date, setDate] = useState('')
@@ -17,7 +16,8 @@ export default function AdminPage() {
   const [sponsorLogo, setSponsorLogo] = useState<File | null>(null)
   const [sponsorLogoPreview, setSponsorLogoPreview] = useState<string | null>(null)
   const [sponsorLogoName, setSponsorLogoName] = useState('')
-  const [selectedEvent, setSelectedEvent] = useState<string | null>(null)
+  const [createdEventId, setCreatedEventId] = useState<string | null>(null)
+  const [createdEventName, setCreatedEventName] = useState<string>('')
   const [files, setFiles] = useState<FileList | null>(null)
   const [fileNames, setFileNames] = useState('')
   const [uploading, setUploading] = useState(false)
@@ -33,20 +33,10 @@ export default function AdminPage() {
       } else {
         setUser(session.user)
         setLoading(false)
-        loadEvents(session.user.id)
       }
     }
     checkUser()
   }, [router])
-
-  const loadEvents = async (userId: string) => {
-    const { data } = await supabase
-      .from('events')
-      .select('*')
-      .eq('user_id', userId)
-      .order('date', { ascending: false })
-    setEvents(data || [])
-  }
 
   const handleSponsorLogo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -85,7 +75,7 @@ export default function AdminPage() {
       setMessage('Sponsor Logo wird hochgeladen...')
       sponsorLogoUrl = await uploadSponsorLogo(sponsorLogo)
     }
-    const { error } = await supabase.from('events').insert({
+    const { data, error } = await supabase.from('events').insert({
       home_team: homeTeam,
       away_team: awayTeam,
       date: date,
@@ -95,11 +85,14 @@ export default function AdminPage() {
       sponsor_name: sponsorName,
       sponsor_logo_url: sponsorLogoUrl,
       user_id: user.id,
-    })
+    }).select().single()
+
     if (error) {
       setMessage('Fehler: ' + error.message)
     } else {
-      setMessage('✅ Spiel erstellt!')
+      setCreatedEventId(data.id)
+      setCreatedEventName(`${homeTeam} vs ${awayTeam}`)
+      setMessage('✅ Spiel erstellt! Jetzt kannst du Fotos hochladen.')
       setHomeTeam('')
       setAwayTeam('')
       setDate('')
@@ -110,7 +103,6 @@ export default function AdminPage() {
       setSponsorLogo(null)
       setSponsorLogoPreview(null)
       setSponsorLogoName('')
-      loadEvents(user.id)
     }
   }
 
@@ -119,15 +111,15 @@ export default function AdminPage() {
       setMessage('Bitte Fotos auswählen!')
       return
     }
-    if (!selectedEvent) {
-      setMessage('Bitte Spiel auswählen!')
+    if (!createdEventId) {
+      setMessage('Bitte zuerst ein Spiel erstellen!')
       return
     }
     setUploading(true)
     setMessage('Fotos werden hochgeladen...')
     const formData = new FormData()
     Array.from(files).forEach((file) => formData.append('files', file))
-    formData.append('eventId', selectedEvent)
+    formData.append('eventId', createdEventId)
     try {
       const res = await fetch('/api/upload', { method: 'POST', body: formData })
       const data = await res.json()
@@ -226,26 +218,27 @@ export default function AdminPage() {
           </button>
         </div>
 
-        <div style={{ background: '#0d1219', border: '1px solid #1c2a38', padding: '24px', borderRadius: '8px', marginBottom: '24px' }}>
+        {/* FOTOS HOCHLADEN */}
+        <div style={{ background: '#0d1219', border: `1px solid ${createdEventId ? '#e8ff00' : '#1c2a38'}`, padding: '24px', borderRadius: '8px', marginBottom: '24px' }}>
           <h2 style={{ marginTop: 0, color: '#e8eef4' }}>📸 Fotos hochladen</h2>
-          <select value={selectedEvent || ''} onChange={(e) => setSelectedEvent(e.target.value)}
-            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }}>
-            <option value="">Spiel auswählen...</option>
-            {events.map((event) => (
-              <option key={event.id} value={event.id}>
-                {event.home_team} vs {event.away_team} — {event.date}
-              </option>
-            ))}
-          </select>
+          {createdEventId ? (
+            <div style={{ background: '#131e2a', border: '1px solid #1c2a38', borderRadius: 6, padding: '10px 16px', marginBottom: 16, fontSize: 14, color: '#e8ff00', fontWeight: 700 }}>
+              ⚽ {createdEventName}
+            </div>
+          ) : (
+            <div style={{ color: '#445566', fontSize: 14, marginBottom: 16 }}>
+              Erstelle zuerst ein Spiel um Fotos hochzuladen.
+            </div>
+          )}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '12px 0' }}>
-            <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 14, border: '1px solid #2a3a4a', fontWeight: 600 }}>
+            <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 14, border: '1px solid #2a3a4a', fontWeight: 600, opacity: createdEventId ? 1 : 0.5 }}>
               📁 Dateien auswählen
-              <input type="file" multiple accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
+              <input type="file" multiple accept="image/*" onChange={handleFileChange} disabled={!createdEventId} style={{ display: 'none' }} />
             </label>
             {fileNames && <span style={{ color: '#667788', fontSize: 13 }}>✓ {fileNames}</span>}
           </div>
-          <button onClick={handleUpload} disabled={uploading}
-            style={{ padding: '12px 32px', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '16px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>
+          <button onClick={handleUpload} disabled={uploading || !createdEventId}
+            style={{ padding: '12px 32px', background: createdEventId ? '#e8ff00' : '#1c2a38', color: createdEventId ? '#070b0f' : '#445566', border: 'none', borderRadius: '6px', cursor: createdEventId ? 'pointer' : 'not-allowed', fontSize: '16px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>
             {uploading ? 'Lädt...' : 'Fotos hochladen'}
           </button>
         </div>
