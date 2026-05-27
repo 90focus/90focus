@@ -9,6 +9,8 @@ export default function EventDetailPage() {
   const [event, setEvent] = useState<any>(null)
   const [fotos, setFotos] = useState<any[]>([])
   const [selected, setSelected] = useState<string[]>([])
+  const [selectMode, setSelectMode] = useState(false)
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
   const [uploading, setUploading] = useState(false)
@@ -28,6 +30,17 @@ export default function EventDetailPage() {
     }
     init()
   }, [eventId])
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (lightboxIndex === null) return
+      if (e.key === 'Escape') setLightboxIndex(null)
+      if (e.key === 'ArrowRight') setLightboxIndex(i => i !== null ? Math.min(i + 1, fotos.length - 1) : null)
+      if (e.key === 'ArrowLeft') setLightboxIndex(i => i !== null ? Math.max(i - 1, 0) : null)
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [lightboxIndex, fotos.length])
 
   const loadEvent = async (userId: string) => {
     const { data } = await supabase
@@ -49,10 +62,14 @@ export default function EventDetailPage() {
     setFotos(data || [])
   }
 
-  const toggleSelect = (id: string) => {
-    setSelected(prev =>
-      prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
-    )
+  const handleFotoClick = (index: number, fotoId: string) => {
+    if (selectMode) {
+      setSelected(prev =>
+        prev.includes(fotoId) ? prev.filter(s => s !== fotoId) : [...prev, fotoId]
+      )
+    } else {
+      setLightboxIndex(index)
+    }
   }
 
   const selectAll = () => {
@@ -63,16 +80,20 @@ export default function EventDetailPage() {
     }
   }
 
+  const cancelSelect = () => {
+    setSelectMode(false)
+    setSelected([])
+  }
+
   const deleteSelected = async () => {
     if (selected.length === 0) return
     if (!confirm(`${selected.length} Foto(s) löschen?`)) return
-
-    const fotosToDelete = fotos.filter(f => selected.includes(f.id))
-    for (const foto of fotosToDelete) {
-      await supabase.from('event_fotos').delete().eq('id', foto.id)
+    for (const id of selected) {
+      await supabase.from('event_fotos').delete().eq('id', id)
     }
     setMessage(`✅ ${selected.length} Foto(s) gelöscht!`)
     setSelected([])
+    setSelectMode(false)
     loadFotos()
   }
 
@@ -109,6 +130,49 @@ export default function EventDetailPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
+
+      {/* LIGHTBOX */}
+      {lightboxIndex !== null && (
+        <div onClick={() => setLightboxIndex(null)} style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+          background: 'rgba(0,0,0,0.95)', zIndex: 1000,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <button onClick={() => setLightboxIndex(null)} style={{
+            position: 'absolute', top: 20, right: 20,
+            background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff',
+            fontSize: 28, width: 44, height: 44, borderRadius: '50%', cursor: 'pointer',
+          }}>✕</button>
+
+          {lightboxIndex > 0 && (
+            <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1) }} style={{
+              position: 'absolute', left: 20,
+              background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff',
+              fontSize: 36, width: 50, height: 50, borderRadius: '50%', cursor: 'pointer',
+            }}>‹</button>
+          )}
+
+          <img
+            src={getImageUrl(fotos[lightboxIndex].filename)}
+            alt="Foto"
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 8 }}
+          />
+
+          {lightboxIndex < fotos.length - 1 && (
+            <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1) }} style={{
+              position: 'absolute', right: 20,
+              background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff',
+              fontSize: 36, width: 50, height: 50, borderRadius: '50%', cursor: 'pointer',
+            }}>›</button>
+          )}
+
+          <div style={{ position: 'absolute', bottom: 20, color: '#667788', fontSize: 14 }}>
+            {lightboxIndex + 1} / {fotos.length}
+          </div>
+        </div>
+      )}
+
       {/* NAV */}
       <nav style={{ background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/dashboard')}>
@@ -124,7 +188,6 @@ export default function EventDetailPage() {
       </nav>
 
       <div style={{ padding: '40px 32px', maxWidth: '1000px', margin: '0 auto' }}>
-        {/* EVENT INFO */}
         {event && (
           <div style={{ marginBottom: 32 }}>
             <div style={{ fontSize: 10, color: '#e8ff00', fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>{event.liga}</div>
@@ -154,22 +217,33 @@ export default function EventDetailPage() {
           </div>
         )}
 
-        {/* FOTOS */}
+        {/* FOTOS HEADER */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 900 }}>
-            Fotos ({fotos.length})
-          </h2>
+          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 900 }}>Fotos ({fotos.length})</h2>
           {fotos.length > 0 && (
             <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={selectAll}
-                style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13 }}>
-                {selected.length === fotos.length ? 'Alle abwählen' : 'Alle auswählen'}
-              </button>
-              {selected.length > 0 && (
-                <button onClick={deleteSelected}
-                  style={{ background: '#ff4444', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>
-                  {selected.length} Foto(s) löschen
+              {!selectMode ? (
+                <button onClick={() => setSelectMode(true)}
+                  style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13 }}>
+                  Auswählen
                 </button>
+              ) : (
+                <>
+                  <button onClick={selectAll}
+                    style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13 }}>
+                    {selected.length === fotos.length ? 'Alle abwählen' : 'Alle auswählen'}
+                  </button>
+                  {selected.length > 0 && (
+                    <button onClick={deleteSelected}
+                      style={{ background: '#ff4444', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>
+                      {selected.length} löschen
+                    </button>
+                  )}
+                  <button onClick={cancelSelect}
+                    style={{ background: 'transparent', color: '#667788', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13 }}>
+                    Abbrechen
+                  </button>
+                </>
               )}
             </div>
           )}
@@ -181,11 +255,12 @@ export default function EventDetailPage() {
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
-            {fotos.map((foto) => (
+            {fotos.map((foto, index) => (
               <div key={foto.id}
-                onClick={() => toggleSelect(foto.id)}
+                onClick={() => handleFotoClick(index, foto.id)}
                 style={{
-                  position: 'relative', borderRadius: 8, overflow: 'hidden', cursor: 'pointer',
+                  position: 'relative', borderRadius: 8, overflow: 'hidden',
+                  cursor: selectMode ? 'pointer' : 'zoom-in',
                   border: selected.includes(foto.id) ? '3px solid #e8ff00' : '3px solid transparent',
                   transition: 'border 0.1s'
                 }}>
@@ -194,13 +269,20 @@ export default function EventDetailPage() {
                   alt="Foto"
                   style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }}
                 />
-                {selected.includes(foto.id) && (
+                {selectMode && selected.includes(foto.id) && (
                   <div style={{
                     position: 'absolute', top: 8, right: 8,
                     background: '#e8ff00', borderRadius: '50%', width: 24, height: 24,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontWeight: 900, fontSize: 14, color: '#070b0f'
                   }}>✓</div>
+                )}
+                {selectMode && (
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    background: selected.includes(foto.id) ? 'rgba(232,255,0,0.1)' : 'transparent',
+                    transition: 'background 0.1s'
+                  }} />
                 )}
               </div>
             ))}
