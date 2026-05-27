@@ -224,8 +224,8 @@ export default function EventDetailPage() {
             <div style={{ display: 'flex', gap: 8 }}>
               {!selectMode ? (
                 <button onClick={() => setSelectMode(true)}
-                  style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13 }}>
-                  Auswählen
+                  style={{ background: '#ff4444', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>
+                  🗑 Löschen
                 </button>
               ) : (
                 <>
