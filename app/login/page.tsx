@@ -20,7 +20,7 @@ export default function LoginPage() {
     if (error) {
       setError('Falsche Email oder Passwort!')
     } else {
-      router.push('/admin')
+      router.push('/dashboard')
     }
     setLoading(false)
   }
@@ -52,7 +52,6 @@ export default function LoginPage() {
         background: '#0d1219', border: '1px solid #1c2a38',
         borderRadius: '12px', padding: '40px', width: '100%', maxWidth: '400px'
       }}>
-        {/* LOGO */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
           <div style={{ width: 40, height: 40, background: '#e8ff00', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 16 }}>90</span>
@@ -67,42 +66,19 @@ export default function LoginPage() {
           {mode === 'login' ? 'Melde dich mit deinen Zugangsdaten an.' : 'Wir senden dir einen Reset-Link per Email.'}
         </p>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
+        <input type="email" placeholder="Email" value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={{
-            width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px',
-            background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px',
-            color: '#e8eef4', boxSizing: 'border-box'
-          }}
-        />
+          style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' }} />
 
         {mode === 'login' && (
-          <input
-            type="password"
-            placeholder="Passwort"
-            value={password}
+          <input type="password" placeholder="Passwort" value={password}
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-            style={{
-              width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px',
-              background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px',
-              color: '#e8eef4', boxSizing: 'border-box'
-            }}
-          />
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' }} />
         )}
 
-        <button
-          onClick={mode === 'login' ? handleLogin : handleForgot}
-          disabled={loading}
-          style={{
-            width: '100%', padding: '14px', background: '#e8ff00', color: '#070b0f',
-            border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '16px',
-            fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase', marginTop: '8px'
-          }}
-        >
+        <button onClick={mode === 'login' ? handleLogin : handleForgot} disabled={loading}
+          style={{ width: '100%', padding: '14px', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '16px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase', marginTop: '8px' }}>
           {loading ? 'Lädt...' : mode === 'login' ? 'Einloggen' : 'Reset-Link senden'}
         </button>
 
