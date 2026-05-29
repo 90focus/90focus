@@ -137,59 +137,23 @@ function SucheContent() {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >
-          {/* SCHLIESSEN */}
-          <button
-            onClick={() => setLightboxIndex(null)}
-            style={{
-              position: 'absolute', top: 20, right: 20,
-              background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff',
-              fontSize: 28, width: 44, height: 44, borderRadius: '50%',
-              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>✕</button>
+          <button onClick={() => setLightboxIndex(null)} style={{ position: 'absolute', top: 20, right: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 28, width: 44, height: 44, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
 
-          {/* LINKS */}
           {lightboxIndex > 0 && (
-            <button
-              onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1) }}
-              style={{
-                position: 'absolute', left: 20,
-                background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff',
-                fontSize: 28, width: 50, height: 50, borderRadius: '50%',
-                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>‹</button>
+            <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1) }} style={{ position: 'absolute', left: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 28, width: 50, height: 50, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
           )}
 
-          {/* FOTO */}
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}
-          >
-            <img
-              src={getImageUrl(matches[lightboxIndex])}
-              alt={`Foto ${lightboxIndex + 1}`}
-              style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 8 }}
-            />
+          <div onClick={(e) => e.stopPropagation()} style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}>
+            <img src={getImageUrl(matches[lightboxIndex])} alt={`Foto ${lightboxIndex + 1}`} style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 8 }} />
             <Watermark />
             <Logo />
           </div>
 
-          {/* RECHTS */}
           {lightboxIndex < matches.length - 1 && (
-            <button
-              onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1) }}
-              style={{
-                position: 'absolute', right: 20,
-                background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff',
-                fontSize: 28, width: 50, height: 50, borderRadius: '50%',
-                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>›</button>
+            <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1) }} style={{ position: 'absolute', right: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 28, width: 50, height: 50, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
           )}
 
-          {/* ZÄHLER */}
-          <div style={{
-            position: 'absolute', bottom: 20,
-            color: '#667788', fontSize: 14,
-          }}>{lightboxIndex + 1} / {matches.length}</div>
+          <div style={{ position: 'absolute', bottom: 20, color: '#667788', fontSize: 14 }}>{lightboxIndex + 1} / {matches.length}</div>
         </div>
       )}
 
@@ -240,18 +204,24 @@ function SucheContent() {
           <h2 style={{ fontSize: 24, fontWeight: 900, textTransform: 'uppercase', marginBottom: 16 }}>Deine Fotos:</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
             {matches.map((filename, i) => (
-              <div
-                key={i}
-                onClick={() => setLightboxIndex(i)}
-                style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', cursor: 'zoom-in' }}
-              >
-                <img
-                  src={getImageUrl(filename)}
-                  alt={`Foto ${i + 1}`}
-                  style={{ width: '100%', display: 'block', borderRadius: '8px' }}
-                />
-                <Watermark />
-                <Logo />
+              <div key={i} style={{ borderRadius: '8px', overflow: 'hidden', background: '#0d1219', border: '1px solid #1c2a38' }}>
+                <div onClick={() => setLightboxIndex(i)} style={{ position: 'relative', cursor: 'zoom-in' }}>
+                  <img src={getImageUrl(filename)} alt={`Foto ${i + 1}`} style={{ width: '100%', display: 'block' }} />
+                  <Watermark />
+                  <Logo />
+                </div>
+                <div style={{ padding: '12px' }}>
+                  <button
+                    onClick={() => {
+                      const params = new URLSearchParams()
+                      params.set('filename', filename)
+                      if (eventId) params.set('eventId', eventId)
+                      window.location.href = `/checkout?${params.toString()}`
+                    }}
+                    style={{ width: '100%', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1.5, textTransform: 'uppercase' }}>
+                    💳 Jetzt kaufen
+                  </button>
+                </div>
               </div>
             ))}
           </div>
