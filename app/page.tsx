@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 
 export default function Home() {
   const [events, setEvents] = useState<any[]>([])
+  const [user, setUser] = useState<any>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -20,6 +21,12 @@ export default function Home() {
       if (data) setEvents(data)
     }
     fetchEvents()
+
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      setUser(session?.user || null)
+    }
+    checkUser()
   }, [])
 
   return (
@@ -35,6 +42,17 @@ export default function Home() {
         <div style={{ display: "flex", gap: 12 }}>
           <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid #1c2a38", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
             onClick={() => router.push('/spiele')}>Alle Spiele</button>
+          {user ? (
+            <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid #1c2a38", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+              onClick={() => router.push('/kunden-dashboard')}>Dashboard</button>
+          ) : (
+            <>
+              <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid #1c2a38", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+                onClick={() => router.push('/login')}>Login</button>
+              <button style={{ background: "transparent", color: "#e8ff00", border: "1px solid #e8ff00", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+                onClick={() => router.push('/register')}>Sign Up</button>
+            </>
+          )}
           <button style={{ background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "8px 18px", fontWeight: 900, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
             onClick={() => router.push('/suche')}>Meine Fotos →</button>
         </div>
@@ -81,8 +99,7 @@ export default function Home() {
                     {ev.sponsor_name && (
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10, background: "#131e2a", padding: "6px 12px", borderRadius: 4, width: "fit-content" }}>
                         {ev.sponsor_logo_url && (
-                          <img src={ev.sponsor_logo_url} alt={ev.sponsor_name}
-                            style={{ height: "24px", objectFit: "contain" }} />
+                          <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: "24px", objectFit: "contain" }} />
                         )}
                         <span style={{ fontSize: 12, color: "#e8eef4", fontWeight: 700, letterSpacing: 1 }}>
                           ⭐ Powered by {ev.sponsor_name}
