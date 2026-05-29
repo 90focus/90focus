@@ -16,10 +16,26 @@ export default function LoginPage() {
   const handleLogin = async () => {
     setLoading(true)
     setError('')
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
       setError('Falsche Email oder Passwort!')
+      setLoading(false)
+      return
+    }
+
+    // Prüfe ob Fotograf oder Kunde
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', data.user.id)
+      .single()
+
+    if (profile?.role === 'photographer') {
+      router.push('/dashboard')
+    } else if (profile?.role === 'customer') {
+      router.push('/kunden-dashboard')
     } else {
+      // Kein Profil = Fotograf (alte Accounts)
       router.push('/dashboard')
     }
     setLoading(false)
@@ -60,7 +76,7 @@ export default function LoginPage() {
         </div>
 
         <h1 style={{ color: '#e8eef4', fontSize: 24, fontWeight: 900, marginBottom: 8, textTransform: 'uppercase' }}>
-          {mode === 'login' ? '🔐 Fotograf Login' : '🔑 Passwort vergessen'}
+          {mode === 'login' ? '🔐 Login' : '🔑 Passwort vergessen'}
         </h1>
         <p style={{ color: '#445566', fontSize: 14, marginBottom: 24 }}>
           {mode === 'login' ? 'Melde dich mit deinen Zugangsdaten an.' : 'Wir senden dir einen Reset-Link per Email.'}
@@ -85,12 +101,21 @@ export default function LoginPage() {
         {error && <p style={{ color: '#ff4444', marginTop: '12px', fontSize: 14 }}>{error}</p>}
         {message && <p style={{ color: '#44ff88', marginTop: '12px', fontSize: 14 }}>{message}</p>}
 
-        <div style={{ marginTop: 20, textAlign: 'center' }}>
+        <div style={{ marginTop: 20, textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 8 }}>
           {mode === 'login' ? (
-            <button onClick={() => { setMode('forgot'); setError(''); setMessage('') }}
-              style={{ background: 'none', border: 'none', color: '#445566', cursor: 'pointer', fontSize: 14, textDecoration: 'underline' }}>
-              Passwort vergessen?
-            </button>
+            <>
+              <button onClick={() => { setMode('forgot'); setError(''); setMessage('') }}
+                style={{ background: 'none', border: 'none', color: '#445566', cursor: 'pointer', fontSize: 14, textDecoration: 'underline' }}>
+                Passwort vergessen?
+              </button>
+              <div style={{ borderTop: '1px solid #131e2a', paddingTop: 16 }}>
+                <span style={{ color: '#445566', fontSize: 14 }}>Noch kein Konto? </span>
+                <button onClick={() => router.push('/register')}
+                  style={{ background: 'none', border: 'none', color: '#e8ff00', cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>
+                  Jetzt registrieren →
+                </button>
+              </div>
+            </>
           ) : (
             <button onClick={() => { setMode('login'); setError(''); setMessage('') }}
               style={{ background: 'none', border: 'none', color: '#445566', cursor: 'pointer', fontSize: 14, textDecoration: 'underline' }}>
