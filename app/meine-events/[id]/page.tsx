@@ -87,6 +87,13 @@ export default function EventDetailPage() {
     setSelected([])
   }
 
+  const deleteEvent = async () => {
+    if (!confirm('Event und alle Fotos löschen?')) return
+    await supabase.from('event_fotos').delete().eq('event_id', eventId)
+    await supabase.from('events').delete().eq('id', eventId)
+    router.push('/meine-events')
+  }
+
   const deleteSelected = async () => {
     if (selected.length === 0) return
     if (!confirm(`${selected.length} Foto(s) löschen?`)) return
@@ -180,10 +187,24 @@ export default function EventDetailPage() {
 
       <div style={{ padding: '40px 32px', maxWidth: '1000px', margin: '0 auto' }}>
         {event && (
-          <div style={{ marginBottom: 32 }}>
-            <div style={{ fontSize: 10, color: '#e8ff00', fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>{event.liga}</div>
-            <h1 style={{ fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 8 }}>{event.home_team} vs {event.away_team}</h1>
-            <div style={{ color: '#445566', fontSize: 14 }}>📅 {event.date} {event.time && `· 🕐 ${event.time}`} {event.ort && `· 📍 ${event.ort}`}</div>
+          <div style={{ marginBottom: 32, background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '20px 24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <div style={{ fontSize: 10, color: '#e8ff00', fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>{event.liga}</div>
+                <h1 style={{ fontSize: 28, fontWeight: 900, textTransform: 'uppercase', marginBottom: 8, margin: 0 }}>{event.home_team} vs {event.away_team}</h1>
+                <div style={{ color: '#445566', fontSize: 14, marginTop: 8 }}>📅 {event.date} {event.time && `· 🕐 ${event.time}`} {event.ort && `· 📍 ${event.ort}`}</div>
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button onClick={() => router.push(`/meine-events/${eventId}/bearbeiten`)}
+                  style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13 }}>
+                  ✏️ Bearbeiten
+                </button>
+                <button onClick={deleteEvent}
+                  style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>
+                  🗑 Event löschen
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
