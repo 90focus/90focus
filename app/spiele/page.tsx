@@ -32,14 +32,6 @@ export default function SpielePage() {
     setFiltered(result)
   }, [ligaFilter, datumFilter, events])
 
-  const handleFotosKlick = (eventId: string) => {
-    if (user) {
-      router.push('/kunden-dashboard')
-    } else {
-      router.push(`/suche?eventId=${eventId}`)
-    }
-  }
-
   return (
     <main style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
       {/* NAV */}
@@ -51,10 +43,12 @@ export default function SpielePage() {
           <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
         </div>
         <div style={{ display: 'flex', gap: 12 }}>
+          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/')}>Home</button>
           {user ? (
             <>
               <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-                onClick={() => router.push('/kunden-dashboard')}>Dashboard</button>
+                onClick={() => router.push('/kunden-dashboard')}>Meine Fotos</button>
               <button style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
                 onClick={async () => { await supabase.auth.signOut(); setUser(null); router.push('/') }}>Abmelden</button>
             </>
@@ -75,7 +69,6 @@ export default function SpielePage() {
         <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Alle Events</div>
         <h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 40 }}>Spiele</h1>
 
-        {/* FILTER */}
         <div style={{ display: 'flex', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
           <div>
             <div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Liga</div>
@@ -128,8 +121,8 @@ export default function SpielePage() {
                     )}
                   </div>
                   <button style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 2, padding: '10px 20px', fontWeight: 900, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' }}
-                    onClick={() => handleFotosKlick(ev.id)}>
-                    {user ? 'Zum Dashboard →' : 'Fotos finden →'}
+                    onClick={() => user ? router.push('/kunden-dashboard') : router.push(`/suche?eventId=${ev.id}`)}>
+                    {user ? 'Fotos verwalten →' : 'Fotos finden →'}
                   </button>
                 </div>
               </div>

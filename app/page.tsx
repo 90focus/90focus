@@ -28,14 +28,6 @@ export default function Home() {
     setUser(null)
   }
 
-  const handleFotosKlick = (eventId: string) => {
-    if (user) {
-      router.push('/kunden-dashboard')
-    } else {
-      router.push(`/suche?eventId=${eventId}`)
-    }
-  }
-
   return (
     <main style={{ minHeight: "100vh", background: "#070b0f", color: "#e8eef4", fontFamily: "sans-serif", padding: "0" }}>
       {/* NAV */}
@@ -48,11 +40,13 @@ export default function Home() {
         </div>
         <div style={{ display: "flex", gap: 12 }}>
           <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid #1c2a38", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+            onClick={() => router.push('/')}>Home</button>
+          <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid #1c2a38", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
             onClick={() => router.push('/spiele')}>Alle Spiele</button>
           {user ? (
             <>
               <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid #1c2a38", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
-                onClick={() => router.push('/kunden-dashboard')}>Dashboard</button>
+                onClick={() => router.push('/kunden-dashboard')}>Meine Fotos</button>
               <button style={{ background: "transparent", color: "#ff4444", border: "1px solid #ff4444", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
                 onClick={handleLogout}>Abmelden</button>
             </>
@@ -117,8 +111,8 @@ export default function Home() {
                     )}
                   </div>
                   <button style={{ background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "10px 20px", fontWeight: 900, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap" }}
-                    onClick={() => handleFotosKlick(ev.id)}>
-                    {user ? 'Zum Dashboard →' : 'Fotos finden →'}
+                    onClick={() => user ? router.push('/kunden-dashboard') : router.push(`/suche?eventId=${ev.id}`)}>
+                    {user ? 'Fotos verwalten →' : 'Fotos finden →'}
                   </button>
                 </div>
               </div>
