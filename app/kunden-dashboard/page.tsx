@@ -15,12 +15,7 @@ export default function KundenDashboardPage() {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) { router.push('/login'); return }
       setUser(session.user)
-
-      const { data: prof } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session.user.id)
-        .single()
+      const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
       setProfile(prof)
       setLoading(false)
     }
@@ -29,7 +24,7 @@ export default function KundenDashboardPage() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    router.push('/login')
+    router.push('/')
   }
 
   if (loading) return (
@@ -49,13 +44,14 @@ export default function KundenDashboardPage() {
           <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
         </div>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <span style={{ color: '#445566', fontSize: 13 }}>{profile?.vorname} {profile?.nachname}</span>
-          <button onClick={() => router.push('/kunden-profil')}
-            style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>
-            Profil
-          </button>
+          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/')}>Home</button>
+          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/spiele')}>Alle Spiele</button>
+          <button style={{ background: 'transparent', color: '#e8ff00', border: '1px solid #e8ff00', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/kunden-dashboard')}>Meine Fotos</button>
           <button onClick={handleLogout}
-            style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>
+            style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}>
             Abmelden
           </button>
         </div>
@@ -67,7 +63,6 @@ export default function KundenDashboardPage() {
           Willkommen, {profile?.vorname}! 👋
         </h1>
 
-        {/* STATISTIKEN */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 40 }}>
           <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
             <div style={{ color: '#445566', fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Meine Käufe</div>
@@ -79,7 +74,6 @@ export default function KundenDashboardPage() {
           </div>
         </div>
 
-        {/* AKTIONEN */}
         <div style={{ display: 'flex', gap: 12, marginBottom: 40 }}>
           <button onClick={() => router.push('/spiele')}
             style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '12px 24px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1, textTransform: 'uppercase' }}>
@@ -91,37 +85,20 @@ export default function KundenDashboardPage() {
           </button>
         </div>
 
-        {/* INFO */}
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
           <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>So funktioniert es</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-              <div style={{ width: 32, height: 32, background: '#e8ff00', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>1</span>
+            {[{n:1,t:'Spiel auswählen',d:'Wähle das Spiel bei dem du dabei warst'},{n:2,t:'Selfie hochladen',d:'Lade ein Selfie hoch — wir finden automatisch deine Fotos'},{n:3,t:'Fotos kaufen',d:'Kaufe deine Fotos und lade sie ohne Wasserzeichen herunter'}].map(item => (
+              <div key={item.n} style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+                <div style={{ width: 32, height: 32, background: '#e8ff00', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>{item.n}</span>
+                </div>
+                <div>
+                  <div style={{ fontWeight: 700, marginBottom: 4 }}>{item.t}</div>
+                  <div style={{ color: '#445566', fontSize: 14 }}>{item.d}</div>
+                </div>
               </div>
-              <div>
-                <div style={{ fontWeight: 700, marginBottom: 4 }}>Spiel auswählen</div>
-                <div style={{ color: '#445566', fontSize: 14 }}>Wähle das Spiel bei dem du dabei warst</div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-              <div style={{ width: 32, height: 32, background: '#e8ff00', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>2</span>
-              </div>
-              <div>
-                <div style={{ fontWeight: 700, marginBottom: 4 }}>Selfie hochladen</div>
-                <div style={{ color: '#445566', fontSize: 14 }}>Lade ein Selfie hoch — wir finden automatisch deine Fotos</div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-              <div style={{ width: 32, height: 32, background: '#e8ff00', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>3</span>
-              </div>
-              <div>
-                <div style={{ fontWeight: 700, marginBottom: 4 }}>Fotos kaufen</div>
-                <div style={{ color: '#445566', fontSize: 14 }}>Kaufe deine Fotos und lade sie ohne Wasserzeichen herunter</div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
