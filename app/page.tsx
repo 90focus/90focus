@@ -47,6 +47,8 @@ export default function Home() {
             <>
               <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid #1c2a38", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
                 onClick={() => router.push('/kunden-dashboard')}>Meine Fotos</button>
+              <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid #1c2a38", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+                onClick={() => router.push('/kunden-profil')}>Profil</button>
               <button style={{ background: "transparent", color: "#ff4444", border: "1px solid #ff4444", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
                 onClick={handleLogout}>Abmelden</button>
             </>

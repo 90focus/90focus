@@ -32,9 +32,16 @@ export default function SpielePage() {
     setFiltered(result)
   }, [ligaFilter, datumFilter, events])
 
+  const navBtn = (active: boolean) => ({
+    background: 'transparent',
+    color: active ? '#e8ff00' : '#e8eef4',
+    border: active ? '1px solid #e8ff00' : '1px solid #1c2a38',
+    borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13,
+    letterSpacing: 1.5 as any, textTransform: 'uppercase' as any, cursor: 'pointer'
+  })
+
   return (
     <main style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
-      {/* NAV */}
       <nav style={{ background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/')}>
           <div style={{ width: 34, height: 34, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -43,25 +50,22 @@ export default function SpielePage() {
           <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
         </div>
         <div style={{ display: 'flex', gap: 12 }}>
-          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-            onClick={() => router.push('/')}>Home</button>
+          <button style={navBtn(false)} onClick={() => router.push('/')}>Home</button>
+          <button style={navBtn(true)} onClick={() => router.push('/spiele')}>Alle Spiele</button>
           {user ? (
             <>
-              <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-                onClick={() => router.push('/kunden-dashboard')}>Meine Fotos</button>
+              <button style={navBtn(false)} onClick={() => router.push('/kunden-dashboard')}>Meine Fotos</button>
+              <button onClick={() => router.push('/kunden-profil')} style={navBtn(false)}>Profil</button>
               <button style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
                 onClick={async () => { await supabase.auth.signOut(); setUser(null); router.push('/') }}>Abmelden</button>
             </>
           ) : (
             <>
-              <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-                onClick={() => router.push('/login')}>Login</button>
+              <button style={navBtn(false)} onClick={() => router.push('/login')}>Login</button>
               <button style={{ background: 'transparent', color: '#e8ff00', border: '1px solid #e8ff00', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
                 onClick={() => router.push('/register')}>Sign Up</button>
             </>
           )}
-          <button style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 2, padding: '8px 18px', fontWeight: 900, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-            onClick={() => router.push('/suche')}>Meine Fotos →</button>
         </div>
       </nav>
 
