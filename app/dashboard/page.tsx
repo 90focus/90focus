@@ -14,10 +14,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        router.push('/login')
-        return
-      }
+      if (!session) { router.push('/login'); return }
       setUser(session.user)
       await loadEvents(session.user.id)
       setLoading(false)
@@ -26,18 +23,10 @@ export default function DashboardPage() {
   }, [router])
 
   const loadEvents = async (userId: string) => {
-    const { data } = await supabase
-      .from('events')
-      .select('*')
-      .eq('user_id', userId)
-      .order('date', { ascending: false })
+    const { data } = await supabase.from('events').select('*').eq('user_id', userId).order('date', { ascending: false })
     setEvents(data || [])
-
     if (data && data.length > 0) {
-      const { count } = await supabase
-        .from('event_fotos')
-        .select('*', { count: 'exact', head: true })
-        .in('event_id', data.map((e: any) => e.id))
+      const { count } = await supabase.from('event_fotos').select('*', { count: 'exact', head: true }).in('event_id', data.map((e: any) => e.id))
       setStats({ events: data.length, fotos: count || 0 })
     } else {
       setStats({ events: 0, fotos: 0 })
@@ -46,7 +35,7 @@ export default function DashboardPage() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    router.push('/login')
+    router.push('/')
   }
 
   if (loading) return (
@@ -66,13 +55,14 @@ export default function DashboardPage() {
           <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
         </div>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <span style={{ color: '#445566', fontSize: 13 }}>{user?.email}</span>
-          <button onClick={() => router.push('/profil')}
-            style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>
-            Profil
-          </button>
+          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/')}>Home</button>
+          <button style={{ background: 'transparent', color: '#e8ff00', border: '1px solid #e8ff00', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/admin')}>+ Spiel erstellen</button>
+          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/profil')}>Profil</button>
           <button onClick={handleLogout}
-            style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>
+            style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}>
             Abmelden
           </button>
         </div>
@@ -82,7 +72,6 @@ export default function DashboardPage() {
         <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Fotograf Dashboard</div>
         <h1 style={{ fontSize: 36, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>Willkommen! 👋</h1>
 
-        {/* STATISTIKEN */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 40 }}>
           <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
             <div style={{ color: '#445566', fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Meine Events</div>
@@ -94,7 +83,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* AKTIONEN */}
         <div style={{ display: 'flex', gap: 12, marginBottom: 40 }}>
           <button onClick={() => router.push('/admin')}
             style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '12px 24px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1, textTransform: 'uppercase' }}>
@@ -106,12 +94,9 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        {/* LETZTE EVENTS */}
         <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>Letzte Events</div>
         {events.length === 0 ? (
-          <div style={{ color: '#445566', padding: '40px 0', textAlign: 'center' }}>
-            Noch keine Events. Erstelle dein erstes Spiel!
-          </div>
+          <div style={{ color: '#445566', padding: '40px 0', textAlign: 'center' }}>Noch keine Events. Erstelle dein erstes Spiel!</div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {events.slice(0, 5).map((ev) => (
