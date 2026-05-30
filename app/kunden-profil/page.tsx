@@ -7,8 +7,7 @@ import { useRouter } from 'next/navigation'
 export default function KundenProfilPage() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
-  const [vorname, setVorname] = useState('')
-  const [nachname, setNachname] = useState('')
+  const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
@@ -22,28 +21,29 @@ export default function KundenProfilPage() {
       setUser(session.user)
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
       setProfile(prof)
-      setVorname(prof?.vorname || '')
-      setNachname(prof?.nachname || '')
       setLoading(false)
     }
     init()
   }, [router])
 
-  const handleSave = async () => {
-    setMessage('')
-    setError('')
-    const { error } = await supabase.from('profiles').update({ vorname, nachname }).eq('id', user.id)
-    if (error) { setError('Fehler beim Speichern!'); return }
-    setMessage('✅ Profil gespeichert!')
-  }
-
   const handlePassword = async () => {
-    if (!newPassword || newPassword.length < 6) { setError('Passwort muss mindestens 6 Zeichen haben!'); return }
+    if (!oldPassword || !newPassword) { setError('Bitte beide Felder ausfüllen!'); return }
+    if (newPassword.length < 6) { setError('Neues Passwort muss mindestens 6 Zeichen haben!'); return }
     setMessage('')
     setError('')
+
+    // Altes Passwort prüfen
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: user.email,
+      password: oldPassword
+    })
+    if (signInError) { setError('Altes Passwort ist falsch!'); return }
+
+    // Neues Passwort setzen
     const { error } = await supabase.auth.updateUser({ password: newPassword })
     if (error) { setError('Fehler beim Ändern!'); return }
-    setMessage('✅ Passwort geändert!')
+    setMessage('✅ Passwort erfolgreich geändert!')
+    setOldPassword('')
     setNewPassword('')
   }
 
@@ -84,30 +84,57 @@ export default function KundenProfilPage() {
         </div>
       </nav>
 
-      <div style={{ padding: '40px 32px', maxWidth: '600px', margin: '0 auto' }}>
+      <div style={{ padding: '40px 32px', maxWidth: '700px', margin: '0 auto' }}>
         <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Mein Profil</div>
-        <h1 style={{ fontSize: 36, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>Profil bearbeiten</h1>
+        <h1 style={{ fontSize: 36, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>
+          {profile?.vorname} {profile?.nachname}
+        </h1>
 
-        {/* NAME */}
+        {/* KONTO INFO */}
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px', marginBottom: 24 }}>
-          <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>Name ändern</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
-            <input type="text" placeholder="Vorname" value={vorname}
-              onChange={(e) => setVorname(e.target.value)}
-              style={{ padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
-            <input type="text" placeholder="Nachname" value={nachname}
-              onChange={(e) => setNachname(e.target.value)}
-              style={{ padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
+          <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>Konto Info</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#445566' }}>Name</span>
+              <span>{profile?.vorname} {profile?.nachname}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#445566' }}>Email</span>
+              <span>{user?.email}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#445566' }}>Mitglied seit</span>
+              <span>{new Date(user?.created_at).toLocaleDateString('de-CH')}</span>
+            </div>
           </div>
-          <button onClick={handleSave}
-            style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px 24px', fontWeight: 900, fontSize: 14, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1 }}>
-            Speichern
-          </button>
+        </div>
+
+        {/* MEINE KÄUFE */}
+        <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px', marginBottom: 24 }}>
+          <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>Meine Käufe</div>
+          <div style={{ color: '#445566', fontSize: 14, padding: '20px 0', textAlign: 'center' }}>
+            Noch keine Käufe vorhanden.<br />
+            <button onClick={() => router.push('/spiele')}
+              style={{ background: 'transparent', color: '#e8ff00', border: 'none', cursor: 'pointer', fontSize: 14, marginTop: 8, textDecoration: 'underline' }}>
+              Jetzt Fotos kaufen →
+            </button>
+          </div>
+        </div>
+
+        {/* RECHNUNGEN */}
+        <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px', marginBottom: 24 }}>
+          <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>Rechnungen</div>
+          <div style={{ color: '#445566', fontSize: 14, padding: '20px 0', textAlign: 'center' }}>
+            Noch keine Rechnungen vorhanden.
+          </div>
         </div>
 
         {/* PASSWORT */}
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px', marginBottom: 24 }}>
           <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>Passwort ändern</div>
+          <input type="password" placeholder="Altes Passwort" value={oldPassword}
+            onChange={(e) => setOldPassword(e.target.value)}
+            style={{ width: '100%', padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any, marginBottom: 12 }} />
           <input type="password" placeholder="Neues Passwort (min. 6 Zeichen)" value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             style={{ width: '100%', padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any, marginBottom: 16 }} />
@@ -115,10 +142,9 @@ export default function KundenProfilPage() {
             style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px 24px', fontWeight: 900, fontSize: 14, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1 }}>
             Passwort ändern
           </button>
+          {message && <p style={{ color: '#44ff88', fontSize: 14, marginTop: 12 }}>{message}</p>}
+          {error && <p style={{ color: '#ff4444', fontSize: 14, marginTop: 12 }}>{error}</p>}
         </div>
-
-        {message && <p style={{ color: '#44ff88', fontSize: 14 }}>{message}</p>}
-        {error && <p style={{ color: '#ff4444', fontSize: 14 }}>{error}</p>}
       </div>
     </div>
   )
