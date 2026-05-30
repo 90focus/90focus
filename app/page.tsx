@@ -12,16 +12,10 @@ export default function Home() {
   useEffect(() => {
     const fetchEvents = async () => {
       const today = new Date().toISOString().split('T')[0]
-      const { data } = await supabase
-        .from('events')
-        .select('*')
-        .gte('date', today)
-        .order('date', { ascending: true })
-        .limit(3)
+      const { data } = await supabase.from('events').select('*').gte('date', today).order('date', { ascending: true }).limit(3)
       if (data) setEvents(data)
     }
     fetchEvents()
-
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       setUser(session?.user || null)
@@ -32,6 +26,14 @@ export default function Home() {
   const handleLogout = async () => {
     await supabase.auth.signOut()
     setUser(null)
+  }
+
+  const handleFotosKlick = (eventId: string) => {
+    if (user) {
+      router.push('/kunden-dashboard')
+    } else {
+      router.push(`/suche?eventId=${eventId}`)
+    }
   }
 
   return (
@@ -80,7 +82,9 @@ export default function Home() {
           Professionelle Spielfotos für die Amateurliga. Gesichtserkennung findet automatisch alle Bilder von dir.
         </p>
         <button style={{ background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "15px 36px", fontWeight: 900, fontSize: 16, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer" }}
-          onClick={() => router.push('/suche')}>Meine Fotos finden →</button>
+          onClick={() => user ? router.push('/kunden-dashboard') : router.push('/suche')}>
+          {user ? 'Zum Dashboard →' : 'Meine Fotos finden →'}
+        </button>
       </section>
 
       {/* AKTUELLE SPIELE */}
@@ -107,17 +111,15 @@ export default function Home() {
                     <div style={{ color: "#445566", fontSize: 13, marginTop: 4 }}>📍 {ev.ort} · 📅 {ev.date} {ev.time && `· 🕐 ${ev.time}`}</div>
                     {ev.sponsor_name && (
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10, background: "#131e2a", padding: "6px 12px", borderRadius: 4, width: "fit-content" }}>
-                        {ev.sponsor_logo_url && (
-                          <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: "24px", objectFit: "contain" }} />
-                        )}
-                        <span style={{ fontSize: 12, color: "#e8eef4", fontWeight: 700, letterSpacing: 1 }}>
-                          ⭐ Powered by {ev.sponsor_name}
-                        </span>
+                        {ev.sponsor_logo_url && <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: "24px", objectFit: "contain" }} />}
+                        <span style={{ fontSize: 12, color: "#e8eef4", fontWeight: 700, letterSpacing: 1 }}>⭐ Powered by {ev.sponsor_name}</span>
                       </div>
                     )}
                   </div>
                   <button style={{ background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "10px 20px", fontWeight: 900, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap" }}
-                    onClick={() => router.push(`/suche?eventId=${ev.id}`)}>Fotos finden →</button>
+                    onClick={() => handleFotosKlick(ev.id)}>
+                    {user ? 'Zum Dashboard →' : 'Fotos finden →'}
+                  </button>
                 </div>
               </div>
             ))}

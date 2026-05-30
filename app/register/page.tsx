@@ -35,6 +35,15 @@ export default function RegisterPage() {
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/login`,
+        data: {
+          role: 'customer',
+          vorname,
+          nachname,
+          geburtsdatum,
+          sport: sport.toString(),
+          sportart: sport ? sportart : '',
+          verein: sport ? verein : '',
+        }
       }
     })
 
@@ -42,19 +51,6 @@ export default function RegisterPage() {
       setError('Fehler: ' + signUpError.message)
       setLoading(false)
       return
-    }
-
-    if (data.user) {
-      await supabase.from('profiles').insert({
-        id: data.user.id,
-        role: 'customer',
-        vorname,
-        nachname,
-        geburtsdatum,
-        sport,
-        sportart: sport ? sportart : null,
-        verein: sport ? verein : null,
-      })
     }
 
     setMessage('✅ Registrierung erfolgreich! Bitte prüfe deine Email und bestätige dein Konto.')
@@ -70,7 +66,6 @@ export default function RegisterPage() {
         background: '#0d1219', border: '1px solid #1c2a38',
         borderRadius: '12px', padding: '40px', width: '100%', maxWidth: '480px'
       }}>
-        {/* LOGO */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
           <div style={{ width: 40, height: 40, background: '#e8ff00', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 16 }}>90</span>
@@ -85,7 +80,6 @@ export default function RegisterPage() {
           Registriere dich um deine Fotos zu kaufen und zu verwalten.
         </p>
 
-        {/* PFLICHTFELDER */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
           <input type="text" placeholder="Vorname *" value={vorname}
             onChange={(e) => setVorname(e.target.value)}
@@ -110,7 +104,6 @@ export default function RegisterPage() {
             style={{ width: '100%', padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' }} />
         </div>
 
-        {/* SPORT */}
         <div style={{ margin: '16px 0', padding: '16px', background: '#131e2a', borderRadius: 8, border: '1px solid #1c2a38' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: sport ? 12 : 0 }}>
             <input type="checkbox" id="sport" checked={sport}
