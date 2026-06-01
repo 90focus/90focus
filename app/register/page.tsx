@@ -13,6 +13,7 @@ export default function RegisterPage() {
   const [sport, setSport] = useState(false)
   const [sportart, setSportart] = useState('')
   const [verein, setVerein] = useState('')
+  const [datenschutz, setDatenschutz] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
@@ -25,6 +26,10 @@ export default function RegisterPage() {
     }
     if (password.length < 6) {
       setError('Passwort muss mindestens 6 Zeichen haben!')
+      return
+    }
+    if (!datenschutz) {
+      setError('Bitte akzeptiere die Datenschutzerklärung!')
       return
     }
     setLoading(true)
@@ -83,25 +88,25 @@ export default function RegisterPage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
           <input type="text" placeholder="Vorname *" value={vorname}
             onChange={(e) => setVorname(e.target.value)}
-            style={{ padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' }} />
+            style={{ padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
           <input type="text" placeholder="Nachname *" value={nachname}
             onChange={(e) => setNachname(e.target.value)}
-            style={{ padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' }} />
+            style={{ padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
         </div>
 
         <input type="email" placeholder="Email *" value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={{ width: '100%', padding: '12px', margin: '6px 0', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' }} />
+          style={{ width: '100%', padding: '12px', margin: '6px 0', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
 
         <input type="password" placeholder="Passwort * (min. 6 Zeichen)" value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={{ width: '100%', padding: '12px', margin: '6px 0', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' }} />
+          style={{ width: '100%', padding: '12px', margin: '6px 0', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
 
         <div style={{ margin: '6px 0' }}>
           <label style={{ display: 'block', fontSize: '13px', color: '#667788', marginBottom: 4 }}>Geburtsdatum *</label>
           <input type="date" value={geburtsdatum}
             onChange={(e) => setGeburtsdatum(e.target.value)}
-            style={{ width: '100%', padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' }} />
+            style={{ width: '100%', padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
         </div>
 
         <div style={{ margin: '16px 0', padding: '16px', background: '#131e2a', borderRadius: 8, border: '1px solid #1c2a38' }}>
@@ -117,12 +122,27 @@ export default function RegisterPage() {
             <>
               <input type="text" placeholder="Sportart (z.B. Fussball)" value={sportart}
                 onChange={(e) => setSportart(e.target.value)}
-                style={{ width: '100%', padding: '10px', margin: '6px 0', fontSize: '14px', background: '#0d1219', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' }} />
+                style={{ width: '100%', padding: '10px', margin: '6px 0', fontSize: '14px', background: '#0d1219', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
               <input type="text" placeholder="Verein (z.B. FC Luzern)" value={verein}
                 onChange={(e) => setVerein(e.target.value)}
-                style={{ width: '100%', padding: '10px', margin: '6px 0', fontSize: '14px', background: '#0d1219', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' }} />
+                style={{ width: '100%', padding: '10px', margin: '6px 0', fontSize: '14px', background: '#0d1219', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
             </>
           )}
+        </div>
+
+        {/* DATENSCHUTZ */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, margin: '16px 0', padding: '16px', background: '#131e2a', borderRadius: 8, border: datenschutz ? '1px solid #e8ff00' : '1px solid #1c2a38' }}>
+          <input type="checkbox" id="datenschutz" checked={datenschutz}
+            onChange={(e) => setDatenschutz(e.target.checked)}
+            style={{ width: 18, height: 18, cursor: 'pointer', marginTop: 2, flexShrink: 0 }} />
+          <label htmlFor="datenschutz" style={{ color: '#e8eef4', fontSize: 14, cursor: 'pointer', lineHeight: 1.5 }}>
+            Ich habe die{' '}
+            <span style={{ color: '#e8ff00', textDecoration: 'underline', cursor: 'pointer' }}
+              onClick={() => window.open('/datenschutz', '_blank')}>
+              Datenschutzerklärung
+            </span>
+            {' '}gelesen und akzeptiere diese. *
+          </label>
         </div>
 
         <button onClick={handleRegister} disabled={loading}
