@@ -53,7 +53,17 @@ export default function RegisterPage() {
     })
 
     if (signUpError) {
-      setError('Fehler: ' + signUpError.message)
+      if (signUpError.message.includes('already registered')) {
+        setError('Diese Email ist bereits registriert! Bitte einloggen.')
+      } else {
+        setError('Fehler: ' + signUpError.message)
+      }
+      setLoading(false)
+      return
+    }
+
+    if (!data.user || data.user.identities?.length === 0) {
+      setError('Diese Email ist bereits registriert! Bitte einloggen.')
       setLoading(false)
       return
     }
@@ -130,7 +140,6 @@ export default function RegisterPage() {
           )}
         </div>
 
-        {/* DATENSCHUTZ */}
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, margin: '16px 0', padding: '16px', background: '#131e2a', borderRadius: 8, border: datenschutz ? '1px solid #e8ff00' : '1px solid #1c2a38' }}>
           <input type="checkbox" id="datenschutz" checked={datenschutz}
             onChange={(e) => setDatenschutz(e.target.checked)}
