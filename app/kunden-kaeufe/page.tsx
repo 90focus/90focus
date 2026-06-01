@@ -37,7 +37,7 @@ export default function KundenKaeufePage() {
   )
 
   return (
-    <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column' }}>
       {/* NAV */}
       <nav style={{ background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/')}>
@@ -62,7 +62,7 @@ export default function KundenKaeufePage() {
         </div>
       </nav>
 
-      <div style={{ padding: '40px 32px', maxWidth: '900px', margin: '0 auto' }}>
+      <div style={{ padding: '40px 32px', maxWidth: '900px', margin: '0 auto', flex: 1, width: '100%' }}>
         <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Meine Käufe</div>
         <h1 style={{ fontSize: 36, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>Gekaufte Fotos</h1>
 
@@ -78,8 +78,7 @@ export default function KundenKaeufePage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
             {purchases.map((purchase) => (
               <div key={purchase.id} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden' }}>
-                <img src={getImageUrl(purchase.foto_filename)} alt="Foto"
-                  style={{ width: '100%', display: 'block' }} />
+                <img src={getImageUrl(purchase.foto_filename)} alt="Foto" style={{ width: '100%', display: 'block' }} />
                 <div style={{ padding: '16px' }}>
                   <div style={{ fontSize: 12, color: '#445566', marginBottom: 4 }}>
                     {purchase.events?.home_team} vs {purchase.events?.away_team} · {purchase.events?.date}
@@ -97,6 +96,22 @@ export default function KundenKaeufePage() {
           </div>
         )}
       </div>
+
+      {/* FOOTER */}
+      <footer style={{ borderTop: '1px solid #131e2a', padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ width: 26, height: 26, background: '#e8ff00', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 11 }}>90</span>
+          </div>
+          <span style={{ fontWeight: 900, fontSize: 16, letterSpacing: 2 }}>FOCUS</span>
+        </div>
+        <div style={{ display: 'flex', gap: 24, fontSize: 13, color: '#445566' }}>
+          <span style={{ cursor: 'pointer' }} onClick={() => router.push('/impressum')}>Impressum</span>
+          <span style={{ cursor: 'pointer' }} onClick={() => router.push('/datenschutz')}>Datenschutz</span>
+          <span style={{ cursor: 'pointer' }} onClick={() => router.push('/kontakt')}>Kontakt</span>
+        </div>
+        <div style={{ color: '#1c2a38', fontSize: 12 }}>© 2026 90Focus - Luzern</div>
+      </footer>
     </div>
   )
 }

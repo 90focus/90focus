@@ -31,15 +31,8 @@ export default function KundenProfilPage() {
     if (newPassword.length < 6) { setError('Neues Passwort muss mindestens 6 Zeichen haben!'); return }
     setMessage('')
     setError('')
-
-    // Altes Passwort prüfen
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: user.email,
-      password: oldPassword
-    })
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email: user.email, password: oldPassword })
     if (signInError) { setError('Altes Passwort ist falsch!'); return }
-
-    // Neues Passwort setzen
     const { error } = await supabase.auth.updateUser({ password: newPassword })
     if (error) { setError('Fehler beim Ändern!'); return }
     setMessage('✅ Passwort erfolgreich geändert!')
@@ -59,7 +52,7 @@ export default function KundenProfilPage() {
   )
 
   return (
-    <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column' }}>
       {/* NAV */}
       <nav style={{ background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/')}>
@@ -84,13 +77,12 @@ export default function KundenProfilPage() {
         </div>
       </nav>
 
-      <div style={{ padding: '40px 32px', maxWidth: '700px', margin: '0 auto' }}>
+      <div style={{ padding: '40px 32px', maxWidth: '700px', margin: '0 auto', flex: 1, width: '100%' }}>
         <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Mein Profil</div>
         <h1 style={{ fontSize: 36, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>
           {profile?.vorname} {profile?.nachname}
         </h1>
 
-        {/* KONTO INFO */}
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px', marginBottom: 24 }}>
           <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>Konto Info</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -109,7 +101,6 @@ export default function KundenProfilPage() {
           </div>
         </div>
 
-        {/* MEINE KÄUFE */}
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px', marginBottom: 24 }}>
           <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>Meine Käufe</div>
           <div style={{ color: '#445566', fontSize: 14, padding: '20px 0', textAlign: 'center' }}>
@@ -121,7 +112,6 @@ export default function KundenProfilPage() {
           </div>
         </div>
 
-        {/* RECHNUNGEN */}
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px', marginBottom: 24 }}>
           <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>Rechnungen</div>
           <div style={{ color: '#445566', fontSize: 14, padding: '20px 0', textAlign: 'center' }}>
@@ -129,7 +119,6 @@ export default function KundenProfilPage() {
           </div>
         </div>
 
-        {/* PASSWORT */}
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px', marginBottom: 24 }}>
           <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>Passwort ändern</div>
           <input type="password" placeholder="Altes Passwort" value={oldPassword}
@@ -146,6 +135,22 @@ export default function KundenProfilPage() {
           {error && <p style={{ color: '#ff4444', fontSize: 14, marginTop: 12 }}>{error}</p>}
         </div>
       </div>
+
+      {/* FOOTER */}
+      <footer style={{ borderTop: '1px solid #131e2a', padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ width: 26, height: 26, background: '#e8ff00', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 11 }}>90</span>
+          </div>
+          <span style={{ fontWeight: 900, fontSize: 16, letterSpacing: 2 }}>FOCUS</span>
+        </div>
+        <div style={{ display: 'flex', gap: 24, fontSize: 13, color: '#445566' }}>
+          <span style={{ cursor: 'pointer' }} onClick={() => router.push('/impressum')}>Impressum</span>
+          <span style={{ cursor: 'pointer' }} onClick={() => router.push('/datenschutz')}>Datenschutz</span>
+          <span style={{ cursor: 'pointer' }} onClick={() => router.push('/kontakt')}>Kontakt</span>
+        </div>
+        <div style={{ color: '#1c2a38', fontSize: 12 }}>© 2026 90Focus - Luzern</div>
+      </footer>
     </div>
   )
 }

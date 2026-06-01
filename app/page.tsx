@@ -134,6 +134,11 @@ export default function Home() {
           </div>
           <span style={{ fontWeight: 900, fontSize: 16, letterSpacing: 2 }}>FOCUS</span>
         </div>
+        <div style={{ display: "flex", gap: 24, fontSize: 13, color: "#445566" }}>
+          <span style={{ cursor: "pointer" }} onClick={() => router.push('/impressum')}>Impressum</span>
+          <span style={{ cursor: "pointer" }} onClick={() => router.push('/datenschutz')}>Datenschutz</span>
+          <span style={{ cursor: "pointer" }} onClick={() => router.push('/kontakt')}>Kontakt</span>
+        </div>
         <div style={{ color: "#1c2a38", fontSize: 12 }}>© 2026 90Focus - Luzern</div>
       </footer>
     </main>
