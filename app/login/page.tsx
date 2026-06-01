@@ -23,29 +23,20 @@ export default function LoginPage() {
       return
     }
 
-    // Prüfe ob Fotograf oder Kunde
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', data.user.id)
-      .single()
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).single()
 
     if (profile?.role === 'photographer') {
       router.push('/dashboard')
     } else if (profile?.role === 'customer') {
       router.push('/kunden-dashboard')
     } else {
-      // Kein Profil = Fotograf (alte Accounts)
       router.push('/dashboard')
     }
     setLoading(false)
   }
 
   const handleForgot = async () => {
-    if (!email) {
-      setError('Bitte Email eingeben!')
-      return
-    }
+    if (!email) { setError('Bitte Email eingeben!'); return }
     setLoading(true)
     setError('')
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -60,70 +51,82 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh', background: '#070b0f', display: 'flex',
-      alignItems: 'center', justifyContent: 'center', fontFamily: 'sans-serif'
-    }}>
-      <div style={{
-        background: '#0d1219', border: '1px solid #1c2a38',
-        borderRadius: '12px', padding: '40px', width: '100%', maxWidth: '400px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
-          <div style={{ width: 40, height: 40, background: '#e8ff00', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 16 }}>90</span>
+    <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', flexDirection: 'column', fontFamily: 'sans-serif' }}>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+        <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: '12px', padding: '40px', width: '100%', maxWidth: '400px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
+            <div style={{ width: 40, height: 40, background: '#e8ff00', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 16 }}>90</span>
+            </div>
+            <span style={{ color: '#e8eef4', fontWeight: 900, fontSize: 22, letterSpacing: 2 }}>FOCUS</span>
           </div>
-          <span style={{ color: '#e8eef4', fontWeight: 900, fontSize: 22, letterSpacing: 2 }}>FOCUS</span>
-        </div>
 
-        <h1 style={{ color: '#e8eef4', fontSize: 24, fontWeight: 900, marginBottom: 8, textTransform: 'uppercase' }}>
-          {mode === 'login' ? '🔐 Login' : '🔑 Passwort vergessen'}
-        </h1>
-        <p style={{ color: '#445566', fontSize: 14, marginBottom: 24 }}>
-          {mode === 'login' ? 'Melde dich mit deinen Zugangsdaten an.' : 'Wir senden dir einen Reset-Link per Email.'}
-        </p>
+          <h1 style={{ color: '#e8eef4', fontSize: 24, fontWeight: 900, marginBottom: 8, textTransform: 'uppercase' }}>
+            {mode === 'login' ? '🔐 Login' : '🔑 Passwort vergessen'}
+          </h1>
+          <p style={{ color: '#445566', fontSize: 14, marginBottom: 24 }}>
+            {mode === 'login' ? 'Melde dich mit deinen Zugangsdaten an.' : 'Wir senden dir einen Reset-Link per Email.'}
+          </p>
 
-        <input type="email" placeholder="Email" value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' }} />
+          <input type="email" placeholder="Email" value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
 
-        {mode === 'login' && (
-          <input type="password" placeholder="Passwort" value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' }} />
-        )}
-
-        <button onClick={mode === 'login' ? handleLogin : handleForgot} disabled={loading}
-          style={{ width: '100%', padding: '14px', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '16px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase', marginTop: '8px' }}>
-          {loading ? 'Lädt...' : mode === 'login' ? 'Einloggen' : 'Reset-Link senden'}
-        </button>
-
-        {error && <p style={{ color: '#ff4444', marginTop: '12px', fontSize: 14 }}>{error}</p>}
-        {message && <p style={{ color: '#44ff88', marginTop: '12px', fontSize: 14 }}>{message}</p>}
-
-        <div style={{ marginTop: 20, textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {mode === 'login' ? (
-            <>
-              <button onClick={() => { setMode('forgot'); setError(''); setMessage('') }}
-                style={{ background: 'none', border: 'none', color: '#445566', cursor: 'pointer', fontSize: 14, textDecoration: 'underline' }}>
-                Passwort vergessen?
-              </button>
-              <div style={{ borderTop: '1px solid #131e2a', paddingTop: 16 }}>
-                <span style={{ color: '#445566', fontSize: 14 }}>Noch kein Konto? </span>
-                <button onClick={() => router.push('/register')}
-                  style={{ background: 'none', border: 'none', color: '#e8ff00', cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>
-                  Jetzt registrieren →
-                </button>
-              </div>
-            </>
-          ) : (
-            <button onClick={() => { setMode('login'); setError(''); setMessage('') }}
-              style={{ background: 'none', border: 'none', color: '#445566', cursor: 'pointer', fontSize: 14, textDecoration: 'underline' }}>
-              Zurück zum Login
-            </button>
+          {mode === 'login' && (
+            <input type="password" placeholder="Passwort" value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+              style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
           )}
+
+          <button onClick={mode === 'login' ? handleLogin : handleForgot} disabled={loading}
+            style={{ width: '100%', padding: '14px', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '16px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase', marginTop: '8px' }}>
+            {loading ? 'Lädt...' : mode === 'login' ? 'Einloggen' : 'Reset-Link senden'}
+          </button>
+
+          {error && <p style={{ color: '#ff4444', marginTop: '12px', fontSize: 14 }}>{error}</p>}
+          {message && <p style={{ color: '#44ff88', marginTop: '12px', fontSize: 14 }}>{message}</p>}
+
+          <div style={{ marginTop: 20, textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {mode === 'login' ? (
+              <>
+                <button onClick={() => { setMode('forgot'); setError(''); setMessage('') }}
+                  style={{ background: 'none', border: 'none', color: '#445566', cursor: 'pointer', fontSize: 14, textDecoration: 'underline' }}>
+                  Passwort vergessen?
+                </button>
+                <div style={{ borderTop: '1px solid #131e2a', paddingTop: 16 }}>
+                  <span style={{ color: '#445566', fontSize: 14 }}>Noch kein Konto? </span>
+                  <button onClick={() => router.push('/register')}
+                    style={{ background: 'none', border: 'none', color: '#e8ff00', cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>
+                    Jetzt registrieren →
+                  </button>
+                </div>
+              </>
+            ) : (
+              <button onClick={() => { setMode('login'); setError(''); setMessage('') }}
+                style={{ background: 'none', border: 'none', color: '#445566', cursor: 'pointer', fontSize: 14, textDecoration: 'underline' }}>
+                Zurück zum Login
+              </button>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* FOOTER */}
+      <footer style={{ borderTop: '1px solid #131e2a', padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ width: 26, height: 26, background: '#e8ff00', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 11 }}>90</span>
+          </div>
+          <span style={{ color: '#e8eef4', fontWeight: 900, fontSize: 16, letterSpacing: 2 }}>FOCUS</span>
+        </div>
+        <div style={{ display: 'flex', gap: 24, fontSize: 13, color: '#445566' }}>
+          <span style={{ cursor: 'pointer' }} onClick={() => router.push('/impressum')}>Impressum</span>
+          <span style={{ cursor: 'pointer' }} onClick={() => router.push('/datenschutz')}>Datenschutz</span>
+          <span style={{ cursor: 'pointer' }} onClick={() => router.push('/kontakt')}>Kontakt</span>
+        </div>
+        <div style={{ color: '#1c2a38', fontSize: 12 }}>© 2026 90Focus - Luzern</div>
+      </footer>
     </div>
   )
 }
