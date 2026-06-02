@@ -73,7 +73,6 @@ export default function SpielePage() {
         <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Alle Events</div>
         <h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 40 }}>Spiele</h1>
 
-        {/* FILTER */}
         <div style={{ display: 'flex', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
           <div>
             <div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Liga</div>
@@ -107,7 +106,6 @@ export default function SpielePage() {
           )}
         </div>
 
-        {/* EVENT CARDS */}
         {filtered.length === 0 ? (
           <div style={{ color: '#445566', fontSize: 16, padding: '40px 0' }}>Keine Spiele gefunden. 🎯</div>
         ) : (
@@ -115,11 +113,10 @@ export default function SpielePage() {
             {filtered.map((ev) => (
               <div key={ev.id} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', cursor: 'pointer' }}
                 onClick={() => user ? router.push('/kunden-dashboard') : router.push(`/suche?eventId=${ev.id}`)}>
-                {/* BILD */}
                 <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
                   {ev.bild_url ? (
                     <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#131e2a' }} />
                   ) : (
                     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <span style={{ fontSize: 48 }}>⚽</span>
@@ -129,7 +126,6 @@ export default function SpielePage() {
                     {ev.liga}
                   </div>
                 </div>
-                {/* INFO */}
                 <div style={{ padding: '16px' }}>
                   <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 8 }}>{ev.home_team} vs {ev.away_team}</div>
                   <div style={{ color: '#445566', fontSize: 12, marginBottom: 12 }}>📅 {ev.date} {ev.ort && `· 📍 ${ev.ort}`}</div>

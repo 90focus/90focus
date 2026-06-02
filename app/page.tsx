@@ -117,11 +117,10 @@ export default function Home() {
             {events.map((ev) => (
               <div key={ev.id} style={{ background: "#0d1219", border: "1px solid #1c2a38", borderRadius: 8, overflow: "hidden", cursor: "pointer" }}
                 onClick={() => user ? router.push('/kunden-dashboard') : router.push(`/suche?eventId=${ev.id}`)}>
-                {/* BILD */}
                 <div style={{ height: 180, background: "#131e2a", position: "relative", overflow: "hidden" }}>
                   {ev.bild_url ? (
                     <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      style={{ width: "100%", height: "100%", objectFit: "contain", background: "#131e2a" }} />
                   ) : (
                     <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <span style={{ fontSize: 48 }}>⚽</span>
@@ -131,7 +130,6 @@ export default function Home() {
                     {ev.liga}
                   </div>
                 </div>
-                {/* INFO */}
                 <div style={{ padding: "16px" }}>
                   <div style={{ fontSize: 15, fontWeight: 800, textTransform: "uppercase", marginBottom: 8 }}>{ev.home_team} vs {ev.away_team}</div>
                   <div style={{ color: "#445566", fontSize: 12, marginBottom: 12 }}>📅 {ev.date} {ev.ort && `· 📍 ${ev.ort}`}</div>
