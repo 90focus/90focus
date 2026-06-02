@@ -8,6 +8,7 @@ export default function KundenDashboardPage() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [purchases, setPurchases] = useState(0)
   const router = useRouter()
 
   useEffect(() => {
@@ -17,6 +18,8 @@ export default function KundenDashboardPage() {
       setUser(session.user)
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
       setProfile(prof)
+      const { count } = await supabase.from('purchases').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id)
+      setPurchases(count || 0)
       setLoading(false)
     }
     init()
@@ -29,7 +32,12 @@ export default function KundenDashboardPage() {
 
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ color: '#e8eef4' }}>Lade...</p>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ width: 40, height: 40, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 16 }}>90</span>
+        </div>
+        <p style={{ color: '#445566' }}>Lade...</p>
+      </div>
     </div>
   )
 
@@ -59,46 +67,70 @@ export default function KundenDashboardPage() {
         </div>
       </nav>
 
-      <div style={{ padding: '40px 32px', maxWidth: '900px', margin: '0 auto', flex: 1, width: '100%' }}>
-        <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Kunden Dashboard</div>
-        <h1 style={{ fontSize: 36, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>
-          Willkommen, {profile?.vorname}! 👋
-        </h1>
+      <div style={{ padding: '48px 32px', maxWidth: '960px', margin: '0 auto', flex: 1, width: '100%' }}>
 
+        {/* HEADER */}
+        <div style={{ marginBottom: 48 }}>
+          <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Kunden Dashboard</div>
+          <h1 style={{ fontSize: 42, fontWeight: 900, textTransform: 'uppercase', margin: 0 }}>
+            Hey, {profile?.vorname}! 👋
+          </h1>
+          <p style={{ color: '#445566', fontSize: 15, marginTop: 8 }}>Willkommen zurück – hier findest du alles auf einen Blick.</p>
+        </div>
+
+        {/* STATS */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 40 }}>
+          <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #1c2a38', borderRadius: 12, padding: '28px 24px', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: -20, right: -20, fontSize: 80, opacity: 0.05 }}>📸</div>
+            <div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>Gekaufte Fotos</div>
+            <div style={{ fontSize: 52, fontWeight: 900, color: '#e8ff00', lineHeight: 1 }}>{purchases}</div>
+            <div style={{ color: '#445566', fontSize: 12, marginTop: 8 }}>Fotos in deiner Sammlung</div>
+          </div>
+          <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #1c2a38', borderRadius: 12, padding: '28px 24px', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: -20, right: -20, fontSize: 80, opacity: 0.05 }}>⚽</div>
+            <div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>Meine Käufe</div>
+            <div style={{ fontSize: 52, fontWeight: 900, color: '#e8ff00', lineHeight: 1 }}>{purchases}</div>
+            <div style={{ color: '#445566', fontSize: 12, marginTop: 8 }}>Bestellungen insgesamt</div>
+          </div>
+          <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #e8ff00', borderRadius: 12, padding: '28px 24px', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}
+            onClick={() => router.push('/spiele')}>
+            <div style={{ position: 'absolute', top: -20, right: -20, fontSize: 80, opacity: 0.05 }}>🔍</div>
+            <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>Neue Fotos</div>
+            <div style={{ fontSize: 28, fontWeight: 900, color: '#e8eef4', lineHeight: 1 }}>Finden →</div>
+            <div style={{ color: '#667788', fontSize: 12, marginTop: 8 }}>Spiele durchsuchen</div>
+          </div>
+        </div>
+
+        {/* AKTIONEN */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 40 }}>
-          <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
-            <div style={{ color: '#445566', fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Meine Käufe</div>
-            <div style={{ fontSize: 48, fontWeight: 900, color: '#e8ff00' }}>0</div>
+          <div style={{ background: '#e8ff00', borderRadius: 12, padding: '24px', cursor: 'pointer', transition: 'transform 0.2s' }}
+            onClick={() => router.push('/spiele')}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>⚽</div>
+            <div style={{ color: '#070b0f', fontWeight: 900, fontSize: 18, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Spiele durchsuchen</div>
+            <div style={{ color: '#1a2000', fontSize: 13 }}>Finde das Spiel bei dem du dabei warst</div>
           </div>
-          <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
-            <div style={{ color: '#445566', fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Meine Fotos</div>
-            <div style={{ fontSize: 48, fontWeight: 900, color: '#e8ff00' }}>0</div>
+          <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 12, padding: '24px', cursor: 'pointer' }}
+            onClick={() => router.push('/kunden-kaeufe')}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>🖼️</div>
+            <div style={{ color: '#e8eef4', fontWeight: 900, fontSize: 18, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Meine Käufe</div>
+            <div style={{ color: '#445566', fontSize: 13 }}>Alle gekauften Fotos herunterladen</div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: 12, marginBottom: 40 }}>
-          <button onClick={() => router.push('/spiele')}
-            style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '12px 24px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1, textTransform: 'uppercase' }}>
-            ⚽ Spiele durchsuchen
-          </button>
-          <button onClick={() => router.push('/kunden-kaeufe')}
-            style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '12px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
-            Meine Käufe →
-          </button>
-        </div>
-
-        <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
-          <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>So funktioniert es</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {[{n:1,t:'Spiel auswählen',d:'Wähle das Spiel bei dem du dabei warst'},{n:2,t:'Selfie hochladen',d:'Lade ein Selfie hoch — wir finden automatisch deine Fotos'},{n:3,t:'Fotos kaufen',d:'Kaufe deine Fotos und lade sie ohne Wasserzeichen herunter'}].map(item => (
-              <div key={item.n} style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-                <div style={{ width: 32, height: 32, background: '#e8ff00', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>{item.n}</span>
-                </div>
-                <div>
-                  <div style={{ fontWeight: 700, marginBottom: 4 }}>{item.t}</div>
-                  <div style={{ color: '#445566', fontSize: 14 }}>{item.d}</div>
-                </div>
+        {/* WIE ES FUNKTIONIERT */}
+        <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 12, padding: '32px' }}>
+          <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 24 }}>So funktioniert es</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+            {[
+              { icon: '⚽', n: '01', t: 'Spiel auswählen', d: 'Wähle das Spiel bei dem du dabei warst aus der Liste.' },
+              { icon: '🤳', n: '02', t: 'Selfie hochladen', d: 'Lade ein Selfie hoch – unsere KI findet automatisch alle Bilder von dir.' },
+              { icon: '💳', n: '03', t: 'Fotos kaufen', d: 'Kaufe deine Fotos und lade sie ohne Wasserzeichen herunter.' },
+            ].map(item => (
+              <div key={item.n} style={{ textAlign: 'center', padding: '16px' }}>
+                <div style={{ fontSize: 40, marginBottom: 12 }}>{item.icon}</div>
+                <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>{item.n}</div>
+                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{item.t}</div>
+                <div style={{ color: '#445566', fontSize: 13, lineHeight: 1.6 }}>{item.d}</div>
               </div>
             ))}
           </div>
