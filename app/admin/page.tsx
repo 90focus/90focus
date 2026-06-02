@@ -16,6 +16,9 @@ export default function AdminPage() {
   const [sponsorLogo, setSponsorLogo] = useState<File | null>(null)
   const [sponsorLogoPreview, setSponsorLogoPreview] = useState<string | null>(null)
   const [sponsorLogoName, setSponsorLogoName] = useState('')
+  const [eventBild, setEventBild] = useState<File | null>(null)
+  const [eventBildPreview, setEventBildPreview] = useState<string | null>(null)
+  const [eventBildName, setEventBildName] = useState('')
   const [createdEventId, setCreatedEventId] = useState<string | null>(null)
   const [createdEventName, setCreatedEventName] = useState<string>('')
   const [files, setFiles] = useState<FileList | null>(null)
@@ -28,63 +31,53 @@ export default function AdminPage() {
   useEffect(() => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        router.push('/login')
-      } else {
-        setUser(session.user)
-        setLoading(false)
-      }
+      if (!session) { router.push('/login') } else { setUser(session.user); setLoading(false) }
     }
     checkUser()
   }, [router])
 
   const handleSponsorLogo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) {
-      setSponsorLogo(file)
-      setSponsorLogoPreview(URL.createObjectURL(file))
-      setSponsorLogoName(file.name)
-    }
+    if (file) { setSponsorLogo(file); setSponsorLogoPreview(URL.createObjectURL(file)); setSponsorLogoName(file.name) }
+  }
+
+  const handleEventBild = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) { setEventBild(file); setEventBildPreview(URL.createObjectURL(file)); setEventBildName(file.name) }
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files
-    if (f && f.length > 0) {
-      setFiles(f)
-      setFileNames(f.length === 1 ? f[0].name : `${f.length} Dateien ausgewählt`)
-    }
+    if (f && f.length > 0) { setFiles(f); setFileNames(f.length === 1 ? f[0].name : `${f.length} Dateien ausgewählt`) }
   }
 
   const uploadSponsorLogo = async (file: File): Promise<string | null> => {
     const filename = `sponsor_${Date.now()}_${file.name}`
-    const { error } = await supabase.storage
-      .from('sponsor-logos')
-      .upload(filename, file, { contentType: file.type })
+    const { error } = await supabase.storage.from('sponsor-logos').upload(filename, file, { contentType: file.type })
+    if (error) return null
+    const { data: urlData } = supabase.storage.from('sponsor-logos').getPublicUrl(filename)
+    return urlData.publicUrl
+  }
+
+  const uploadEventBild = async (file: File): Promise<string | null> => {
+    const filename = `event_${Date.now()}_${file.name}`
+    const { error } = await supabase.storage.from('sponsor-logos').upload(filename, file, { contentType: file.type })
     if (error) return null
     const { data: urlData } = supabase.storage.from('sponsor-logos').getPublicUrl(filename)
     return urlData.publicUrl
   }
 
   const createEvent = async () => {
-    if (!homeTeam || !awayTeam || !date) {
-      setMessage('Heimteam, Gastteam und Datum sind Pflichtfelder!')
-      return
-    }
+    if (!homeTeam || !awayTeam || !date) { setMessage('Heimteam, Gastteam und Datum sind Pflichtfelder!'); return }
     let sponsorLogoUrl = null
-    if (sponsorLogo) {
-      setMessage('Sponsor Logo wird hochgeladen...')
-      sponsorLogoUrl = await uploadSponsorLogo(sponsorLogo)
-    }
+    let bildUrl = null
+    if (sponsorLogo) { setMessage('Sponsor Logo wird hochgeladen...'); sponsorLogoUrl = await uploadSponsorLogo(sponsorLogo) }
+    if (eventBild) { setMessage('Event Bild wird hochgeladen...'); bildUrl = await uploadEventBild(eventBild) }
+
     const { data, error } = await supabase.from('events').insert({
-      home_team: homeTeam,
-      away_team: awayTeam,
-      date: date,
-      time: time,
-      liga: liga,
-      ort: ort,
-      sponsor_name: sponsorName,
-      sponsor_logo_url: sponsorLogoUrl,
-      user_id: user.id,
+      home_team: homeTeam, away_team: awayTeam, date, time, liga, ort,
+      sponsor_name: sponsorName, sponsor_logo_url: sponsorLogoUrl,
+      bild_url: bildUrl, user_id: user.id,
     }).select().single()
 
     if (error) {
@@ -93,28 +86,15 @@ export default function AdminPage() {
       setCreatedEventId(data.id)
       setCreatedEventName(`${homeTeam} vs ${awayTeam}`)
       setMessage('✅ Spiel erstellt! Jetzt kannst du Fotos hochladen.')
-      setHomeTeam('')
-      setAwayTeam('')
-      setDate('')
-      setTime('')
-      setLiga('')
-      setOrt('')
-      setSponsorName('')
-      setSponsorLogo(null)
-      setSponsorLogoPreview(null)
-      setSponsorLogoName('')
+      setHomeTeam(''); setAwayTeam(''); setDate(''); setTime(''); setLiga(''); setOrt('')
+      setSponsorName(''); setSponsorLogo(null); setSponsorLogoPreview(null); setSponsorLogoName('')
+      setEventBild(null); setEventBildPreview(null); setEventBildName('')
     }
   }
 
   const handleUpload = async () => {
-    if (!files || files.length === 0) {
-      setMessage('Bitte Fotos auswählen!')
-      return
-    }
-    if (!createdEventId) {
-      setMessage('Bitte zuerst ein Spiel erstellen!')
-      return
-    }
+    if (!files || files.length === 0) { setMessage('Bitte Fotos auswählen!'); return }
+    if (!createdEventId) { setMessage('Bitte zuerst ein Spiel erstellen!'); return }
     setUploading(true)
     setMessage('Fotos werden hochgeladen...')
     const formData = new FormData()
@@ -124,8 +104,7 @@ export default function AdminPage() {
       const res = await fetch('/api/upload', { method: 'POST', body: formData })
       const data = await res.json()
       setMessage(data.message || 'Fertig!')
-      setFiles(null)
-      setFileNames('')
+      setFiles(null); setFileNames('')
     } catch {
       setMessage('Fehler beim Hochladen!')
     } finally {
@@ -161,18 +140,16 @@ export default function AdminPage() {
         <h1 style={{ fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>⚽ Spiel erstellen</h1>
 
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', padding: '24px', borderRadius: '8px', marginBottom: '24px' }}>
-          <input type="text" placeholder="Heimteam (z.B. FC Kickers Luzern)" value={homeTeam}
-            onChange={(e) => setHomeTeam(e.target.value)}
-            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
-          <input type="text" placeholder="Gastteam (z.B. FC Brunnen)" value={awayTeam}
-            onChange={(e) => setAwayTeam(e.target.value)}
-            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+          <input type="text" placeholder="Heimteam *" value={homeTeam} onChange={(e) => setHomeTeam(e.target.value)}
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+          <input type="text" placeholder="Gastteam *" value={awayTeam} onChange={(e) => setAwayTeam(e.target.value)}
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
           <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
-            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
           <select value={liga} onChange={(e) => setLiga(e.target.value)}
-            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }}>
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }}>
             <option value="">Liga auswählen...</option>
             <option value="Super League">Super League</option>
             <option value="Challenge League">Challenge League</option>
@@ -185,26 +162,37 @@ export default function AdminPage() {
             <option value="5. Liga">5. Liga</option>
             <option value="6. Liga">6. Liga</option>
           </select>
-          <input type="text" placeholder="Ort (optional)" value={ort}
-            onChange={(e) => setOrt(e.target.value)}
-            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+          <input type="text" placeholder="Ort (optional)" value={ort} onChange={(e) => setOrt(e.target.value)}
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
 
+          {/* EVENT BILD */}
+          <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>
+            <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4' }}>🖼️ Event Bild (optional)</h3>
+            <p style={{ color: '#445566', fontSize: 13, marginBottom: 12 }}>Wird auf der Homepage und Spiele-Seite angezeigt.</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 14, border: '1px solid #2a3a4a', fontWeight: 600 }}>
+                📁 Bild auswählen
+                <input type="file" accept="image/*" onChange={handleEventBild} style={{ display: 'none' }} />
+              </label>
+              {eventBildName && <span style={{ color: '#667788', fontSize: 13 }}>✓ {eventBildName}</span>}
+            </div>
+            {eventBildPreview && (
+              <img src={eventBildPreview} alt="Bild Vorschau"
+                style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', marginTop: '12px', borderRadius: '8px' }} />
+            )}
+          </div>
+
+          {/* SPONSOR */}
           <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>
             <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4' }}>🏢 Sponsor (optional)</h3>
-            <input type="text" placeholder="Sponsor Name (z.B. Migros)" value={sponsorName}
-              onChange={(e) => setSponsorName(e.target.value)}
-              style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
-            <div style={{ margin: '8px 0' }}>
-              <label style={{ display: 'block', fontSize: '13px', color: '#667788', marginBottom: 8 }}>
-                Sponsor Logo (wird als Wasserzeichen verwendet):
+            <input type="text" placeholder="Sponsor Name" value={sponsorName} onChange={(e) => setSponsorName(e.target.value)}
+              style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 14, border: '1px solid #2a3a4a', fontWeight: 600 }}>
+                📁 Logo auswählen
+                <input type="file" accept="image/*" onChange={handleSponsorLogo} style={{ display: 'none' }} />
               </label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 14, border: '1px solid #2a3a4a', fontWeight: 600 }}>
-                  📁 Logo auswählen
-                  <input type="file" accept="image/*" onChange={handleSponsorLogo} style={{ display: 'none' }} />
-                </label>
-                {sponsorLogoName && <span style={{ color: '#667788', fontSize: 13 }}>✓ {sponsorLogoName}</span>}
-              </div>
+              {sponsorLogoName && <span style={{ color: '#667788', fontSize: 13 }}>✓ {sponsorLogoName}</span>}
             </div>
             {sponsorLogoPreview && (
               <img src={sponsorLogoPreview} alt="Logo Vorschau"
@@ -226,9 +214,7 @@ export default function AdminPage() {
               ⚽ {createdEventName}
             </div>
           ) : (
-            <div style={{ color: '#445566', fontSize: 14, marginBottom: 16 }}>
-              Erstelle zuerst ein Spiel um Fotos hochzuladen.
-            </div>
+            <div style={{ color: '#445566', fontSize: 14, marginBottom: 16 }}>Erstelle zuerst ein Spiel um Fotos hochzuladen.</div>
           )}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '12px 0' }}>
             <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 14, border: '1px solid #2a3a4a', fontWeight: 600, opacity: createdEventId ? 1 : 0.5 }}>
