@@ -116,7 +116,7 @@ export default function SpielePage() {
                 <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
                   {ev.bild_url ? (
                     <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
-                      style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#131e2a' }} />
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
                     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <span style={{ fontSize: 48 }}>⚽</span>
