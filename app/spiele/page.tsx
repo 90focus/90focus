@@ -14,7 +14,7 @@ export default function SpielePage() {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const { data } = await supabase.from('events').select('*').order('date', { ascending: true })
+      const { data } = await supabase.from('events').select('*').order('date', { ascending: false })
       if (data) { setEvents(data); setFiltered(data) }
     }
     fetchEvents()
@@ -73,6 +73,7 @@ export default function SpielePage() {
         <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Alle Events</div>
         <h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 40 }}>Spiele</h1>
 
+        {/* FILTER */}
         <div style={{ display: 'flex', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
           <div>
             <div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Liga</div>
@@ -106,26 +107,39 @@ export default function SpielePage() {
           )}
         </div>
 
+        {/* EVENT CARDS */}
         {filtered.length === 0 ? (
           <div style={{ color: '#445566', fontSize: 16, padding: '40px 0' }}>Keine Spiele gefunden. 🎯</div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
             {filtered.map((ev) => (
-              <div key={ev.id} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 4, padding: '20px 24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <div style={{ fontSize: 10, color: '#e8ff00', fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 6 }}>{ev.liga}</div>
-                    <div style={{ fontSize: 20, fontWeight: 800, textTransform: 'uppercase' }}>{ev.home_team} vs {ev.away_team}</div>
-                    <div style={{ color: '#445566', fontSize: 13, marginTop: 4 }}>📍 {ev.ort} · 📅 {ev.date} {ev.time && `· 🕐 ${ev.time}`}</div>
-                    {ev.sponsor_name && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10, background: '#131e2a', padding: '6px 12px', borderRadius: 4, width: 'fit-content' }}>
-                        {ev.sponsor_logo_url && <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: '24px', objectFit: 'contain' }} />}
-                        <span style={{ fontSize: 12, color: '#e8eef4', fontWeight: 700, letterSpacing: 1 }}>⭐ Powered by {ev.sponsor_name}</span>
-                      </div>
-                    )}
+              <div key={ev.id} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', cursor: 'pointer' }}
+                onClick={() => user ? router.push('/kunden-dashboard') : router.push(`/suche?eventId=${ev.id}`)}>
+                {/* BILD */}
+                <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
+                  {ev.bild_url ? (
+                    <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ fontSize: 48 }}>⚽</span>
+                    </div>
+                  )}
+                  <div style={{ position: 'absolute', top: 10, left: 10, background: '#e8ff00', color: '#070b0f', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', padding: '4px 8px', borderRadius: 2 }}>
+                    {ev.liga}
                   </div>
-                  <button style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 2, padding: '10px 20px', fontWeight: 900, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' }}
-                    onClick={() => user ? router.push('/kunden-dashboard') : router.push(`/suche?eventId=${ev.id}`)}>
+                </div>
+                {/* INFO */}
+                <div style={{ padding: '16px' }}>
+                  <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 8 }}>{ev.home_team} vs {ev.away_team}</div>
+                  <div style={{ color: '#445566', fontSize: 12, marginBottom: 12 }}>📅 {ev.date} {ev.ort && `· 📍 ${ev.ort}`}</div>
+                  {ev.sponsor_name && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
+                      {ev.sponsor_logo_url && <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: '16px', objectFit: 'contain' }} />}
+                      <span style={{ fontSize: 11, color: '#e8eef4', fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
+                    </div>
+                  )}
+                  <button style={{ width: '100%', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 2, padding: '10px', fontWeight: 900, fontSize: 12, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1 }}>
                     {user ? 'Fotos verwalten →' : 'Fotos finden →'}
                   </button>
                 </div>
