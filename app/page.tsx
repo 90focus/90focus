@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 export default function Home() {
   const [events, setEvents] = useState<any[]>([])
   const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
@@ -18,13 +19,14 @@ export default function Home() {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session?.user) {
-        setUser(session.user)
         const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
         if (profile?.role === 'photographer') {
           router.push('/dashboard')
           return
         }
+        setUser(session.user)
       }
+      setLoading(false)
     }
     checkUser()
   }, [])
@@ -33,6 +35,12 @@ export default function Home() {
     await supabase.auth.signOut()
     setUser(null)
   }
+
+  if (loading) return (
+    <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <p style={{ color: '#e8eef4' }}>Lade...</p>
+    </div>
+  )
 
   return (
     <main style={{ minHeight: "100vh", background: "#070b0f", color: "#e8eef4", fontFamily: "sans-serif", padding: "0" }}>
