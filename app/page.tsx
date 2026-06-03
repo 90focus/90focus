@@ -112,14 +112,14 @@ export default function Home() {
         )}
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(7,11,15,0.88) 45%, rgba(7,11,15,0.3) 100%)" }} />
         <div style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 48px" }}>
-          <div style={{ color: "#e8ff00", fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>
+          <div style={{ color: "#e8ff00", fontSize: 16, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>
             PROFESSIONELLE SPORTFOTOGRAFIE
           </div>
           <h1 style={{ fontSize: "clamp(36px, 6vw, 72px)", fontWeight: 900, lineHeight: 0.95, letterSpacing: -2, textTransform: "uppercase", marginBottom: 18 }}>
             DEIN SPIEL<br />
             <span style={{ color: "#e8ff00" }}>DEINE MOMENTE</span>
           </h1>
-          <p style={{ color: "#e8eef4", fontSize: 16, fontWeight: 800, maxWidth: 400, lineHeight: 1.6, marginBottom: 24, letterSpacing: 0.5 }}>
+          <p style={{ color: "#e8eef4", fontSize: 14, fontWeight: 800, maxWidth: 400, lineHeight: 1.6, marginBottom: 24, letterSpacing: 0.5 }}>
             Jeder Augenblick zählt. Wir halten ihn fest.
           </p>
           <div>
