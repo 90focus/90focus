@@ -113,14 +113,14 @@ export default function Home() {
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(7,11,15,0.88) 45%, rgba(7,11,15,0.3) 100%)" }} />
         <div style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 48px" }}>
           <div style={{ color: "#e8ff00", fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>
-            Luzern · Amateurliga · Saison 2025/26
+            PROFESSIONELLE SPORTFOTOGRAFIE
           </div>
           <h1 style={{ fontSize: "clamp(36px, 6vw, 72px)", fontWeight: 900, lineHeight: 0.95, letterSpacing: -2, textTransform: "uppercase", marginBottom: 18 }}>
             DEIN SPIEL.<br />
-            <span style={{ color: "#e8ff00" }}>DEINE BILDER.</span>
+            <span style={{ color: "#e8ff00" }}>DEINE MOMENTE.</span>
           </h1>
           <p style={{ color: "#aabbcc", fontSize: 15, maxWidth: 400, lineHeight: 1.6, marginBottom: 24 }}>
-            Professionelle Spielfotos für die Amateurliga. Gesichtserkennung findet automatisch alle Bilder von dir.
+            Jeder Augenblick zählt. Wir halten ihn fest.
           </p>
           <div>
             <button
