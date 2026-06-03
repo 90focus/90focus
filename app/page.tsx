@@ -91,8 +91,8 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* HERO MIT SLIDESHOW */}
-      <section style={{ position: "relative", height: "520px", overflow: "hidden" }}>
+      {/* HERO MIT SLIDESHOW - kompakter */}
+      <section style={{ position: "relative", height: "380px", overflow: "hidden" }}>
         {heroBilder.length > 0 ? (
           heroBilder.map((bild, i) => (
             <div key={i} style={{
@@ -107,21 +107,21 @@ export default function Home() {
         ) : (
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, #0d1219 0%, #131e2a 100%)" }} />
         )}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(7,11,15,0.85) 40%, rgba(7,11,15,0.3) 100%)" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(7,11,15,0.88) 45%, rgba(7,11,15,0.3) 100%)" }} />
 
         <div style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 48px", paddingTop: 60 }}>
-          <div style={{ color: "#e8ff00", fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 16 }}>
+          <div style={{ color: "#e8ff00", fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>
             Luzern · Amateurliga · Saison 2025/26
           </div>
-          <h1 style={{ fontSize: "clamp(48px, 8vw, 96px)", fontWeight: 900, lineHeight: 0.9, letterSpacing: -3, textTransform: "uppercase", marginBottom: 24 }}>
+          <h1 style={{ fontSize: "clamp(36px, 6vw, 72px)", fontWeight: 900, lineHeight: 0.95, letterSpacing: -2, textTransform: "uppercase", marginBottom: 18 }}>
             DEIN SPIEL.<br />
             <span style={{ color: "#e8ff00" }}>DEINE BILDER.</span>
           </h1>
-          <p style={{ color: "#aabbcc", fontSize: 17, maxWidth: 440, lineHeight: 1.7, marginBottom: 36 }}>
+          <p style={{ color: "#aabbcc", fontSize: 15, maxWidth: 400, lineHeight: 1.6, marginBottom: 24 }}>
             Professionelle Spielfotos für die Amateurliga. Gesichtserkennung findet automatisch alle Bilder von dir.
           </p>
           <div>
-            <button style={{ background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "15px 36px", fontWeight: 900, fontSize: 16, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer" }}
+            <button style={{ background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "12px 28px", fontWeight: 900, fontSize: 14, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer" }}
               onClick={() => user ? router.push('/kunden-dashboard') : router.push('/suche')}>
               {user ? 'Fotos verwalten →' : 'Meine Fotos finden →'}
             </button>
@@ -129,7 +129,7 @@ export default function Home() {
         </div>
 
         {heroBilder.length > 1 && (
-          <div style={{ position: "absolute", bottom: 20, left: 48, zIndex: 3, display: "flex", gap: 8 }}>
+          <div style={{ position: "absolute", bottom: 16, left: 48, zIndex: 3, display: "flex", gap: 8 }}>
             {heroBilder.map((_, i) => (
               <div key={i} onClick={() => setSlideIndex(i)} style={{
                 width: i === slideIndex ? 24 : 8, height: 8,
@@ -143,14 +143,11 @@ export default function Home() {
       </section>
 
       {/* EVENTS */}
-      <section style={{ padding: "60px 48px", borderTop: "1px solid #131e2a" }}>
+      <section style={{ padding: "32px 48px 40px", borderTop: "1px solid #131e2a" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 32 }}>
-            <div>
-              <div style={{ color: "#e8ff00", fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 8 }}>Neueste Events</div>
-              <h2 style={{ fontSize: 36, fontWeight: 900, textTransform: "uppercase", letterSpacing: -1, margin: 0 }}>Events</h2>
-            </div>
-            <button style={{ background: "transparent", color: "#e8ff00", border: "1px solid #e8ff00", borderRadius: 2, padding: "10px 20px", fontWeight: 800, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+            <h2 style={{ fontSize: 24, fontWeight: 900, textTransform: "uppercase", letterSpacing: -1, margin: 0 }}>Neueste Spiele</h2>
+            <button style={{ background: "transparent", color: "#e8ff00", border: "1px solid #e8ff00", borderRadius: 2, padding: "8px 16px", fontWeight: 800, fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
               onClick={() => router.push('/spiele')}>Alle Spiele →</button>
           </div>
 
@@ -185,11 +182,6 @@ export default function Home() {
               ))}
             </div>
           )}
-
-          <div style={{ marginTop: 32, textAlign: "center" }}>
-            <button style={{ background: "transparent", color: "#667788", border: "1px solid #1c2a38", borderRadius: 2, padding: "12px 32px", fontWeight: 700, fontSize: 14, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
-              onClick={() => router.push('/spiele')}>Alle Spiele anzeigen →</button>
-          </div>
         </div>
       </section>
 
