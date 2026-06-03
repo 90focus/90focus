@@ -14,7 +14,7 @@ export default function Home() {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const { data } = await supabase.from('events').select('*').order('date', { ascending: false }).limit(8)
+      const { data } = await supabase.from('events').select('*').order('date', { ascending: false }).limit(6)
       if (data) {
         setEvents(data)
         const bilder = data.filter((e: any) => e.bild_url).map((e: any) => e.bild_url)
@@ -58,7 +58,6 @@ export default function Home() {
 
   return (
     <main style={{ minHeight: "100vh", background: "#070b0f", color: "#e8eef4", fontFamily: "sans-serif", padding: "0" }}>
-      {/* NAV - FIXED */}
       <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "rgba(7,11,15,0.97)", borderBottom: "1px solid #131e2a", height: 60, padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} onClick={() => router.push('/')}>
           <div style={{ width: 34, height: 34, background: "#e8ff00", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -91,7 +90,6 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* HERO */}
       <section style={{ position: "relative", height: "380px", overflow: "hidden", marginTop: 60 }}>
         {heroBilder.length > 0 ? (
           heroBilder.map((bild, i) => (
@@ -108,7 +106,6 @@ export default function Home() {
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, #0d1219 0%, #131e2a 100%)" }} />
         )}
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(7,11,15,0.88) 45%, rgba(7,11,15,0.3) 100%)" }} />
-
         <div style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 48px" }}>
           <div style={{ color: "#e8ff00", fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>
             Luzern · Amateurliga · Saison 2025/26
@@ -127,22 +124,19 @@ export default function Home() {
             </button>
           </div>
         </div>
-
         {heroBilder.length > 1 && (
           <div style={{ position: "absolute", bottom: 16, left: 48, zIndex: 3, display: "flex", gap: 8 }}>
             {heroBilder.map((_, i) => (
               <div key={i} onClick={() => setSlideIndex(i)} style={{
                 width: i === slideIndex ? 24 : 8, height: 8,
                 background: i === slideIndex ? "#e8ff00" : "rgba(255,255,255,0.3)",
-                borderRadius: 4, cursor: "pointer",
-                transition: "all 0.3s ease"
+                borderRadius: 4, cursor: "pointer", transition: "all 0.3s ease"
               }} />
             ))}
           </div>
         )}
       </section>
 
-      {/* EVENTS */}
       <section style={{ padding: "32px 48px 40px", borderTop: "1px solid #131e2a" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 20 }}>
@@ -153,33 +147,33 @@ export default function Home() {
           {events.length === 0 ? (
             <div style={{ color: "#445566", fontSize: 16, padding: "40px 0" }}>Noch keine Events. 🎯</div>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
               {events.map((ev) => (
                 <div key={ev.id} style={{ background: "#0d1219", border: "1px solid #1c2a38", borderRadius: 8, overflow: "hidden", cursor: "pointer" }}
                   onClick={() => user ? router.push('/kunden-dashboard') : router.push(`/suche?eventId=${ev.id}`)}>
-                  <div style={{ height: 150, background: "#131e2a", position: "relative", overflow: "hidden" }}>
+                  <div style={{ height: 180, background: "#131e2a", position: "relative", overflow: "hidden" }}>
                     {ev.bild_url ? (
                       <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
                         style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     ) : (
                       <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <span style={{ fontSize: 40 }}>⚽</span>
+                        <span style={{ fontSize: 48 }}>⚽</span>
                       </div>
                     )}
-                    <div style={{ position: "absolute", top: 8, left: 8, background: "#e8ff00", color: "#070b0f", fontSize: 9, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", padding: "3px 6px", borderRadius: 2 }}>
+                    <div style={{ position: "absolute", top: 10, left: 10, background: "#e8ff00", color: "#070b0f", fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", padding: "4px 8px", borderRadius: 2 }}>
                       {ev.liga}
                     </div>
                   </div>
-                  <div style={{ padding: "12px" }}>
-                    <div style={{ fontSize: 13, fontWeight: 800, textTransform: "uppercase", marginBottom: 6, lineHeight: 1.2 }}>{ev.home_team} vs {ev.away_team}</div>
-                    <div style={{ fontSize: 12, color: "#8899aa", marginBottom: 8 }}>📅 {ev.date} {ev.ort && `· 📍 ${ev.ort}`}</div>
+                  <div style={{ padding: "16px" }}>
+                    <div style={{ fontSize: 15, fontWeight: 800, textTransform: "uppercase", marginBottom: 8 }}>{ev.home_team} vs {ev.away_team}</div>
+                    <div style={{ fontSize: 12, color: "#8899aa", marginBottom: 12 }}>📅 {ev.date} {ev.ort && `· 📍 ${ev.ort}`}</div>
                     {ev.sponsor_name && (
-                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8, background: "#131e2a", padding: "4px 8px", borderRadius: 4, width: "fit-content" }}>
-                        {ev.sponsor_logo_url && <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: "14px", objectFit: "contain" }} />}
-                        <span style={{ fontSize: 10, color: "#e8eef4", fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12, background: "#131e2a", padding: "4px 8px", borderRadius: 4, width: "fit-content" }}>
+                        {ev.sponsor_logo_url && <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: "16px", objectFit: "contain" }} />}
+                        <span style={{ fontSize: 11, color: "#e8eef4", fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
                       </div>
                     )}
-                    <button style={{ width: "100%", background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "8px", fontWeight: 900, fontSize: 11, cursor: "pointer", textTransform: "uppercase", letterSpacing: 1 }}>
+                    <button style={{ width: "100%", background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "10px", fontWeight: 900, fontSize: 12, cursor: "pointer", textTransform: "uppercase", letterSpacing: 1 }}>
                       Zu den Fotos →
                     </button>
                   </div>
@@ -195,7 +189,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer style={{ borderTop: "1px solid #131e2a", padding: "24px 48px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 26, height: 26, background: "#e8ff00", borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center" }}>
