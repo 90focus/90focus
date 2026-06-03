@@ -12,6 +12,9 @@ export default function Home() {
   const [heroBilder, setHeroBilder] = useState<string[]>([])
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const [hoveredBtn, setHoveredBtn] = useState<string | null>(null)
+  const [hoveredHeroBtn, setHoveredHeroBtn] = useState(false)
+  const [hoveredAlleSpiele1, setHoveredAlleSpiele1] = useState(false)
+  const [hoveredAlleSpiele2, setHoveredAlleSpiele2] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -120,7 +123,17 @@ export default function Home() {
             Professionelle Spielfotos für die Amateurliga. Gesichtserkennung findet automatisch alle Bilder von dir.
           </p>
           <div>
-            <button style={{ background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "12px 28px", fontWeight: 900, fontSize: 14, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer" }}
+            <button
+              onMouseEnter={() => setHoveredHeroBtn(true)}
+              onMouseLeave={() => setHoveredHeroBtn(false)}
+              style={{
+                background: hoveredHeroBtn ? "#d4e800" : "#e8ff00",
+                color: "#070b0f", border: "none", borderRadius: 2,
+                padding: "12px 28px", fontWeight: 900, fontSize: 14,
+                letterSpacing: 2, textTransform: "uppercase", cursor: "pointer",
+                transform: hoveredHeroBtn ? "scale(1.03)" : "scale(1)",
+                transition: "all 0.15s ease"
+              }}
               onClick={() => user ? router.push('/kunden-dashboard') : router.push('/suche')}>
               {user ? 'Fotos verwalten →' : 'Meine Fotos finden →'}
             </button>
@@ -142,7 +155,17 @@ export default function Home() {
       <section style={{ padding: "32px 48px 40px", borderTop: "1px solid #131e2a" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 20 }}>
-            <button style={{ background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "10px 20px", fontWeight: 900, fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+            <button
+              onMouseEnter={() => setHoveredAlleSpiele1(true)}
+              onMouseLeave={() => setHoveredAlleSpiele1(false)}
+              style={{
+                background: hoveredAlleSpiele1 ? "#d4e800" : "#e8ff00",
+                color: "#070b0f", border: "none", borderRadius: 2,
+                padding: "10px 20px", fontWeight: 900, fontSize: 12,
+                letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer",
+                transform: hoveredAlleSpiele1 ? "scale(1.03)" : "scale(1)",
+                transition: "all 0.15s ease"
+              }}
               onClick={() => router.push('/spiele')}>Alle Spiele →</button>
           </div>
 
@@ -202,7 +225,17 @@ export default function Home() {
           )}
 
           <div style={{ textAlign: "center", marginTop: 24 }}>
-            <button style={{ background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "10px 20px", fontWeight: 900, fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+            <button
+              onMouseEnter={() => setHoveredAlleSpiele2(true)}
+              onMouseLeave={() => setHoveredAlleSpiele2(false)}
+              style={{
+                background: hoveredAlleSpiele2 ? "#d4e800" : "#e8ff00",
+                color: "#070b0f", border: "none", borderRadius: 2,
+                padding: "10px 20px", fontWeight: 900, fontSize: 12,
+                letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer",
+                transform: hoveredAlleSpiele2 ? "scale(1.03)" : "scale(1)",
+                transition: "all 0.15s ease"
+              }}
               onClick={() => router.push('/spiele')}>Alle Spiele →</button>
           </div>
         </div>
