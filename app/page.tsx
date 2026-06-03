@@ -171,10 +171,10 @@ export default function Home() {
                     </div>
                   </div>
                   <div style={{ padding: "12px" }}>
-                    <div style={{ fontSize: 11, color: "#445566", marginBottom: 4 }}>📅 {ev.date}</div>
+                    <div style={{ fontSize: 12, color: "#8899aa", marginBottom: 4 }}>📅 {ev.date}</div>
                     <div style={{ fontSize: 13, fontWeight: 800, textTransform: "uppercase", marginBottom: 8, lineHeight: 1.2 }}>{ev.home_team} vs {ev.away_team}</div>
                     <button style={{ width: "100%", background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "8px", fontWeight: 900, fontSize: 11, cursor: "pointer", textTransform: "uppercase", letterSpacing: 1 }}>
-                      Fotos finden →
+                      Zu den Fotos →
                     </button>
                   </div>
                 </div>
