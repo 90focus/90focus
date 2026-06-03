@@ -17,7 +17,6 @@ export default function Home() {
       const { data } = await supabase.from('events').select('*').order('date', { ascending: false }).limit(8)
       if (data) {
         setEvents(data)
-        // Sammle alle bild_urls für Hero Slideshow
         const bilder = data.filter((e: any) => e.bild_url).map((e: any) => e.bild_url)
         setHeroBilder(bilder)
       }
@@ -38,7 +37,6 @@ export default function Home() {
     checkUser()
   }, [])
 
-  // Slideshow Timer
   useEffect(() => {
     if (heroBilder.length <= 1) return
     const timer = setInterval(() => {
@@ -95,7 +93,6 @@ export default function Home() {
 
       {/* HERO MIT SLIDESHOW */}
       <section style={{ position: "relative", height: "520px", overflow: "hidden" }}>
-        {/* Hintergrundbilder */}
         {heroBilder.length > 0 ? (
           heroBilder.map((bild, i) => (
             <div key={i} style={{
@@ -110,10 +107,8 @@ export default function Home() {
         ) : (
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, #0d1219 0%, #131e2a 100%)" }} />
         )}
-        {/* Dunkler Overlay */}
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(7,11,15,0.85) 40%, rgba(7,11,15,0.3) 100%)" }} />
 
-        {/* Hero Content */}
         <div style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 48px", paddingTop: 60 }}>
           <div style={{ color: "#e8ff00", fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 16 }}>
             Luzern · Amateurliga · Saison 2025/26
@@ -133,7 +128,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Slideshow Dots */}
         {heroBilder.length > 1 && (
           <div style={{ position: "absolute", bottom: 20, left: 48, zIndex: 3, display: "flex", gap: 8 }}>
             {heroBilder.map((_, i) => (
@@ -146,27 +140,6 @@ export default function Home() {
             ))}
           </div>
         )}
-      </section>
-
-      {/* WIE ES FUNKTIONIERT */}
-      <section style={{ padding: "60px 48px", background: "#0a0e14", borderTop: "1px solid #131e2a" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div style={{ color: "#e8ff00", fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 8 }}>So einfach</div>
-          <h2 style={{ fontSize: 36, fontWeight: 900, textTransform: "uppercase", letterSpacing: -1, marginBottom: 40 }}>Wie es funktioniert</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
-            {[
-              { n: "01", title: "Spiel auswählen", desc: "Wähle das Spiel bei dem du dabei warst aus der Liste." },
-              { n: "02", title: "Selfie hochladen", desc: "Lade ein Selfie hoch – unsere KI findet automatisch alle Bilder von dir." },
-              { n: "03", title: "Fotos kaufen", desc: "Kaufe deine Fotos und lade sie ohne Wasserzeichen herunter." },
-            ].map((step) => (
-              <div key={step.n} style={{ background: "#0d1219", border: "1px solid #1c2a38", borderRadius: 8, padding: "32px 24px" }}>
-                <div style={{ fontSize: 48, fontWeight: 900, color: "#e8ff00", marginBottom: 16, letterSpacing: -2 }}>{step.n}</div>
-                <div style={{ fontSize: 18, fontWeight: 800, textTransform: "uppercase", marginBottom: 12 }}>{step.title}</div>
-                <div style={{ color: "#445566", fontSize: 14, lineHeight: 1.7 }}>{step.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* EVENTS */}
@@ -188,7 +161,6 @@ export default function Home() {
               {events.map((ev) => (
                 <div key={ev.id} style={{ background: "#0d1219", border: "1px solid #1c2a38", borderRadius: 6, overflow: "hidden", cursor: "pointer" }}
                   onClick={() => user ? router.push('/kunden-dashboard') : router.push(`/suche?eventId=${ev.id}`)}>
-                  {/* QUADRATISCHES BILD */}
                   <div style={{ width: "100%", paddingBottom: "100%", position: "relative", background: "#131e2a" }}>
                     {ev.bild_url ? (
                       <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
@@ -202,7 +174,6 @@ export default function Home() {
                       {ev.liga}
                     </div>
                   </div>
-                  {/* INFO */}
                   <div style={{ padding: "12px" }}>
                     <div style={{ fontSize: 11, color: "#445566", marginBottom: 4 }}>📅 {ev.date}</div>
                     <div style={{ fontSize: 13, fontWeight: 800, textTransform: "uppercase", marginBottom: 8, lineHeight: 1.2 }}>{ev.home_team} vs {ev.away_team}</div>
