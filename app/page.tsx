@@ -91,7 +91,7 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* HERO - paddingTop 60px wegen fixed nav */}
+      {/* HERO */}
       <section style={{ position: "relative", height: "380px", overflow: "hidden", marginTop: 60 }}>
         {heroBilder.length > 0 ? (
           heroBilder.map((bild, i) => (
@@ -181,6 +181,11 @@ export default function Home() {
               ))}
             </div>
           )}
+
+          <div style={{ textAlign: "center", marginTop: 24 }}>
+            <button style={{ background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "10px 20px", fontWeight: 900, fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+              onClick={() => router.push('/spiele')}>Alle Spiele →</button>
+          </div>
         </div>
       </section>
 
