@@ -10,6 +10,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [slideIndex, setSlideIndex] = useState(0)
   const [heroBilder, setHeroBilder] = useState<string[]>([])
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null)
+  const [hoveredBtn, setHoveredBtn] = useState<string | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -149,7 +151,15 @@ export default function Home() {
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
               {events.map((ev) => (
-                <div key={ev.id} style={{ background: "#0d1219", border: "1px solid #1c2a38", borderRadius: 8, overflow: "hidden", cursor: "pointer" }}
+                <div key={ev.id}
+                  onMouseEnter={() => setHoveredCard(ev.id)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                  style={{
+                    background: "#0d1219", border: hoveredCard === ev.id ? "1px solid #e8ff00" : "1px solid #1c2a38",
+                    borderRadius: 8, overflow: "hidden", cursor: "pointer",
+                    transform: hoveredCard === ev.id ? "translateY(-4px)" : "translateY(0)",
+                    transition: "all 0.2s ease"
+                  }}
                   onClick={() => user ? router.push('/kunden-dashboard') : router.push(`/suche?eventId=${ev.id}`)}>
                   <div style={{ height: 180, background: "#131e2a", position: "relative", overflow: "hidden" }}>
                     {ev.bild_url ? (
@@ -173,7 +183,16 @@ export default function Home() {
                         <span style={{ fontSize: 11, color: "#e8eef4", fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
                       </div>
                     )}
-                    <button style={{ width: "100%", background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "10px", fontWeight: 900, fontSize: 12, cursor: "pointer", textTransform: "uppercase", letterSpacing: 1 }}>
+                    <button
+                      onMouseEnter={() => setHoveredBtn(ev.id)}
+                      onMouseLeave={() => setHoveredBtn(null)}
+                      style={{
+                        width: "100%", background: hoveredBtn === ev.id ? "#d4e800" : "#e8ff00",
+                        color: "#070b0f", border: "none", borderRadius: 2, padding: "10px",
+                        fontWeight: 900, fontSize: 12, cursor: "pointer", textTransform: "uppercase",
+                        letterSpacing: 1, transform: hoveredBtn === ev.id ? "scale(1.02)" : "scale(1)",
+                        transition: "all 0.15s ease"
+                      }}>
                       Zu den Fotos →
                     </button>
                   </div>
