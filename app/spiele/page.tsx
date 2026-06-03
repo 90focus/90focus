@@ -109,33 +109,33 @@ export default function SpielePage() {
         {filtered.length === 0 ? (
           <div style={{ color: '#445566', fontSize: 16, padding: '40px 0' }}>Keine Spiele gefunden. 🎯</div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
             {filtered.map((ev) => (
-              <div key={ev.id} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 6, overflow: 'hidden', cursor: 'pointer' }}
+              <div key={ev.id} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', cursor: 'pointer' }}
                 onClick={() => user ? router.push('/kunden-dashboard') : router.push(`/suche?eventId=${ev.id}`)}>
-                <div style={{ width: '100%', paddingBottom: '100%', position: 'relative', background: '#131e2a' }}>
+                <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
                   {ev.bild_url ? (
                     <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
-                      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
-                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <span style={{ fontSize: 40 }}>⚽</span>
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ fontSize: 48 }}>⚽</span>
                     </div>
                   )}
-                  <div style={{ position: 'absolute', top: 8, left: 8, background: '#e8ff00', color: '#070b0f', fontSize: 9, fontWeight: 800, letterSpacing: 1, textTransform: 'uppercase', padding: '3px 6px', borderRadius: 2 }}>
+                  <div style={{ position: 'absolute', top: 10, left: 10, background: '#e8ff00', color: '#070b0f', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', padding: '4px 8px', borderRadius: 2 }}>
                     {ev.liga}
                   </div>
                 </div>
-                <div style={{ padding: '12px' }}>
-                  <div style={{ fontSize: 13, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6, lineHeight: 1.2 }}>{ev.home_team} vs {ev.away_team}</div>
-                  <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 6 }}>📅 {ev.date} {ev.ort && `· 📍 ${ev.ort}`}</div>
+                <div style={{ padding: '16px' }}>
+                  <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 8 }}>{ev.home_team} vs {ev.away_team}</div>
+                  <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 12 }}>📅 {ev.date} {ev.ort && `· 📍 ${ev.ort}`}</div>
                   {ev.sponsor_name && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
-                      {ev.sponsor_logo_url && <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: '14px', objectFit: 'contain' }} />}
-                      <span style={{ fontSize: 10, color: '#e8eef4', fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
+                      {ev.sponsor_logo_url && <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: '16px', objectFit: 'contain' }} />}
+                      <span style={{ fontSize: 11, color: '#e8eef4', fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
                     </div>
                   )}
-                  <button style={{ width: '100%', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 2, padding: '8px', fontWeight: 900, fontSize: 11, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1 }}>
+                  <button style={{ width: '100%', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 2, padding: '10px', fontWeight: 900, fontSize: 12, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1 }}>
                     Zu den Fotos →
                   </button>
                 </div>
