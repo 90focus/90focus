@@ -155,14 +155,14 @@ export default function Home() {
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
               {events.map((ev) => (
-                <div key={ev.id} style={{ background: "#0d1219", border: "1px solid #1c2a38", borderRadius: 6, overflow: "hidden", cursor: "pointer" }}
+                <div key={ev.id} style={{ background: "#0d1219", border: "1px solid #1c2a38", borderRadius: 8, overflow: "hidden", cursor: "pointer" }}
                   onClick={() => user ? router.push('/kunden-dashboard') : router.push(`/suche?eventId=${ev.id}`)}>
-                  <div style={{ width: "100%", paddingBottom: "100%", position: "relative", background: "#131e2a" }}>
+                  <div style={{ height: 150, background: "#131e2a", position: "relative", overflow: "hidden" }}>
                     {ev.bild_url ? (
                       <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
-                        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     ) : (
-                      <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                         <span style={{ fontSize: 40 }}>⚽</span>
                       </div>
                     )}
@@ -171,8 +171,14 @@ export default function Home() {
                     </div>
                   </div>
                   <div style={{ padding: "12px" }}>
-                    <div style={{ fontSize: 12, color: "#8899aa", marginBottom: 4 }}>📅 {ev.date}</div>
-                    <div style={{ fontSize: 13, fontWeight: 800, textTransform: "uppercase", marginBottom: 8, lineHeight: 1.2 }}>{ev.home_team} vs {ev.away_team}</div>
+                    <div style={{ fontSize: 13, fontWeight: 800, textTransform: "uppercase", marginBottom: 6, lineHeight: 1.2 }}>{ev.home_team} vs {ev.away_team}</div>
+                    <div style={{ fontSize: 12, color: "#8899aa", marginBottom: 8 }}>📅 {ev.date} {ev.ort && `· 📍 ${ev.ort}`}</div>
+                    {ev.sponsor_name && (
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8, background: "#131e2a", padding: "4px 8px", borderRadius: 4, width: "fit-content" }}>
+                        {ev.sponsor_logo_url && <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: "14px", objectFit: "contain" }} />}
+                        <span style={{ fontSize: 10, color: "#e8eef4", fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
+                      </div>
+                    )}
                     <button style={{ width: "100%", background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "8px", fontWeight: 900, fontSize: 11, cursor: "pointer", textTransform: "uppercase", letterSpacing: 1 }}>
                       Zu den Fotos →
                     </button>
