@@ -91,7 +91,7 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* HERO MIT SLIDESHOW - kompakter */}
+      {/* HERO */}
       <section style={{ position: "relative", height: "380px", overflow: "hidden" }}>
         {heroBilder.length > 0 ? (
           heroBilder.map((bild, i) => (
@@ -145,9 +145,8 @@ export default function Home() {
       {/* EVENTS */}
       <section style={{ padding: "32px 48px 40px", borderTop: "1px solid #131e2a" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-            <h2 style={{ fontSize: 24, fontWeight: 900, textTransform: "uppercase", letterSpacing: -1, margin: 0 }}>Neueste Spiele</h2>
-            <button style={{ background: "transparent", color: "#e8ff00", border: "1px solid #e8ff00", borderRadius: 2, padding: "8px 16px", fontWeight: 800, fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 20 }}>
+            <button style={{ background: "#e8ff00", color: "#070b0f", border: "none", borderRadius: 2, padding: "10px 20px", fontWeight: 900, fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
               onClick={() => router.push('/spiele')}>Alle Spiele →</button>
           </div>
 
