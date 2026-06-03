@@ -58,8 +58,8 @@ export default function Home() {
 
   return (
     <main style={{ minHeight: "100vh", background: "#070b0f", color: "#e8eef4", fontFamily: "sans-serif", padding: "0" }}>
-      {/* NAV */}
-      <nav style={{ position: "absolute", top: 0, left: 0, right: 0, zIndex: 10, background: "rgba(7,11,15,0.7)", borderBottom: "1px solid rgba(255,255,255,0.05)", height: 60, padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      {/* NAV - FIXED */}
+      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "rgba(7,11,15,0.97)", borderBottom: "1px solid #131e2a", height: 60, padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} onClick={() => router.push('/')}>
           <div style={{ width: 34, height: 34, background: "#e8ff00", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <span style={{ color: "#070b0f", fontWeight: 900, fontSize: 14 }}>90</span>
@@ -69,20 +69,20 @@ export default function Home() {
         <div style={{ display: "flex", gap: 12 }}>
           <button style={{ background: "transparent", color: "#e8ff00", border: "1px solid #e8ff00", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
             onClick={() => router.push('/')}>Home</button>
-          <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+          <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid #1c2a38", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
             onClick={() => router.push('/spiele')}>Alle Spiele</button>
           {user ? (
             <>
-              <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+              <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid #1c2a38", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
                 onClick={() => router.push('/kunden-dashboard')}>Meine Fotos</button>
-              <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+              <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid #1c2a38", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
                 onClick={() => router.push('/kunden-profil')}>Profil</button>
               <button style={{ background: "transparent", color: "#ff4444", border: "1px solid #ff4444", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
                 onClick={handleLogout}>Abmelden</button>
             </>
           ) : (
             <>
-              <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+              <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid #1c2a38", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
                 onClick={() => router.push('/login')}>Login</button>
               <button style={{ background: "transparent", color: "#e8ff00", border: "1px solid #e8ff00", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
                 onClick={() => router.push('/register')}>Sign Up</button>
@@ -91,8 +91,8 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* HERO */}
-      <section style={{ position: "relative", height: "380px", overflow: "hidden" }}>
+      {/* HERO - paddingTop 60px wegen fixed nav */}
+      <section style={{ position: "relative", height: "380px", overflow: "hidden", marginTop: 60 }}>
         {heroBilder.length > 0 ? (
           heroBilder.map((bild, i) => (
             <div key={i} style={{
@@ -109,7 +109,7 @@ export default function Home() {
         )}
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(7,11,15,0.88) 45%, rgba(7,11,15,0.3) 100%)" }} />
 
-        <div style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 48px", paddingTop: 60 }}>
+        <div style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 48px" }}>
           <div style={{ color: "#e8ff00", fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>
             Luzern · Amateurliga · Saison 2025/26
           </div>
