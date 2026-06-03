@@ -23,11 +23,7 @@ export default function MeineEventsPage() {
   }, [router])
 
   const loadEvents = async (userId: string) => {
-    const { data } = await supabase
-      .from('events')
-      .select('*')
-      .eq('user_id', userId)
-      .order('date', { ascending: false })
+    const { data } = await supabase.from('events').select('*').eq('user_id', userId).order('date', { ascending: false })
     setEvents(data || [])
   }
 
@@ -47,8 +43,8 @@ export default function MeineEventsPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
-      {/* NAV */}
-      <nav style={{ background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      {/* NAV FIXED */}
+      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/dashboard')}>
           <div style={{ width: 34, height: 34, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>90</span>
@@ -67,7 +63,7 @@ export default function MeineEventsPage() {
         </div>
       </nav>
 
-      <div style={{ padding: '40px 32px', maxWidth: '900px', margin: '0 auto' }}>
+      <div style={{ padding: '40px 32px', maxWidth: '900px', margin: '60px auto 0' }}>
         <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Fotograf</div>
         <h1 style={{ fontSize: 36, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>Meine Events</h1>
 

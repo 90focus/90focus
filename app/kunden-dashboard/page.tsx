@@ -43,8 +43,8 @@ export default function KundenDashboardPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column' }}>
-      {/* NAV */}
-      <nav style={{ background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      {/* NAV FIXED */}
+      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/')}>
           <div style={{ width: 34, height: 34, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>90</span>
@@ -67,7 +67,7 @@ export default function KundenDashboardPage() {
         </div>
       </nav>
 
-      <div style={{ padding: '48px 32px', maxWidth: '960px', margin: '0 auto', flex: 1, width: '100%' }}>
+      <div style={{ padding: '48px 32px', maxWidth: '960px', margin: '0 auto', flex: 1, width: '100%', marginTop: 60 }}>
 
         {/* HEADER */}
         <div style={{ marginBottom: 48 }}>
@@ -103,7 +103,7 @@ export default function KundenDashboardPage() {
 
         {/* AKTIONEN */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 40 }}>
-          <div style={{ background: '#e8ff00', borderRadius: 12, padding: '24px', cursor: 'pointer', transition: 'transform 0.2s' }}
+          <div style={{ background: '#e8ff00', borderRadius: 12, padding: '24px', cursor: 'pointer' }}
             onClick={() => router.push('/spiele')}>
             <div style={{ fontSize: 32, marginBottom: 12 }}>⚽</div>
             <div style={{ color: '#070b0f', fontWeight: 900, fontSize: 18, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Spiele durchsuchen</div>
