@@ -9,6 +9,7 @@ export default function MeineEventsPage() {
   const [events, setEvents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -63,12 +64,12 @@ export default function MeineEventsPage() {
         </div>
       </nav>
 
-      <div style={{ padding: '40px 32px', maxWidth: '900px', margin: '60px auto 0' }}>
+      <div style={{ padding: '40px 48px', maxWidth: '1200px', margin: '60px auto 0' }}>
         <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Fotograf</div>
         <h1 style={{ fontSize: 36, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>Meine Events</h1>
 
         {message && (
-          <div style={{ padding: '16px', background: message.startsWith('Fehler') ? 'rgba(255,68,68,0.1)' : 'rgba(68,255,136,0.1)', border: `1px solid ${message.startsWith('Fehler') ? '#ff4444' : '#44ff88'}`, borderRadius: '8px', color: message.startsWith('Fehler') ? '#ff4444' : '#44ff88', fontWeight: 'bold', marginBottom: 24 }}>
+          <div style={{ padding: '16px', background: 'rgba(68,255,136,0.1)', border: '1px solid #44ff88', borderRadius: '8px', color: '#44ff88', fontWeight: 'bold', marginBottom: 24 }}>
             {message}
           </div>
         )}
@@ -83,32 +84,55 @@ export default function MeineEventsPage() {
             </button>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
             {events.map((ev) => (
-              <div key={ev.id} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '20px 24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <div style={{ fontSize: 10, color: '#e8ff00', fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 6 }}>{ev.liga}</div>
-                    <div style={{ fontSize: 20, fontWeight: 800, textTransform: 'uppercase' }}>{ev.home_team} vs {ev.away_team}</div>
-                    <div style={{ color: '#445566', fontSize: 13, marginTop: 4 }}>
-                      📅 {ev.date} {ev.time && `· 🕐 ${ev.time}`} {ev.ort && `· 📍 ${ev.ort}`}
+              <div key={ev.id}
+                onMouseEnter={() => setHoveredCard(ev.id)}
+                onMouseLeave={() => setHoveredCard(null)}
+                style={{
+                  background: '#0d1219',
+                  border: hoveredCard === ev.id ? '1px solid #e8ff00' : '1px solid #1c2a38',
+                  borderRadius: 8, overflow: 'hidden', cursor: 'pointer',
+                  transform: hoveredCard === ev.id ? 'translateY(-4px)' : 'translateY(0)',
+                  transition: 'all 0.2s ease'
+                }}>
+                {/* BILD */}
+                <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
+                  {ev.bild_url ? (
+                    <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ fontSize: 48 }}>⚽</span>
                     </div>
-                    {ev.sponsor_name && (
-                      <div style={{ fontSize: 12, color: '#667788', marginTop: 4 }}>⭐ Sponsor: {ev.sponsor_name}</div>
-                    )}
+                  )}
+                  <div style={{ position: 'absolute', top: 10, left: 10, background: '#e8ff00', color: '#070b0f', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', padding: '4px 8px', borderRadius: 2 }}>
+                    {ev.liga}
                   </div>
-                  <div style={{ display: 'flex', gap: 8 }}>
+                </div>
+                {/* INFO */}
+                <div style={{ padding: '16px' }}>
+                  <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>{ev.home_team} vs {ev.away_team}</div>
+                  <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 6 }}>📅 {ev.date} {ev.ort && `· 📍 ${ev.ort}`}</div>
+                  {ev.sponsor_name && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
+                      {ev.sponsor_logo_url && <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: '14px', objectFit: 'contain' }} />}
+                      <span style={{ fontSize: 10, color: '#e8eef4', fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
+                    </div>
+                  )}
+                  {/* BUTTONS */}
+                  <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
                     <button onClick={() => router.push(`/meine-events/${ev.id}`)}
-                      style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13, fontWeight: 900 }}>
-                      Fotos verwalten →
+                      style={{ flex: 1, background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '8px', cursor: 'pointer', fontSize: 12, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>
+                      Verwalten →
                     </button>
-                    <button onClick={() => router.push(`/meine-events/${ev.id}/bearbeiten`)}
-                      style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13 }}>
-                      Bearbeiten
+                    <button onClick={(e) => { e.stopPropagation(); router.push(`/meine-events/${ev.id}/bearbeiten`) }}
+                      style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 12px', cursor: 'pointer', fontSize: 12 }}>
+                      ✏️
                     </button>
-                    <button onClick={() => deleteEvent(ev.id)}
-                      style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13 }}>
-                      Löschen
+                    <button onClick={(e) => { e.stopPropagation(); deleteEvent(ev.id) }}
+                      style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '8px 12px', cursor: 'pointer', fontSize: 12 }}>
+                      🗑️
                     </button>
                   </div>
                 </div>
