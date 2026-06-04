@@ -10,6 +10,7 @@ export default function MeineEventsPage() {
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
+  const [stats, setStats] = useState({ events: 0, fotos: 0 })
   const router = useRouter()
 
   useEffect(() => {
@@ -26,6 +27,17 @@ export default function MeineEventsPage() {
   const loadEvents = async (userId: string) => {
     const { data } = await supabase.from('events').select('*').eq('user_id', userId).order('date', { ascending: false })
     setEvents(data || [])
+    if (data && data.length > 0) {
+      const { count } = await supabase.from('event_fotos').select('*', { count: 'exact', head: true }).in('event_id', data.map((e: any) => e.id))
+      setStats({ events: data.length, fotos: count || 0 })
+    } else {
+      setStats({ events: 0, fotos: 0 })
+    }
+  }
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/')
   }
 
   const deleteEvent = async (eventId: string) => {
@@ -43,30 +55,50 @@ export default function MeineEventsPage() {
   )
 
   return (
-    <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column' }}>
       {/* NAV FIXED */}
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/dashboard')}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/meine-events')}>
           <div style={{ width: 34, height: 34, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>90</span>
           </div>
           <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
         </div>
-        <div style={{ display: 'flex', gap: 12 }}>
-          <button onClick={() => router.push('/dashboard')}
-            style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>
-            ← Dashboard
-          </button>
-          <button onClick={() => router.push('/admin')}
-            style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '6px 14px', cursor: 'pointer', fontSize: 13, fontWeight: 900 }}>
-            + Neues Spiel
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+          <button style={{ background: 'transparent', color: '#e8ff00', border: '1px solid #e8ff00', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/admin')}>+ Spiel erstellen</button>
+          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/profil')}>Profil</button>
+          <button onClick={handleLogout}
+            style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}>
+            Abmelden
           </button>
         </div>
       </nav>
 
-      <div style={{ padding: '40px 48px', maxWidth: '1200px', margin: '60px auto 0' }}>
-        <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Fotograf</div>
-        <h1 style={{ fontSize: 36, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>Meine Events</h1>
+      <div style={{ padding: '40px 48px', maxWidth: '1200px', margin: '60px auto 0', flex: 1, width: '100%' }}>
+        <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Fotograf Dashboard</div>
+        <h1 style={{ fontSize: 36, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>Willkommen! 👋</h1>
+
+        {/* STATS */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 32 }}>
+          <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
+            <div style={{ color: '#445566', fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Meine Events</div>
+            <div style={{ fontSize: 48, fontWeight: 900, color: '#e8ff00' }}>{stats.events}</div>
+          </div>
+          <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
+            <div style={{ color: '#445566', fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Hochgeladene Fotos</div>
+            <div style={{ fontSize: 48, fontWeight: 900, color: '#e8ff00' }}>{stats.fotos}</div>
+          </div>
+        </div>
+
+        {/* BUTTON */}
+        <div style={{ marginBottom: 32 }}>
+          <button onClick={() => router.push('/admin')}
+            style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '12px 24px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1, textTransform: 'uppercase' }}>
+            + Neues Spiel erstellen
+          </button>
+        </div>
 
         {message && (
           <div style={{ padding: '16px', background: 'rgba(68,255,136,0.1)', border: '1px solid #44ff88', borderRadius: '8px', color: '#44ff88', fontWeight: 'bold', marginBottom: 24 }}>
@@ -74,6 +106,7 @@ export default function MeineEventsPage() {
           </div>
         )}
 
+        {/* EVENTS */}
         {events.length === 0 ? (
           <div style={{ color: '#445566', padding: '60px 0', textAlign: 'center' }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>⚽</div>
@@ -96,7 +129,6 @@ export default function MeineEventsPage() {
                   transform: hoveredCard === ev.id ? 'translateY(-4px)' : 'translateY(0)',
                   transition: 'all 0.2s ease'
                 }}>
-                {/* BILD */}
                 <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
                   {ev.bild_url ? (
                     <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
@@ -110,7 +142,6 @@ export default function MeineEventsPage() {
                     {ev.liga}
                   </div>
                 </div>
-                {/* INFO */}
                 <div style={{ padding: '16px' }}>
                   <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>{ev.home_team} vs {ev.away_team}</div>
                   <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 6 }}>📅 {ev.date} {ev.ort && `· 📍 ${ev.ort}`}</div>
@@ -120,7 +151,6 @@ export default function MeineEventsPage() {
                       <span style={{ fontSize: 10, color: '#e8eef4', fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
                     </div>
                   )}
-                  {/* BUTTONS */}
                   <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
                     <button onClick={() => router.push(`/meine-events/${ev.id}`)}
                       style={{ flex: 1, background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '8px', cursor: 'pointer', fontSize: 12, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>
@@ -141,6 +171,22 @@ export default function MeineEventsPage() {
           </div>
         )}
       </div>
+
+      {/* FOOTER */}
+      <footer style={{ borderTop: '1px solid #131e2a', padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ width: 26, height: 26, background: '#e8ff00', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 11 }}>90</span>
+          </div>
+          <span style={{ fontWeight: 900, fontSize: 16, letterSpacing: 2 }}>FOCUS</span>
+        </div>
+        <div style={{ display: 'flex', gap: 24, fontSize: 13, color: '#445566' }}>
+          <span style={{ cursor: 'pointer' }} onClick={() => router.push('/impressum')}>Impressum</span>
+          <span style={{ cursor: 'pointer' }} onClick={() => router.push('/datenschutz')}>Datenschutz</span>
+          <span style={{ cursor: 'pointer' }} onClick={() => router.push('/kontakt')}>Kontakt</span>
+        </div>
+        <div style={{ color: '#1c2a38', fontSize: 12 }}>© 2026 90Focus - Luzern</div>
+      </footer>
     </div>
   )
 }

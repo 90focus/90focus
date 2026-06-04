@@ -26,11 +26,11 @@ export default function LoginPage() {
     const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).single()
 
     if (profile?.role === 'photographer') {
-      router.push('/dashboard')
+      router.push('/meine-events')
     } else if (profile?.role === 'customer') {
       router.push('/kunden-dashboard')
     } else {
-      router.push('/dashboard')
+      router.push('/meine-events')
     }
     setLoading(false)
   }
