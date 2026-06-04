@@ -7,11 +7,13 @@ import { useRouter } from 'next/navigation'
 export default function MeineEventsPage() {
   const [user, setUser] = useState<any>(null)
   const [events, setEvents] = useState<any[]>([])
+  const [filtered, setFiltered] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const [stats, setStats] = useState({ events: 0, fotos: 0 })
-  const [alleEvents, setAlleEvents] = useState(false)
+  const [ligaFilter, setLigaFilter] = useState('')
+  const [datumFilter, setDatumFilter] = useState('')
   const router = useRouter()
 
   useEffect(() => {
@@ -25,6 +27,13 @@ export default function MeineEventsPage() {
     init()
   }, [router])
 
+  useEffect(() => {
+    let result = events
+    if (ligaFilter) result = result.filter((ev) => ev.liga === ligaFilter)
+    if (datumFilter) result = result.filter((ev) => ev.date === datumFilter)
+    setFiltered(result)
+  }, [ligaFilter, datumFilter, events])
+
   const loadEvents = async (userId: string) => {
     const today = new Date().toISOString().split('T')[0]
     const { data: upcoming } = await supabase.from('events').select('*')
@@ -33,6 +42,7 @@ export default function MeineEventsPage() {
       .eq('user_id', userId).lt('date', today).order('date', { ascending: false })
     const combined = [...(upcoming || []), ...(past || [])]
     setEvents(combined)
+    setFiltered(combined)
     if (combined.length > 0) {
       const { count } = await supabase.from('event_fotos').select('*', { count: 'exact', head: true }).in('event_id', combined.map((e: any) => e.id))
       setStats({ events: combined.length, fotos: count || 0 })
@@ -55,9 +65,6 @@ export default function MeineEventsPage() {
   }
 
   const today = new Date().toISOString().split('T')[0]
-  const upcomingEvents = events.filter(ev => ev.date >= today)
-  const pastEvents = events.filter(ev => ev.date < today)
-  const displayedEvents = alleEvents ? events : upcomingEvents.length > 0 ? upcomingEvents : events
 
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -102,15 +109,45 @@ export default function MeineEventsPage() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: 12, marginBottom: 32 }}>
+        <div style={{ marginBottom: 32 }}>
           <button onClick={() => router.push('/admin')}
             style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '12px 24px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1, textTransform: 'uppercase' }}>
             + Neues Spiel erstellen
           </button>
-          <button onClick={() => setAlleEvents(!alleEvents)}
-            style={{ background: 'transparent', color: alleEvents ? '#e8ff00' : '#e8eef4', border: alleEvents ? '1px solid #e8ff00' : '1px solid #1c2a38', borderRadius: 4, padding: '12px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1 }}>
-            {alleEvents ? 'Nur kommende →' : `Alle Events (${events.length}) →`}
-          </button>
+        </div>
+
+        {/* FILTER */}
+        <div style={{ display: 'flex', gap: 16, marginBottom: 32, flexWrap: 'wrap' }}>
+          <div>
+            <div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Liga</div>
+            <select value={ligaFilter} onChange={(e) => setLigaFilter(e.target.value)}
+              style={{ background: '#0d1219', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '10px 16px', fontSize: 14, cursor: 'pointer', minWidth: 200 }}>
+              <option value="">Alle Ligen</option>
+              <option value="Super League">Super League</option>
+              <option value="Challenge League">Challenge League</option>
+              <option value="Promotion League">Promotion League</option>
+              <option value="1. Liga">1. Liga</option>
+              <option value="2. Liga interregional">2. Liga interregional</option>
+              <option value="2. Liga regional">2. Liga regional</option>
+              <option value="3. Liga">3. Liga</option>
+              <option value="4. Liga">4. Liga</option>
+              <option value="5. Liga">5. Liga</option>
+              <option value="6. Liga">6. Liga</option>
+            </select>
+          </div>
+          <div>
+            <div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Datum</div>
+            <input type="date" value={datumFilter} onChange={(e) => setDatumFilter(e.target.value)}
+              style={{ background: '#0d1219', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '10px 16px', fontSize: 14, cursor: 'pointer' }} />
+          </div>
+          {(ligaFilter || datumFilter) && (
+            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+              <button onClick={() => { setLigaFilter(''); setDatumFilter('') }}
+                style={{ background: 'transparent', color: '#667788', border: '1px solid #1c2a38', borderRadius: 4, padding: '10px 16px', fontSize: 13, cursor: 'pointer' }}>
+                Filter zurücksetzen ✕
+              </button>
+            </div>
+          )}
         </div>
 
         {message && (
@@ -119,13 +156,7 @@ export default function MeineEventsPage() {
           </div>
         )}
 
-        {!alleEvents && pastEvents.length > 0 && (
-          <div style={{ color: '#445566', fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 16 }}>
-            {upcomingEvents.length > 0 ? `Kommende Events (${upcomingEvents.length})` : 'Alle Events'}
-          </div>
-        )}
-
-        {displayedEvents.length === 0 ? (
+        {filtered.length === 0 ? (
           <div style={{ color: '#445566', padding: '60px 0', textAlign: 'center' }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>⚽</div>
             <div style={{ fontSize: 18, marginBottom: 16 }}>Noch keine Events vorhanden.</div>
@@ -136,7 +167,7 @@ export default function MeineEventsPage() {
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-            {displayedEvents.map((ev) => {
+            {filtered.map((ev) => {
               const isPast = ev.date < today
               return (
                 <div key={ev.id}
@@ -147,7 +178,7 @@ export default function MeineEventsPage() {
                     border: hoveredCard === ev.id ? '1px solid #e8ff00' : '1px solid #1c2a38',
                     borderRadius: 8, overflow: 'hidden', cursor: 'pointer',
                     transform: hoveredCard === ev.id ? 'translateY(-4px)' : 'translateY(0)',
-                    transition: 'all 0.2s ease', opacity: isPast ? 0.7 : 1
+                    transition: 'all 0.2s ease'
                   }}>
                   <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
                     {ev.bild_url ? (
@@ -162,7 +193,7 @@ export default function MeineEventsPage() {
                       {ev.liga}
                     </div>
                     {isPast && (
-                      <div style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(0,0,0,0.7)', color: '#8899aa', fontSize: 9, fontWeight: 800, letterSpacing: 1, textTransform: 'uppercase', padding: '3px 6px', borderRadius: 2 }}>
+                      <div style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(0,0,0,0.75)', color: '#aabbcc', fontSize: 9, fontWeight: 800, letterSpacing: 1, textTransform: 'uppercase', padding: '3px 8px', borderRadius: 2 }}>
                         Abgeschlossen
                       </div>
                     )}
