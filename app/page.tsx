@@ -32,7 +32,7 @@ export default function Home() {
       if (session?.user) {
         const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
         if (profile?.role === 'photographer') {
-          router.push('/dashboard')
+          router.push('/meine-events')
           return
         }
         setUser(session.user)
