@@ -73,13 +73,11 @@ export default function AdminPage() {
     let bildUrl = null
     if (sponsorLogo) { setMessage('Sponsor Logo wird hochgeladen...'); sponsorLogoUrl = await uploadSponsorLogo(sponsorLogo) }
     if (eventBild) { setMessage('Event Bild wird hochgeladen...'); bildUrl = await uploadEventBild(eventBild) }
-
     const { data, error } = await supabase.from('events').insert({
       home_team: homeTeam, away_team: awayTeam, date, time, liga, ort,
       sponsor_name: sponsorName, sponsor_logo_url: sponsorLogoUrl,
       bild_url: bildUrl, user_id: user.id,
     }).select().single()
-
     if (error) {
       setMessage('Fehler: ' + error.message)
     } else {
@@ -116,26 +114,29 @@ export default function AdminPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
-      <nav style={{ background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/dashboard')}>
+      {/* NAV FIXED */}
+      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/meine-events')}>
           <div style={{ width: 34, height: 34, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>90</span>
           </div>
           <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
         </div>
-        <div style={{ display: 'flex', gap: 12 }}>
-          <button onClick={() => router.push('/dashboard')}
-            style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>
-            ← Dashboard
-          </button>
-          <button onClick={() => router.push('/meine-events')}
-            style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>
-            Meine Events
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+          <button style={{ background: 'transparent', color: '#e8ff00', border: '1px solid #e8ff00', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/meine-events')}>Meine Events</button>
+          <button style={{ background: 'transparent', color: '#e8ff00', border: '1px solid #e8ff00', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/admin')}>+ Spiel erstellen</button>
+          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/profil')}>Profil</button>
+          <button onClick={async () => { await supabase.auth.signOut(); router.push('/') }}
+            style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}>
+            Abmelden
           </button>
         </div>
       </nav>
 
-      <div style={{ padding: '40px', maxWidth: '700px', margin: '0 auto' }}>
+      <div style={{ padding: '40px', maxWidth: '700px', margin: '60px auto 0' }}>
         <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Admin</div>
         <h1 style={{ fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>⚽ Spiel erstellen</h1>
 
@@ -165,7 +166,6 @@ export default function AdminPage() {
           <input type="text" placeholder="Ort (optional)" value={ort} onChange={(e) => setOrt(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
 
-          {/* EVENT BILD */}
           <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>
             <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4' }}>🖼️ Event Bild (optional)</h3>
             <p style={{ color: '#445566', fontSize: 13, marginBottom: 12 }}>Wird auf der Homepage und Spiele-Seite angezeigt.</p>
@@ -182,7 +182,6 @@ export default function AdminPage() {
             )}
           </div>
 
-          {/* SPONSOR */}
           <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>
             <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4' }}>🏢 Sponsor (optional)</h3>
             <input type="text" placeholder="Sponsor Name" value={sponsorName} onChange={(e) => setSponsorName(e.target.value)}
@@ -206,7 +205,6 @@ export default function AdminPage() {
           </button>
         </div>
 
-        {/* FOTOS HOCHLADEN */}
         <div style={{ background: '#0d1219', border: `1px solid ${createdEventId ? '#e8ff00' : '#1c2a38'}`, padding: '24px', borderRadius: '8px', marginBottom: '24px' }}>
           <h2 style={{ marginTop: 0, color: '#e8eef4' }}>📸 Fotos hochladen</h2>
           {createdEventId ? (
