@@ -11,6 +11,7 @@ export default function MeineEventsPage() {
   const [message, setMessage] = useState('')
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const [stats, setStats] = useState({ events: 0, fotos: 0 })
+  const [alleEvents, setAlleEvents] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -25,11 +26,16 @@ export default function MeineEventsPage() {
   }, [router])
 
   const loadEvents = async (userId: string) => {
-    const { data } = await supabase.from('events').select('*').eq('user_id', userId).order('date', { ascending: false })
-    setEvents(data || [])
-    if (data && data.length > 0) {
-      const { count } = await supabase.from('event_fotos').select('*', { count: 'exact', head: true }).in('event_id', data.map((e: any) => e.id))
-      setStats({ events: data.length, fotos: count || 0 })
+    const today = new Date().toISOString().split('T')[0]
+    const { data: upcoming } = await supabase.from('events').select('*')
+      .eq('user_id', userId).gte('date', today).order('date', { ascending: true })
+    const { data: past } = await supabase.from('events').select('*')
+      .eq('user_id', userId).lt('date', today).order('date', { ascending: false })
+    const combined = [...(upcoming || []), ...(past || [])]
+    setEvents(combined)
+    if (combined.length > 0) {
+      const { count } = await supabase.from('event_fotos').select('*', { count: 'exact', head: true }).in('event_id', combined.map((e: any) => e.id))
+      setStats({ events: combined.length, fotos: count || 0 })
     } else {
       setStats({ events: 0, fotos: 0 })
     }
@@ -47,6 +53,11 @@ export default function MeineEventsPage() {
     setMessage('✅ Event gelöscht!')
     loadEvents(user.id)
   }
+
+  const today = new Date().toISOString().split('T')[0]
+  const upcomingEvents = events.filter(ev => ev.date >= today)
+  const pastEvents = events.filter(ev => ev.date < today)
+  const displayedEvents = alleEvents ? events : upcomingEvents.length > 0 ? upcomingEvents : events
 
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -91,10 +102,14 @@ export default function MeineEventsPage() {
           </div>
         </div>
 
-        <div style={{ marginBottom: 32 }}>
+        <div style={{ display: 'flex', gap: 12, marginBottom: 32 }}>
           <button onClick={() => router.push('/admin')}
             style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '12px 24px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1, textTransform: 'uppercase' }}>
             + Neues Spiel erstellen
+          </button>
+          <button onClick={() => setAlleEvents(!alleEvents)}
+            style={{ background: 'transparent', color: alleEvents ? '#e8ff00' : '#e8eef4', border: alleEvents ? '1px solid #e8ff00' : '1px solid #1c2a38', borderRadius: 4, padding: '12px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1 }}>
+            {alleEvents ? 'Nur kommende →' : `Alle Events (${events.length}) →`}
           </button>
         </div>
 
@@ -104,7 +119,13 @@ export default function MeineEventsPage() {
           </div>
         )}
 
-        {events.length === 0 ? (
+        {!alleEvents && pastEvents.length > 0 && (
+          <div style={{ color: '#445566', fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 16 }}>
+            {upcomingEvents.length > 0 ? `Kommende Events (${upcomingEvents.length})` : 'Alle Events'}
+          </div>
+        )}
+
+        {displayedEvents.length === 0 ? (
           <div style={{ color: '#445566', padding: '60px 0', textAlign: 'center' }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>⚽</div>
             <div style={{ fontSize: 18, marginBottom: 16 }}>Noch keine Events vorhanden.</div>
@@ -115,56 +136,64 @@ export default function MeineEventsPage() {
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-            {events.map((ev) => (
-              <div key={ev.id}
-                onMouseEnter={() => setHoveredCard(ev.id)}
-                onMouseLeave={() => setHoveredCard(null)}
-                style={{
-                  background: '#0d1219',
-                  border: hoveredCard === ev.id ? '1px solid #e8ff00' : '1px solid #1c2a38',
-                  borderRadius: 8, overflow: 'hidden', cursor: 'pointer',
-                  transform: hoveredCard === ev.id ? 'translateY(-4px)' : 'translateY(0)',
-                  transition: 'all 0.2s ease'
-                }}>
-                <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
-                  {ev.bild_url ? (
-                    <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <span style={{ fontSize: 48 }}>⚽</span>
+            {displayedEvents.map((ev) => {
+              const isPast = ev.date < today
+              return (
+                <div key={ev.id}
+                  onMouseEnter={() => setHoveredCard(ev.id)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                  style={{
+                    background: '#0d1219',
+                    border: hoveredCard === ev.id ? '1px solid #e8ff00' : '1px solid #1c2a38',
+                    borderRadius: 8, overflow: 'hidden', cursor: 'pointer',
+                    transform: hoveredCard === ev.id ? 'translateY(-4px)' : 'translateY(0)',
+                    transition: 'all 0.2s ease', opacity: isPast ? 0.7 : 1
+                  }}>
+                  <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
+                    {ev.bild_url ? (
+                      <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: 48 }}>⚽</span>
+                      </div>
+                    )}
+                    <div style={{ position: 'absolute', top: 10, left: 10, background: '#e8ff00', color: '#070b0f', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', padding: '4px 8px', borderRadius: 2 }}>
+                      {ev.liga}
                     </div>
-                  )}
-                  <div style={{ position: 'absolute', top: 10, left: 10, background: '#e8ff00', color: '#070b0f', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', padding: '4px 8px', borderRadius: 2 }}>
-                    {ev.liga}
+                    {isPast && (
+                      <div style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(0,0,0,0.7)', color: '#8899aa', fontSize: 9, fontWeight: 800, letterSpacing: 1, textTransform: 'uppercase', padding: '3px 6px', borderRadius: 2 }}>
+                        Abgeschlossen
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ padding: '16px' }}>
+                    <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>{ev.home_team} vs {ev.away_team}</div>
+                    <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 6 }}>📅 {ev.date} {ev.ort && `· 📍 ${ev.ort}`}</div>
+                    {ev.sponsor_name && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
+                        {ev.sponsor_logo_url && <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: '14px', objectFit: 'contain' }} />}
+                        <span style={{ fontSize: 10, color: '#e8eef4', fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                      <button onClick={() => router.push(`/meine-events/${ev.id}`)}
+                        style={{ flex: 1, background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '8px', cursor: 'pointer', fontSize: 12, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>
+                        Verwalten →
+                      </button>
+                      <button onClick={(e) => { e.stopPropagation(); router.push(`/meine-events/${ev.id}/bearbeiten`) }}
+                        style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 12px', cursor: 'pointer', fontSize: 12 }}>
+                        ✏️
+                      </button>
+                      <button onClick={(e) => { e.stopPropagation(); deleteEvent(ev.id) }}
+                        style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '8px 12px', cursor: 'pointer', fontSize: 12 }}>
+                        🗑️
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <div style={{ padding: '16px' }}>
-                  <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>{ev.home_team} vs {ev.away_team}</div>
-                  <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 6 }}>📅 {ev.date} {ev.ort && `· 📍 ${ev.ort}`}</div>
-                  {ev.sponsor_name && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
-                      {ev.sponsor_logo_url && <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: '14px', objectFit: 'contain' }} />}
-                      <span style={{ fontSize: 10, color: '#e8eef4', fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
-                    </div>
-                  )}
-                  <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                    <button onClick={() => router.push(`/meine-events/${ev.id}`)}
-                      style={{ flex: 1, background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '8px', cursor: 'pointer', fontSize: 12, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>
-                      Verwalten →
-                    </button>
-                    <button onClick={(e) => { e.stopPropagation(); router.push(`/meine-events/${ev.id}/bearbeiten`) }}
-                      style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 12px', cursor: 'pointer', fontSize: 12 }}>
-                      ✏️
-                    </button>
-                    <button onClick={(e) => { e.stopPropagation(); deleteEvent(ev.id) }}
-                      style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '8px 12px', cursor: 'pointer', fontSize: 12 }}>
-                      🗑️
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>

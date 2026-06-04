@@ -19,12 +19,17 @@ export default function Home() {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const { data } = await supabase.from('events').select('*').order('date', { ascending: false }).limit(6)
-      if (data) {
-        setEvents(data)
-        const bilder = data.filter((e: any) => e.bild_url).map((e: any) => e.bild_url)
-        setHeroBilder(bilder)
-      }
+      const today = new Date().toISOString().split('T')[0]
+      // Kommende Events (heute + zukünftig) aufsteigend
+      const { data: upcoming } = await supabase.from('events').select('*')
+        .gte('date', today).order('date', { ascending: true }).limit(6)
+      // Vergangene Events absteigend falls nicht genug kommende
+      const { data: past } = await supabase.from('events').select('*')
+        .lt('date', today).order('date', { ascending: false }).limit(6)
+      const combined = [...(upcoming || []), ...(past || [])].slice(0, 6)
+      setEvents(combined)
+      const bilder = combined.filter((e: any) => e.bild_url).map((e: any) => e.bild_url)
+      setHeroBilder(bilder)
     }
     fetchEvents()
     const checkUser = async () => {
@@ -173,54 +178,63 @@ export default function Home() {
             <div style={{ color: "#445566", fontSize: 16, padding: "40px 0" }}>Noch keine Events. 🎯</div>
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
-              {events.map((ev) => (
-                <div key={ev.id}
-                  onMouseEnter={() => setHoveredCard(ev.id)}
-                  onMouseLeave={() => setHoveredCard(null)}
-                  style={{
-                    background: "#0d1219", border: hoveredCard === ev.id ? "1px solid #e8ff00" : "1px solid #1c2a38",
-                    borderRadius: 8, overflow: "hidden", cursor: "pointer",
-                    transform: hoveredCard === ev.id ? "translateY(-4px)" : "translateY(0)",
-                    transition: "all 0.2s ease"
-                  }}
-                  onClick={() => user ? router.push('/kunden-dashboard') : router.push(`/suche?eventId=${ev.id}`)}>
-                  <div style={{ height: 180, background: "#131e2a", position: "relative", overflow: "hidden" }}>
-                    {ev.bild_url ? (
-                      <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    ) : (
-                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <span style={{ fontSize: 48 }}>⚽</span>
+              {events.map((ev) => {
+                const today = new Date().toISOString().split('T')[0]
+                const isPast = ev.date < today
+                return (
+                  <div key={ev.id}
+                    onMouseEnter={() => setHoveredCard(ev.id)}
+                    onMouseLeave={() => setHoveredCard(null)}
+                    style={{
+                      background: "#0d1219", border: hoveredCard === ev.id ? "1px solid #e8ff00" : "1px solid #1c2a38",
+                      borderRadius: 8, overflow: "hidden", cursor: "pointer",
+                      transform: hoveredCard === ev.id ? "translateY(-4px)" : "translateY(0)",
+                      transition: "all 0.2s ease", opacity: isPast ? 0.7 : 1
+                    }}
+                    onClick={() => user ? router.push('/kunden-dashboard') : router.push(`/suche?eventId=${ev.id}`)}>
+                    <div style={{ height: 180, background: "#131e2a", position: "relative", overflow: "hidden" }}>
+                      {ev.bild_url ? (
+                        <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      ) : (
+                        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <span style={{ fontSize: 48 }}>⚽</span>
+                        </div>
+                      )}
+                      <div style={{ position: "absolute", top: 10, left: 10, background: "#e8ff00", color: "#070b0f", fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", padding: "4px 8px", borderRadius: 2 }}>
+                        {ev.liga}
                       </div>
-                    )}
-                    <div style={{ position: "absolute", top: 10, left: 10, background: "#e8ff00", color: "#070b0f", fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", padding: "4px 8px", borderRadius: 2 }}>
-                      {ev.liga}
+                      {isPast && (
+                        <div style={{ position: "absolute", top: 10, right: 10, background: "rgba(0,0,0,0.7)", color: "#8899aa", fontSize: 9, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", padding: "3px 6px", borderRadius: 2 }}>
+                          Abgeschlossen
+                        </div>
+                      )}
+                    </div>
+                    <div style={{ padding: "16px" }}>
+                      <div style={{ fontSize: 15, fontWeight: 800, textTransform: "uppercase", marginBottom: 8 }}>{ev.home_team} vs {ev.away_team}</div>
+                      <div style={{ fontSize: 12, color: "#8899aa", marginBottom: 12 }}>📅 {ev.date} {ev.ort && `· 📍 ${ev.ort}`}</div>
+                      {ev.sponsor_name && (
+                        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12, background: "#131e2a", padding: "4px 8px", borderRadius: 4, width: "fit-content" }}>
+                          {ev.sponsor_logo_url && <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: "16px", objectFit: "contain" }} />}
+                          <span style={{ fontSize: 11, color: "#e8eef4", fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
+                        </div>
+                      )}
+                      <button
+                        onMouseEnter={() => setHoveredBtn(ev.id)}
+                        onMouseLeave={() => setHoveredBtn(null)}
+                        style={{
+                          width: "100%", background: hoveredBtn === ev.id ? "#d4e800" : "#e8ff00",
+                          color: "#070b0f", border: "none", borderRadius: 2, padding: "10px",
+                          fontWeight: 900, fontSize: 12, cursor: "pointer", textTransform: "uppercase",
+                          letterSpacing: 1, transform: hoveredBtn === ev.id ? "scale(1.02)" : "scale(1)",
+                          transition: "all 0.15s ease"
+                        }}>
+                        Zu den Fotos →
+                      </button>
                     </div>
                   </div>
-                  <div style={{ padding: "16px" }}>
-                    <div style={{ fontSize: 15, fontWeight: 800, textTransform: "uppercase", marginBottom: 8 }}>{ev.home_team} vs {ev.away_team}</div>
-                    <div style={{ fontSize: 12, color: "#8899aa", marginBottom: 12 }}>📅 {ev.date} {ev.ort && `· 📍 ${ev.ort}`}</div>
-                    {ev.sponsor_name && (
-                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12, background: "#131e2a", padding: "4px 8px", borderRadius: 4, width: "fit-content" }}>
-                        {ev.sponsor_logo_url && <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: "16px", objectFit: "contain" }} />}
-                        <span style={{ fontSize: 11, color: "#e8eef4", fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
-                      </div>
-                    )}
-                    <button
-                      onMouseEnter={() => setHoveredBtn(ev.id)}
-                      onMouseLeave={() => setHoveredBtn(null)}
-                      style={{
-                        width: "100%", background: hoveredBtn === ev.id ? "#d4e800" : "#e8ff00",
-                        color: "#070b0f", border: "none", borderRadius: 2, padding: "10px",
-                        fontWeight: 900, fontSize: 12, cursor: "pointer", textTransform: "uppercase",
-                        letterSpacing: 1, transform: hoveredBtn === ev.id ? "scale(1.02)" : "scale(1)",
-                        transition: "all 0.15s ease"
-                      }}>
-                      Zu den Fotos →
-                    </button>
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
 
