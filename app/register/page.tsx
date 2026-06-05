@@ -24,31 +24,16 @@ export default function RegisterPage() {
       setError('Vorname, Nachname, Email, Passwort und Geburtsdatum sind Pflichtfelder!')
       return
     }
-    if (password.length < 6) {
-      setError('Passwort muss mindestens 6 Zeichen haben!')
-      return
-    }
-    if (!datenschutz) {
-      setError('Bitte akzeptiere die Datenschutzerklärung!')
-      return
-    }
+    if (password.length < 6) { setError('Passwort muss mindestens 6 Zeichen haben!'); return }
+    if (!datenschutz) { setError('Bitte akzeptiere die Datenschutzerklärung!'); return }
     setLoading(true)
     setError('')
 
     const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
+      email, password,
       options: {
         emailRedirectTo: `${window.location.origin}/login`,
-        data: {
-          role: 'customer',
-          vorname,
-          nachname,
-          geburtsdatum,
-          sport: sport.toString(),
-          sportart: sport ? sportart : '',
-          verein: sport ? verein : '',
-        }
+        data: { role: 'customer', vorname, nachname, geburtsdatum, sport: sport.toString(), sportart: sport ? sportart : '', verein: sport ? verein : '' }
       }
     })
 
@@ -74,7 +59,27 @@ export default function RegisterPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', flexDirection: 'column', fontFamily: 'sans-serif' }}>
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+      {/* NAV */}
+      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/')}>
+          <div style={{ width: 34, height: 34, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>90</span>
+          </div>
+          <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
+        </div>
+        <div style={{ display: 'flex', gap: 12 }}>
+          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/')}>Home</button>
+          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/spiele')}>Alle Spiele</button>
+          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/login')}>Login</button>
+          <button style={{ background: 'transparent', color: '#e8ff00', border: '1px solid #e8ff00', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/register')}>Sign Up</button>
+        </div>
+      </nav>
+
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', marginTop: 60 }}>
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: '12px', padding: '40px', width: '100%', maxWidth: '480px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
             <div style={{ width: 40, height: 40, background: '#e8ff00', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -83,66 +88,50 @@ export default function RegisterPage() {
             <span style={{ color: '#e8eef4', fontWeight: 900, fontSize: 22, letterSpacing: 2 }}>FOCUS</span>
           </div>
 
-          <h1 style={{ color: '#e8eef4', fontSize: 24, fontWeight: 900, marginBottom: 8, textTransform: 'uppercase' }}>
-            Konto erstellen
-          </h1>
-          <p style={{ color: '#445566', fontSize: 14, marginBottom: 24 }}>
-            Registriere dich um deine Fotos zu kaufen und zu verwalten.
-          </p>
+          <h1 style={{ color: '#e8eef4', fontSize: 24, fontWeight: 900, marginBottom: 8, textTransform: 'uppercase' }}>Konto erstellen</h1>
+          <p style={{ color: '#445566', fontSize: 14, marginBottom: 24 }}>Registriere dich um deine Fotos zu kaufen und zu verwalten.</p>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-            <input type="text" placeholder="Vorname *" value={vorname}
-              onChange={(e) => setVorname(e.target.value)}
+            <input type="text" placeholder="Vorname *" value={vorname} onChange={(e) => setVorname(e.target.value)}
               style={{ padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
-            <input type="text" placeholder="Nachname *" value={nachname}
-              onChange={(e) => setNachname(e.target.value)}
+            <input type="text" placeholder="Nachname *" value={nachname} onChange={(e) => setNachname(e.target.value)}
               style={{ padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
           </div>
 
-          <input type="email" placeholder="Email *" value={email}
-            onChange={(e) => setEmail(e.target.value)}
+          <input type="email" placeholder="Email *" value={email} onChange={(e) => setEmail(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '6px 0', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
 
-          <input type="password" placeholder="Passwort * (min. 6 Zeichen)" value={password}
-            onChange={(e) => setPassword(e.target.value)}
+          <input type="password" placeholder="Passwort * (min. 6 Zeichen)" value={password} onChange={(e) => setPassword(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '6px 0', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
 
           <div style={{ margin: '6px 0' }}>
             <label style={{ display: 'block', fontSize: '13px', color: '#667788', marginBottom: 4 }}>Geburtsdatum *</label>
-            <input type="date" value={geburtsdatum}
-              onChange={(e) => setGeburtsdatum(e.target.value)}
+            <input type="date" value={geburtsdatum} onChange={(e) => setGeburtsdatum(e.target.value)}
               style={{ width: '100%', padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
           </div>
 
           <div style={{ margin: '16px 0', padding: '16px', background: '#131e2a', borderRadius: 8, border: '1px solid #1c2a38' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: sport ? 12 : 0 }}>
-              <input type="checkbox" id="sport" checked={sport}
-                onChange={(e) => setSport(e.target.checked)}
+              <input type="checkbox" id="sport" checked={sport} onChange={(e) => setSport(e.target.checked)}
                 style={{ width: 18, height: 18, cursor: 'pointer' }} />
-              <label htmlFor="sport" style={{ color: '#e8eef4', fontSize: 15, cursor: 'pointer' }}>
-                Ich treibe Sport
-              </label>
+              <label htmlFor="sport" style={{ color: '#e8eef4', fontSize: 15, cursor: 'pointer' }}>Ich treibe Sport</label>
             </div>
             {sport && (
               <>
-                <input type="text" placeholder="Sportart (z.B. Fussball)" value={sportart}
-                  onChange={(e) => setSportart(e.target.value)}
+                <input type="text" placeholder="Sportart (z.B. Fussball)" value={sportart} onChange={(e) => setSportart(e.target.value)}
                   style={{ width: '100%', padding: '10px', margin: '6px 0', fontSize: '14px', background: '#0d1219', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
-                <input type="text" placeholder="Verein (z.B. FC Luzern)" value={verein}
-                  onChange={(e) => setVerein(e.target.value)}
+                <input type="text" placeholder="Verein (z.B. FC Luzern)" value={verein} onChange={(e) => setVerein(e.target.value)}
                   style={{ width: '100%', padding: '10px', margin: '6px 0', fontSize: '14px', background: '#0d1219', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
               </>
             )}
           </div>
 
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, margin: '16px 0', padding: '16px', background: '#131e2a', borderRadius: 8, border: datenschutz ? '1px solid #e8ff00' : '1px solid #1c2a38' }}>
-            <input type="checkbox" id="datenschutz" checked={datenschutz}
-              onChange={(e) => setDatenschutz(e.target.checked)}
+            <input type="checkbox" id="datenschutz" checked={datenschutz} onChange={(e) => setDatenschutz(e.target.checked)}
               style={{ width: 18, height: 18, cursor: 'pointer', marginTop: 2, flexShrink: 0 }} />
             <label htmlFor="datenschutz" style={{ color: '#e8eef4', fontSize: 14, cursor: 'pointer', lineHeight: 1.5 }}>
               Ich habe die{' '}
-              <span style={{ color: '#e8ff00', textDecoration: 'underline', cursor: 'pointer' }}
-                onClick={() => window.open('/datenschutz', '_blank')}>
+              <span style={{ color: '#e8ff00', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => window.open('/datenschutz', '_blank')}>
                 Datenschutzerklärung
               </span>
               {' '}gelesen und akzeptiere diese. *
@@ -167,7 +156,6 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      {/* FOOTER */}
       <footer style={{ borderTop: '1px solid #131e2a', padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{ width: 26, height: 26, background: '#e8ff00', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
