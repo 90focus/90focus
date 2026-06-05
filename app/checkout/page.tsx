@@ -12,8 +12,6 @@ function CheckoutContent() {
   const [event, setEvent] = useState<any>(null)
   const [user, setUser] = useState<any>(null)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
-
-  // Kreditkarten Felder
   const [kartenNummer, setKartenNummer] = useState('')
   const [kartenName, setKartenName] = useState('')
   const [ablaufdatum, setAblaufdatum] = useState('')
@@ -61,14 +59,29 @@ function CheckoutContent() {
 
   const Watermark = () => (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-around', pointerEvents: 'none', overflow: 'hidden' }}>
-      {[...Array(4)].map((_, row) => (
-        <div key={row} style={{ display: 'flex', gap: '20px', transform: 'rotate(-30deg) translateX(-20%)', whiteSpace: 'nowrap' }}>
-          {[...Array(3)].map((_, col) => (
-            <span key={col} style={{ fontSize: '9px', fontWeight: 800, color: 'rgba(255,255,255,0.25)', letterSpacing: 1, userSelect: 'none' }}>90focus</span>
+      {[...Array(6)].map((_, row) => (
+        <div key={row} style={{ display: 'flex', gap: '40px', transform: 'rotate(-30deg) translateX(-20%)', whiteSpace: 'nowrap', marginLeft: row % 2 === 0 ? '0px' : '60px' }}>
+          {[...Array(5)].map((_, col) => (
+            <span key={col} style={{ fontSize: '13px', fontWeight: 800, color: 'rgba(255,255,255,0.25)', letterSpacing: 1, userSelect: 'none' }}>90focus ⚽</span>
           ))}
         </div>
       ))}
     </div>
+  )
+
+  const Logo = () => (
+    !event?.sponsor_logo_url ? (
+      <div style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.6)', borderRadius: 4, padding: '4px 8px', display: 'flex', alignItems: 'center', gap: 4 }}>
+        <div style={{ width: 18, height: 18, background: '#e8ff00', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 9 }}>90</span>
+        </div>
+        <span style={{ color: '#fff', fontWeight: 800, fontSize: 11, letterSpacing: 1 }}>FOCUS</span>
+      </div>
+    ) : (
+      <div style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.5)', borderRadius: 4, padding: '4px 8px' }}>
+        <img src={event.sponsor_logo_url} alt={event.sponsor_name} style={{ height: '20px', objectFit: 'contain', opacity: 0.9 }} />
+      </div>
+    )
   )
 
   const inputStyle = {
@@ -91,6 +104,7 @@ function CheckoutContent() {
           <div onClick={(e) => e.stopPropagation()} style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}>
             <img src={getImageUrl(filenames[lightboxIndex])} alt={`Foto ${lightboxIndex + 1}`} style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 8 }} />
             <Watermark />
+            <Logo />
           </div>
           {lightboxIndex < filenames.length - 1 && (
             <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1) }} style={{ position: 'absolute', right: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 28, width: 50, height: 50, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
@@ -135,6 +149,7 @@ function CheckoutContent() {
               <div key={i} onClick={() => setLightboxIndex(i)} style={{ position: 'relative', borderRadius: 4, overflow: 'hidden', aspectRatio: '1', cursor: 'zoom-in' }}>
                 <img src={getImageUrl(filename)} alt={`Foto ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 <Watermark />
+                <Logo />
               </div>
             ))}
           </div>
@@ -146,7 +161,6 @@ function CheckoutContent() {
             Bezahlung
           </div>
 
-          {/* PREIS */}
           <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '16px 20px', marginBottom: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
               <span style={{ color: '#667788' }}>{filenames.length} Foto(s) × CHF {preisProFoto.toFixed(2)}</span>
@@ -158,7 +172,6 @@ function CheckoutContent() {
             </div>
           </div>
 
-          {/* KREDITKARTEN FORMULAR */}
           <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: '#667788', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 20 }}>
               Kreditkarte
@@ -166,57 +179,35 @@ function CheckoutContent() {
 
             <div style={{ marginBottom: 16 }}>
               <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>Karteninhaber</div>
-              <input
-                type="text"
-                placeholder="Max Mustermann"
-                value={kartenName}
-                onChange={(e) => setKartenName(e.target.value)}
-                style={inputStyle}
-              />
+              <input type="text" placeholder="Max Mustermann" value={kartenName}
+                onChange={(e) => setKartenName(e.target.value)} style={inputStyle} />
             </div>
 
             <div style={{ marginBottom: 16 }}>
               <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>Kartennummer</div>
-              <input
-                type="text"
-                placeholder="1234 5678 9012 3456"
-                value={kartenNummer}
-                onChange={(e) => setKartenNummer(formatKartenNummer(e.target.value))}
-                style={inputStyle}
-              />
+              <input type="text" placeholder="1234 5678 9012 3456" value={kartenNummer}
+                onChange={(e) => setKartenNummer(formatKartenNummer(e.target.value))} style={inputStyle} />
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
               <div>
                 <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>Ablaufdatum</div>
-                <input
-                  type="text"
-                  placeholder="MM/JJ"
-                  value={ablaufdatum}
-                  onChange={(e) => setAblaufdatum(formatAblaufdatum(e.target.value))}
-                  style={inputStyle}
-                />
+                <input type="text" placeholder="MM/JJ" value={ablaufdatum}
+                  onChange={(e) => setAblaufdatum(formatAblaufdatum(e.target.value))} style={inputStyle} />
               </div>
               <div>
                 <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>Prüfziffer (CVV)</div>
-                <input
-                  type="text"
-                  placeholder="123"
-                  value={cvv}
-                  onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                  style={inputStyle}
-                />
+                <input type="text" placeholder="123" value={cvv}
+                  onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))} style={inputStyle} />
               </div>
             </div>
 
-            <button
-              disabled
-              style={{
-                width: '100%', background: '#e8ff00', color: '#070b0f',
-                border: 'none', borderRadius: 4, padding: '14px',
-                fontWeight: 900, fontSize: 15, cursor: 'not-allowed',
-                letterSpacing: 1.5, textTransform: 'uppercase', opacity: 0.5
-              }}>
+            <button disabled style={{
+              width: '100%', background: '#e8ff00', color: '#070b0f',
+              border: 'none', borderRadius: 4, padding: '14px',
+              fontWeight: 900, fontSize: 15, cursor: 'not-allowed',
+              letterSpacing: 1.5, textTransform: 'uppercase', opacity: 0.5
+            }}>
               Jetzt kaufen – CHF {total}
             </button>
             <p style={{ color: '#445566', fontSize: 12, textAlign: 'center', marginTop: 12 }}>
