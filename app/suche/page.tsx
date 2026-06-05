@@ -243,16 +243,13 @@ function SucheContent() {
         {matches.length > 0 && (
           <div style={{ marginTop: '30px', textAlign: 'left' }}>
 
-            {/* JETZT KAUFEN BUTTON – SCHÖN */}
+            {/* JETZT KAUFEN BUTTON */}
             <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #e8ff00', borderRadius: 12, padding: '24px', marginBottom: 20, textAlign: 'center' }}>
-              <div style={{ fontSize: 12, color: '#8899aa', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 700, marginBottom: 4 }}>
+              <div style={{ fontSize: 12, color: '#e8eef4', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 700, marginBottom: 4 }}>
                 {matches.length} Foto{matches.length > 1 ? 's' : ''} gefunden
               </div>
-              <div style={{ fontSize: 28, fontWeight: 900, color: '#e8ff00', marginBottom: 4 }}>
+              <div style={{ fontSize: 28, fontWeight: 900, color: '#e8ff00', marginBottom: 16 }}>
                 CHF {total}
-              </div>
-              <div style={{ fontSize: 12, color: '#445566', marginBottom: 16 }}>
-                Alle Fotos ohne Wasserzeichen · Sofort Download
               </div>
               <button
                 onClick={handleKaufen}
@@ -261,12 +258,12 @@ function SucheContent() {
                 style={{
                   background: hoveredKaufen ? '#d4e800' : '#e8ff00',
                   color: '#070b0f', border: 'none', borderRadius: 4,
-                  padding: '14px 40px', fontWeight: 900, fontSize: 15,
+                  padding: '11px 32px', fontWeight: 900, fontSize: 14,
                   cursor: 'pointer', letterSpacing: 1.5, textTransform: 'uppercase',
                   transform: hoveredKaufen ? 'scale(1.03)' : 'scale(1)',
                   transition: 'all 0.15s ease'
                 }}>
-                💳 Jetzt kaufen
+                Jetzt kaufen
               </button>
             </div>
 
