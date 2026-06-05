@@ -149,8 +149,8 @@ function SucheContent() {
 
         {/* EVENT CARD */}
         {event && (
-          <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', textAlign: 'left', maxWidth: 500, margin: '0 auto 32px' }}>
-            <div style={{ height: 220, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', textAlign: 'left', marginBottom: 32 }}>
+            <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
               {event.bild_url ? (
                 <img src={event.bild_url} alt={`${event.home_team} vs ${event.away_team}`}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
