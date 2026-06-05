@@ -177,7 +177,7 @@ function SucheContent() {
         )}
 
         {/* TITEL */}
-        <h1 style={{ fontSize: 20, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>
+        <h1 style={{ fontSize: 18, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>
           Lade ein Selfie hoch und finde deine Fotos
         </h1>
 
@@ -188,10 +188,10 @@ function SucheContent() {
             onMouseLeave={() => setHoveredUpload(false)}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
-              padding: '10px 20px',
+              padding: '8px 16px',
               background: hoveredUpload ? '#1c2a38' : '#131e2a',
               color: '#e8eef4', borderRadius: 4, cursor: 'pointer',
-              fontSize: 13, fontWeight: 700, textTransform: 'uppercase',
+              fontSize: 11, fontWeight: 700, textTransform: 'uppercase',
               letterSpacing: 1, border: '1px solid #2a3a4a',
               transform: hoveredUpload ? 'scale(1.03)' : 'scale(1)',
               transition: 'all 0.15s ease'
@@ -199,7 +199,7 @@ function SucheContent() {
             Foto hochladen
             <input type="file" accept="image/*" capture="user" onChange={handleSelfie} style={{ display: 'none' }} />
           </label>
-          {selfieName && <div style={{ color: '#667788', fontSize: 13, marginTop: 8 }}>✓ {selfieName}</div>}
+          {selfieName && <div style={{ color: '#667788', fontSize: 12, marginTop: 8 }}>✓ {selfieName}</div>}
         </div>
 
         {preview && (
@@ -214,11 +214,11 @@ function SucheContent() {
             onMouseEnter={() => setHoveredSearch(true)}
             onMouseLeave={() => setHoveredSearch(false)}
             style={{
-              padding: '12px 32px',
+              padding: '10px 28px',
               background: hoveredSearch ? '#d4e800' : '#e8ff00',
               color: '#070b0f', border: 'none', borderRadius: '4px',
               cursor: searching ? 'not-allowed' : 'pointer',
-              fontSize: '16px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase',
+              fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase',
               transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)',
               transition: 'all 0.15s ease'
             }}>
@@ -247,7 +247,7 @@ function SucheContent() {
                         if (eventId) params.set('eventId', eventId)
                         window.location.href = `/checkout?${params.toString()}`
                       }}
-                      style={{ width: '100%', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1.5, textTransform: 'uppercase' }}>
+                      style={{ width: '100%', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px', fontWeight: 900, fontSize: 12, cursor: 'pointer', letterSpacing: 1.5, textTransform: 'uppercase' }}>
                       💳 Jetzt kaufen
                     </button>
                   </div>
