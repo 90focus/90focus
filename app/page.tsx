@@ -136,7 +136,7 @@ export default function Home() {
                 transform: hoveredHeroBtn ? "scale(1.03)" : "scale(1)",
                 transition: "all 0.15s ease"
               }}
-              onClick={() => user ? router.push('/kunden-dashboard') : router.push('/suche')}>
+              onClick={() => user ? router.push('/kunden-dashboard') : router.push('/spiele')}>
               {user ? 'Fotos verwalten →' : 'Meine Fotos finden →'}
             </button>
           </div>
