@@ -13,6 +13,8 @@ function SucheContent() {
   const [event, setEvent] = useState<any>(null)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [selfieName, setSelfieName] = useState('')
+  const [hoveredUpload, setHoveredUpload] = useState(false)
+  const [hoveredSearch, setHoveredSearch] = useState(false)
   const searchParams = useSearchParams()
   const eventId = searchParams.get('eventId')
   const router = useRouter()
@@ -143,11 +145,11 @@ function SucheContent() {
         </div>
       </nav>
 
-      <div style={{ padding: '40px 48px', maxWidth: '900px', margin: '60px auto 0' }}>
+      <div style={{ padding: '40px 48px', maxWidth: '600px', margin: '60px auto 0', textAlign: 'center' }}>
 
-        {/* EVENT CARD – gleicher Style wie Homepage */}
+        {/* EVENT CARD */}
         {event && (
-          <div style={{ marginBottom: 32, background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', maxWidth: 380 }}>
+          <div style={{ marginBottom: 32, background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', textAlign: 'left' }}>
             <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
               {event.bild_url ? (
                 <img src={event.bild_url} alt={`${event.home_team} vs ${event.away_team}`}
@@ -176,15 +178,27 @@ function SucheContent() {
 
         {/* TITEL */}
         <h1 style={{ fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 8 }}>Meine Fotos finden</h1>
-        <p style={{ color: '#e8eef4', fontSize: 15, fontWeight: 600, marginBottom: 24 }}>Lade ein Selfie hoch und finde deine Fotos.</p>
+        <p style={{ color: '#e8eef4', fontSize: 15, fontWeight: 600, marginBottom: 32 }}>Lade ein Selfie hoch und finde deine Fotos.</p>
 
         {/* SELFIE UPLOAD */}
-        <div style={{ marginBottom: 24, display: 'flex', alignItems: 'center', gap: 12 }}>
-          <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 4, cursor: 'pointer', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, border: '1px solid #2a3a4a' }}>
-            📷 Foto hochladen
+        <div style={{ marginBottom: 24 }}>
+          <label
+            onMouseEnter={() => setHoveredUpload(true)}
+            onMouseLeave={() => setHoveredUpload(false)}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '10px 20px',
+              background: hoveredUpload ? '#1c2a38' : '#131e2a',
+              color: '#e8eef4', borderRadius: 4, cursor: 'pointer',
+              fontSize: 13, fontWeight: 700, textTransform: 'uppercase',
+              letterSpacing: 1, border: '1px solid #2a3a4a',
+              transform: hoveredUpload ? 'scale(1.03)' : 'scale(1)',
+              transition: 'all 0.15s ease'
+            }}>
+            Foto hochladen
             <input type="file" accept="image/*" capture="user" onChange={handleSelfie} style={{ display: 'none' }} />
           </label>
-          {selfieName && <span style={{ color: '#667788', fontSize: 13 }}>✓ {selfieName}</span>}
+          {selfieName && <div style={{ color: '#667788', fontSize: 13, marginTop: 8 }}>✓ {selfieName}</div>}
         </div>
 
         {preview && (
@@ -193,8 +207,20 @@ function SucheContent() {
         )}
 
         <div>
-          <button onClick={handleSearch} disabled={searching}
-            style={{ padding: '12px 32px', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '4px', cursor: searching ? 'not-allowed' : 'pointer', fontSize: '16px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase' }}>
+          <button
+            onClick={handleSearch}
+            disabled={searching}
+            onMouseEnter={() => setHoveredSearch(true)}
+            onMouseLeave={() => setHoveredSearch(false)}
+            style={{
+              padding: '12px 32px',
+              background: hoveredSearch ? '#d4e800' : '#e8ff00',
+              color: '#070b0f', border: 'none', borderRadius: '4px',
+              cursor: searching ? 'not-allowed' : 'pointer',
+              fontSize: '16px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase',
+              transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)',
+              transition: 'all 0.15s ease'
+            }}>
             {searching ? 'Suche läuft...' : 'Fotos suchen'}
           </button>
         </div>
@@ -202,7 +228,7 @@ function SucheContent() {
         {message && <p style={{ marginTop: '20px', fontWeight: 'bold', color: '#e8ff00' }}>{message}</p>}
 
         {matches.length > 0 && (
-          <div style={{ marginTop: '30px' }}>
+          <div style={{ marginTop: '30px', textAlign: 'left' }}>
             <h2 style={{ fontSize: 24, fontWeight: 900, textTransform: 'uppercase', marginBottom: 16 }}>Deine Fotos:</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
               {matches.map((filename, i) => (
