@@ -115,6 +115,88 @@ function SucheContent() {
     )
   )
 
+  const LeftPanel = () => (
+    <div style={{ textAlign: 'center' }}>
+      {event && (
+        <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', textAlign: 'left', marginBottom: 24 }}>
+          <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
+            {event.bild_url ? (
+              <img src={event.bild_url} alt={`${event.home_team} vs ${event.away_team}`}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ fontSize: 48 }}>⚽</span>
+              </div>
+            )}
+            <div style={{ position: 'absolute', top: 10, left: 10, background: '#e8ff00', color: '#070b0f', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', padding: '4px 8px', borderRadius: 2 }}>
+              {event.liga}
+            </div>
+          </div>
+          <div style={{ padding: '16px' }}>
+            <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>{event.home_team} vs {event.away_team}</div>
+            <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 8 }}>📅 {event.date} {event.ort && `· 📍 ${event.ort}`}</div>
+            {event.sponsor_name && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
+                {event.sponsor_logo_url && <img src={event.sponsor_logo_url} alt={event.sponsor_name} style={{ height: '14px', objectFit: 'contain' }} />}
+                <span style={{ fontSize: 10, color: '#e8eef4', fontWeight: 700 }}>⭐ {event.sponsor_name}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      <h1 style={{ fontSize: 16, fontWeight: 900, textTransform: 'uppercase', marginBottom: 20 }}>
+        Lade ein Selfie hoch und finde deine Fotos
+      </h1>
+
+      <div style={{ marginBottom: 16 }}>
+        <label
+          onMouseEnter={() => setHoveredUpload(true)}
+          onMouseLeave={() => setHoveredUpload(false)}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            padding: '8px 16px',
+            background: hoveredUpload ? '#1c2a38' : '#131e2a',
+            color: '#e8eef4', borderRadius: 4, cursor: 'pointer',
+            fontSize: 11, fontWeight: 700, textTransform: 'uppercase',
+            letterSpacing: 1, border: '1px solid #2a3a4a',
+            transform: hoveredUpload ? 'scale(1.03)' : 'scale(1)',
+            transition: 'all 0.15s ease'
+          }}>
+          Foto hochladen
+          <input type="file" accept="image/*" capture="user" onChange={handleSelfie} style={{ display: 'none' }} />
+        </label>
+        {selfieName && <div style={{ color: '#667788', fontSize: 12, marginTop: 8 }}>✓ {selfieName}</div>}
+      </div>
+
+      {preview && (
+        <img src={preview} alt="Vorschau"
+          style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '50%', marginBottom: '16px', border: '3px solid #e8ff00' }} />
+      )}
+
+      <div>
+        <button
+          onClick={handleSearch}
+          disabled={searching}
+          onMouseEnter={() => setHoveredSearch(true)}
+          onMouseLeave={() => setHoveredSearch(false)}
+          style={{
+            padding: '10px 28px',
+            background: hoveredSearch ? '#d4e800' : '#e8ff00',
+            color: '#070b0f', border: 'none', borderRadius: '4px',
+            cursor: searching ? 'not-allowed' : 'pointer',
+            fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase',
+            transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)',
+            transition: 'all 0.15s ease'
+          }}>
+          {searching ? 'Suche läuft...' : 'Fotos suchen'}
+        </button>
+      </div>
+
+      {message && <p style={{ marginTop: '16px', fontWeight: 'bold', color: '#e8ff00', fontSize: 13 }}>{message}</p>}
+    </div>
+  )
+
   return (
     <div style={{ background: '#070b0f', minHeight: '100vh', color: '#e8eef4', fontFamily: 'sans-serif' }}>
 
@@ -157,93 +239,96 @@ function SucheContent() {
         </div>
       </nav>
 
-      <div style={{ padding: '40px 48px', maxWidth: '600px', margin: '60px auto 0', textAlign: 'center' }}>
-
-        {/* EVENT CARD */}
-        {event && (
-          <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', textAlign: 'left', marginBottom: 32 }}>
-            <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
-              {event.bild_url ? (
-                <img src={event.bild_url} alt={`${event.home_team} vs ${event.away_team}`}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontSize: 48 }}>⚽</span>
+      {/* MAIN CONTENT */}
+      {matches.length === 0 ? (
+        // VOR SUCHE – MITTIG
+        <div style={{ padding: '40px 48px', maxWidth: '600px', margin: '60px auto 0', textAlign: 'center' }}>
+          {event && (
+            <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', textAlign: 'left', marginBottom: 32 }}>
+              <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
+                {event.bild_url ? (
+                  <img src={event.bild_url} alt={`${event.home_team} vs ${event.away_team}`}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ fontSize: 48 }}>⚽</span>
+                  </div>
+                )}
+                <div style={{ position: 'absolute', top: 10, left: 10, background: '#e8ff00', color: '#070b0f', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', padding: '4px 8px', borderRadius: 2 }}>
+                  {event.liga}
                 </div>
-              )}
-              <div style={{ position: 'absolute', top: 10, left: 10, background: '#e8ff00', color: '#070b0f', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', padding: '4px 8px', borderRadius: 2 }}>
-                {event.liga}
+              </div>
+              <div style={{ padding: '16px' }}>
+                <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>{event.home_team} vs {event.away_team}</div>
+                <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 8 }}>📅 {event.date} {event.ort && `· 📍 ${event.ort}`}</div>
+                {event.sponsor_name && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
+                    {event.sponsor_logo_url && <img src={event.sponsor_logo_url} alt={event.sponsor_name} style={{ height: '14px', objectFit: 'contain' }} />}
+                    <span style={{ fontSize: 10, color: '#e8eef4', fontWeight: 700 }}>⭐ {event.sponsor_name}</span>
+                  </div>
+                )}
               </div>
             </div>
-            <div style={{ padding: '16px' }}>
-              <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>{event.home_team} vs {event.away_team}</div>
-              <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 8 }}>📅 {event.date} {event.ort && `· 📍 ${event.ort}`}</div>
-              {event.sponsor_name && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
-                  {event.sponsor_logo_url && <img src={event.sponsor_logo_url} alt={event.sponsor_name} style={{ height: '14px', objectFit: 'contain' }} />}
-                  <span style={{ fontSize: 10, color: '#e8eef4', fontWeight: 700 }}>⭐ {event.sponsor_name}</span>
-                </div>
-              )}
-            </div>
+          )}
+
+          <h1 style={{ fontSize: 18, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>
+            Lade ein Selfie hoch und finde deine Fotos
+          </h1>
+
+          <div style={{ marginBottom: 24 }}>
+            <label
+              onMouseEnter={() => setHoveredUpload(true)}
+              onMouseLeave={() => setHoveredUpload(false)}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                padding: '8px 16px',
+                background: hoveredUpload ? '#1c2a38' : '#131e2a',
+                color: '#e8eef4', borderRadius: 4, cursor: 'pointer',
+                fontSize: 11, fontWeight: 700, textTransform: 'uppercase',
+                letterSpacing: 1, border: '1px solid #2a3a4a',
+                transform: hoveredUpload ? 'scale(1.03)' : 'scale(1)',
+                transition: 'all 0.15s ease'
+              }}>
+              Foto hochladen
+              <input type="file" accept="image/*" capture="user" onChange={handleSelfie} style={{ display: 'none' }} />
+            </label>
+            {selfieName && <div style={{ color: '#667788', fontSize: 12, marginTop: 8 }}>✓ {selfieName}</div>}
           </div>
-        )}
 
-        {/* TITEL */}
-        <h1 style={{ fontSize: 18, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>
-          Lade ein Selfie hoch und finde deine Fotos
-        </h1>
+          {preview && (
+            <img src={preview} alt="Vorschau"
+              style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '50%', marginBottom: '24px', border: '3px solid #e8ff00' }} />
+          )}
 
-        {/* SELFIE UPLOAD */}
-        <div style={{ marginBottom: 24 }}>
-          <label
-            onMouseEnter={() => setHoveredUpload(true)}
-            onMouseLeave={() => setHoveredUpload(false)}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              padding: '8px 16px',
-              background: hoveredUpload ? '#1c2a38' : '#131e2a',
-              color: '#e8eef4', borderRadius: 4, cursor: 'pointer',
-              fontSize: 11, fontWeight: 700, textTransform: 'uppercase',
-              letterSpacing: 1, border: '1px solid #2a3a4a',
-              transform: hoveredUpload ? 'scale(1.03)' : 'scale(1)',
-              transition: 'all 0.15s ease'
-            }}>
-            Foto hochladen
-            <input type="file" accept="image/*" capture="user" onChange={handleSelfie} style={{ display: 'none' }} />
-          </label>
-          {selfieName && <div style={{ color: '#667788', fontSize: 12, marginTop: 8 }}>✓ {selfieName}</div>}
+          <div>
+            <button
+              onClick={handleSearch}
+              disabled={searching}
+              onMouseEnter={() => setHoveredSearch(true)}
+              onMouseLeave={() => setHoveredSearch(false)}
+              style={{
+                padding: '10px 28px',
+                background: hoveredSearch ? '#d4e800' : '#e8ff00',
+                color: '#070b0f', border: 'none', borderRadius: '4px',
+                cursor: searching ? 'not-allowed' : 'pointer',
+                fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase',
+                transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)',
+                transition: 'all 0.15s ease'
+              }}>
+              {searching ? 'Suche läuft...' : 'Fotos suchen'}
+            </button>
+          </div>
+
+          {message && <p style={{ marginTop: '20px', fontWeight: 'bold', color: '#e8ff00' }}>{message}</p>}
         </div>
+      ) : (
+        // NACH SUCHE – 2 SPALTEN
+        <div style={{ padding: '40px 48px', maxWidth: '1100px', margin: '60px auto 0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'start' }}>
+          {/* LINKS */}
+          <LeftPanel />
 
-        {preview && (
-          <img src={preview} alt="Vorschau"
-            style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '50%', marginBottom: '24px', border: '3px solid #e8ff00' }} />
-        )}
-
-        <div>
-          <button
-            onClick={handleSearch}
-            disabled={searching}
-            onMouseEnter={() => setHoveredSearch(true)}
-            onMouseLeave={() => setHoveredSearch(false)}
-            style={{
-              padding: '10px 28px',
-              background: hoveredSearch ? '#d4e800' : '#e8ff00',
-              color: '#070b0f', border: 'none', borderRadius: '4px',
-              cursor: searching ? 'not-allowed' : 'pointer',
-              fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase',
-              transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)',
-              transition: 'all 0.15s ease'
-            }}>
-            {searching ? 'Suche läuft...' : 'Fotos suchen'}
-          </button>
-        </div>
-
-        {message && <p style={{ marginTop: '20px', fontWeight: 'bold', color: '#e8ff00' }}>{message}</p>}
-
-        {matches.length > 0 && (
-          <div style={{ marginTop: '30px', textAlign: 'left' }}>
-
-            {/* JETZT KAUFEN BUTTON */}
+          {/* RECHTS */}
+          <div>
             <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #e8ff00', borderRadius: 12, padding: '24px', marginBottom: 20, textAlign: 'center' }}>
               <div style={{ fontSize: 12, color: '#e8eef4', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 700, marginBottom: 4 }}>
                 {matches.length} Foto{matches.length > 1 ? 's' : ''} gefunden
@@ -267,8 +352,7 @@ function SucheContent() {
               </button>
             </div>
 
-            {/* FOTOS GRID – KLEINE QUADRATE */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
               {matches.map((filename, i) => (
                 <div key={i} onClick={() => setLightboxIndex(i)} style={{ position: 'relative', cursor: 'zoom-in', borderRadius: 4, overflow: 'hidden', aspectRatio: '1' }}>
                   <img src={getImageUrl(filename)} alt={`Foto ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
@@ -278,8 +362,8 @@ function SucheContent() {
               ))}
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }
