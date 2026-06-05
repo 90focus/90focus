@@ -15,9 +15,12 @@ function SucheContent() {
   const [selfieName, setSelfieName] = useState('')
   const [hoveredUpload, setHoveredUpload] = useState(false)
   const [hoveredSearch, setHoveredSearch] = useState(false)
+  const [hoveredKaufen, setHoveredKaufen] = useState(false)
   const searchParams = useSearchParams()
   const eventId = searchParams.get('eventId')
   const router = useRouter()
+
+  const PREIS_PRO_FOTO = 4.90
 
   useEffect(() => {
     if (eventId) {
@@ -82,6 +85,8 @@ function SucheContent() {
 
   const getImageUrl = (filename: string) =>
     `https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`
+
+  const total = (matches.length * PREIS_PRO_FOTO).toFixed(2)
 
   const Watermark = () => (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-around', pointerEvents: 'none', overflow: 'hidden' }}>
@@ -237,11 +242,30 @@ function SucheContent() {
 
         {matches.length > 0 && (
           <div style={{ marginTop: '30px', textAlign: 'left' }}>
-            {/* JETZT KAUFEN BUTTON OBEN */}
-            <div style={{ background: '#0d1219', border: '1px solid #e8ff00', borderRadius: 8, padding: '20px', marginBottom: 20, textAlign: 'center' }}>
-              <div style={{ fontSize: 13, color: '#8899aa', marginBottom: 8 }}>{matches.length} Foto(s) gefunden – alle als Paket kaufen</div>
-              <button onClick={handleKaufen}
-                style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '12px 32px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1.5, textTransform: 'uppercase' }}>
+
+            {/* JETZT KAUFEN BUTTON – SCHÖN */}
+            <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #e8ff00', borderRadius: 12, padding: '24px', marginBottom: 20, textAlign: 'center' }}>
+              <div style={{ fontSize: 12, color: '#8899aa', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 700, marginBottom: 4 }}>
+                {matches.length} Foto{matches.length > 1 ? 's' : ''} gefunden
+              </div>
+              <div style={{ fontSize: 28, fontWeight: 900, color: '#e8ff00', marginBottom: 4 }}>
+                CHF {total}
+              </div>
+              <div style={{ fontSize: 12, color: '#445566', marginBottom: 16 }}>
+                Alle Fotos ohne Wasserzeichen · Sofort Download
+              </div>
+              <button
+                onClick={handleKaufen}
+                onMouseEnter={() => setHoveredKaufen(true)}
+                onMouseLeave={() => setHoveredKaufen(false)}
+                style={{
+                  background: hoveredKaufen ? '#d4e800' : '#e8ff00',
+                  color: '#070b0f', border: 'none', borderRadius: 4,
+                  padding: '14px 40px', fontWeight: 900, fontSize: 15,
+                  cursor: 'pointer', letterSpacing: 1.5, textTransform: 'uppercase',
+                  transform: hoveredKaufen ? 'scale(1.03)' : 'scale(1)',
+                  transition: 'all 0.15s ease'
+                }}>
                 💳 Jetzt kaufen
               </button>
             </div>
