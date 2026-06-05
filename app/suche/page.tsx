@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { supabase } from '@/app/supabase'
 
 function SucheContent() {
@@ -12,8 +12,10 @@ function SucheContent() {
   const [preview, setPreview] = useState<string | null>(null)
   const [event, setEvent] = useState<any>(null)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+  const [selfieName, setSelfieName] = useState('')
   const searchParams = useSearchParams()
   const eventId = searchParams.get('eventId')
+  const router = useRouter()
 
   useEffect(() => {
     if (eventId) {
@@ -41,14 +43,12 @@ function SucheContent() {
     if (file) {
       setSelfie(file)
       setPreview(URL.createObjectURL(file))
+      setSelfieName(file.name)
     }
   }
 
   const handleSearch = async () => {
-    if (!selfie) {
-      setMessage('Bitte zuerst ein Selfie aufnehmen!')
-      return
-    }
+    if (!selfie) { setMessage('Bitte zuerst ein Selfie aufnehmen!'); return }
     setSearching(true)
     setMessage('Suche läuft...')
     setMatches([])
@@ -75,26 +75,11 @@ function SucheContent() {
     `https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`
 
   const Watermark = () => (
-    <div style={{
-      position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-      display: 'flex', flexDirection: 'column', justifyContent: 'space-around',
-      pointerEvents: 'none', overflow: 'hidden',
-    }}>
+    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-around', pointerEvents: 'none', overflow: 'hidden' }}>
       {[...Array(6)].map((_, row) => (
-        <div key={row} style={{
-          display: 'flex', gap: '40px',
-          transform: 'rotate(-30deg) translateX(-20%)',
-          whiteSpace: 'nowrap',
-          marginLeft: row % 2 === 0 ? '0px' : '60px',
-        }}>
+        <div key={row} style={{ display: 'flex', gap: '40px', transform: 'rotate(-30deg) translateX(-20%)', whiteSpace: 'nowrap', marginLeft: row % 2 === 0 ? '0px' : '60px' }}>
           {[...Array(5)].map((_, col) => (
-            <span key={col} style={{
-              fontSize: '13px', fontWeight: 800,
-              color: 'rgba(255,255,255,0.25)',
-              letterSpacing: 1, userSelect: 'none',
-            }}>
-              90focus ⚽
-            </span>
+            <span key={col} style={{ fontSize: '13px', fontWeight: 800, color: 'rgba(255,255,255,0.25)', letterSpacing: 1, userSelect: 'none' }}>90focus ⚽</span>
           ))}
         </div>
       ))}
@@ -103,130 +88,144 @@ function SucheContent() {
 
   const Logo = () => (
     !event?.sponsor_logo_url ? (
-      <div style={{
-        position: 'absolute', bottom: 8, right: 8,
-        background: 'rgba(0,0,0,0.6)', borderRadius: 4, padding: '4px 8px',
-        display: 'flex', alignItems: 'center', gap: 4,
-      }}>
+      <div style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.6)', borderRadius: 4, padding: '4px 8px', display: 'flex', alignItems: 'center', gap: 4 }}>
         <div style={{ width: 18, height: 18, background: '#e8ff00', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 9 }}>90</span>
         </div>
         <span style={{ color: '#fff', fontWeight: 800, fontSize: 11, letterSpacing: 1 }}>FOCUS</span>
       </div>
     ) : (
-      <div style={{
-        position: 'absolute', bottom: 8, right: 8,
-        background: 'rgba(0,0,0,0.5)', borderRadius: 4, padding: '4px 8px',
-      }}>
-        <img src={event.sponsor_logo_url} alt={event.sponsor_name}
-          style={{ height: '20px', objectFit: 'contain', opacity: 0.9 }} />
+      <div style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.5)', borderRadius: 4, padding: '4px 8px' }}>
+        <img src={event.sponsor_logo_url} alt={event.sponsor_name} style={{ height: '20px', objectFit: 'contain', opacity: 0.9 }} />
       </div>
     )
   )
 
   return (
-    <div style={{ padding: '40px', maxWidth: '800px', margin: '0 auto', background: '#070b0f', minHeight: '100vh', color: '#e8eef4', fontFamily: 'sans-serif' }}>
+    <div style={{ background: '#070b0f', minHeight: '100vh', color: '#e8eef4', fontFamily: 'sans-serif' }}>
 
       {/* LIGHTBOX */}
       {lightboxIndex !== null && (
-        <div
-          onClick={() => setLightboxIndex(null)}
-          style={{
-            position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-            background: 'rgba(0,0,0,0.95)', zIndex: 1000,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}
-        >
+        <div onClick={() => setLightboxIndex(null)} style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.95)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <button onClick={() => setLightboxIndex(null)} style={{ position: 'absolute', top: 20, right: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 28, width: 44, height: 44, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
-
           {lightboxIndex > 0 && (
             <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1) }} style={{ position: 'absolute', left: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 28, width: 50, height: 50, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
           )}
-
           <div onClick={(e) => e.stopPropagation()} style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}>
             <img src={getImageUrl(matches[lightboxIndex])} alt={`Foto ${lightboxIndex + 1}`} style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 8 }} />
             <Watermark />
             <Logo />
           </div>
-
           {lightboxIndex < matches.length - 1 && (
             <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1) }} style={{ position: 'absolute', right: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 28, width: 50, height: 50, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
           )}
-
           <div style={{ position: 'absolute', bottom: 20, color: '#667788', fontSize: 14 }}>{lightboxIndex + 1} / {matches.length}</div>
         </div>
       )}
 
-      {/* NAV */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
-        <div style={{ width: 34, height: 34, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>90</span>
+      {/* NAV FIXED */}
+      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/')}>
+          <div style={{ width: 34, height: 34, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>90</span>
+          </div>
+          <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
         </div>
-        <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
-      </div>
-
-      {event && (
-        <div style={{ marginBottom: '24px', padding: '16px 20px', background: '#0d1219', borderRadius: '8px', border: '1px solid #1c2a38' }}>
-          <div style={{ fontSize: 10, color: '#e8ff00', fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4 }}>{event.liga}</div>
-          <strong style={{ fontSize: 18 }}>{event.home_team} vs {event.away_team}</strong><br />
-          <span style={{ color: '#445566', fontSize: 13 }}>📅 {event.date} {event.ort && `— 📍 ${event.ort}`}</span>
-          {event.sponsor_name && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10, background: '#131e2a', padding: '6px 12px', borderRadius: 4, width: 'fit-content' }}>
-              {event.sponsor_logo_url && (
-                <img src={event.sponsor_logo_url} alt={event.sponsor_name} style={{ height: '20px', objectFit: 'contain' }} />
-              )}
-              <span style={{ fontSize: 12, color: '#e8eef4', fontWeight: 700 }}>⭐ Powered by {event.sponsor_name}</span>
-            </div>
-          )}
+        <div style={{ display: 'flex', gap: 12 }}>
+          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/')}>Home</button>
+          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/spiele')}>Alle Spiele</button>
+          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/login')}>Login</button>
+          <button style={{ background: 'transparent', color: '#e8ff00', border: '1px solid #e8ff00', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/register')}>Sign Up</button>
         </div>
-      )}
+      </nav>
 
-      <h1 style={{ fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 8 }}>🔍 Meine Fotos finden</h1>
-      <p style={{ color: '#667788', marginBottom: 24 }}>Mach ein Selfie oder lade ein Foto von dir hoch!</p>
+      <div style={{ padding: '40px 48px', maxWidth: '900px', margin: '60px auto 0' }}>
 
-      <input type="file" accept="image/*" capture="user" onChange={handleSelfie}
-        style={{ margin: '20px 0', display: 'block', color: '#e8eef4' }} />
-
-      {preview && (
-        <img src={preview} alt="Vorschau"
-          style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '50%', marginBottom: '20px', border: '3px solid #e8ff00' }} />
-      )}
-
-      <button onClick={handleSearch} disabled={searching}
-        style={{ padding: '12px 32px', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '16px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase' }}>
-        {searching ? 'Suche...' : '🔍 Fotos suchen'}
-      </button>
-
-      {message && <p style={{ marginTop: '20px', fontWeight: 'bold', color: '#e8ff00' }}>{message}</p>}
-
-      {matches.length > 0 && (
-        <div style={{ marginTop: '30px' }}>
-          <h2 style={{ fontSize: 24, fontWeight: 900, textTransform: 'uppercase', marginBottom: 16 }}>Deine Fotos:</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
-            {matches.map((filename, i) => (
-              <div key={i} style={{ borderRadius: '8px', overflow: 'hidden', background: '#0d1219', border: '1px solid #1c2a38' }}>
-                <div onClick={() => setLightboxIndex(i)} style={{ position: 'relative', cursor: 'zoom-in' }}>
-                  <img src={getImageUrl(filename)} alt={`Foto ${i + 1}`} style={{ width: '100%', display: 'block' }} />
-                  <Watermark />
-                  <Logo />
-                </div>
-                <div style={{ padding: '12px' }}>
-                  <button
-                    onClick={() => {
-                      const params = new URLSearchParams()
-                      params.set('filename', filename)
-                      if (eventId) params.set('eventId', eventId)
-                      window.location.href = `/checkout?${params.toString()}`
-                    }}
-                    style={{ width: '100%', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1.5, textTransform: 'uppercase' }}>
-                    💳 Jetzt kaufen
-                  </button>
+        {/* EVENT CARD */}
+        {event && (
+          <div style={{ marginBottom: 32, background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden' }}>
+            {event.bild_url && (
+              <div style={{ height: 200, position: 'relative', overflow: 'hidden' }}>
+                <img src={event.bild_url} alt={`${event.home_team} vs ${event.away_team}`}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <div style={{ position: 'absolute', top: 10, left: 10, background: '#e8ff00', color: '#070b0f', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', padding: '4px 8px', borderRadius: 2 }}>
+                  {event.liga}
                 </div>
               </div>
-            ))}
+            )}
+            <div style={{ padding: '20px' }}>
+              {!event.bild_url && <div style={{ fontSize: 10, color: '#e8ff00', fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 6 }}>{event.liga}</div>}
+              <div style={{ fontSize: 20, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>{event.home_team} vs {event.away_team}</div>
+              <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 12 }}>📅 {event.date} {event.ort && `· 📍 ${event.ort}`}</div>
+              {event.sponsor_name && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
+                  {event.sponsor_logo_url && <img src={event.sponsor_logo_url} alt={event.sponsor_name} style={{ height: '16px', objectFit: 'contain' }} />}
+                  <span style={{ fontSize: 11, color: '#e8eef4', fontWeight: 700 }}>⭐ {event.sponsor_name}</span>
+                </div>
+              )}
+            </div>
           </div>
+        )}
+
+        <h1 style={{ fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 8 }}>🔍 Meine Fotos finden</h1>
+        <p style={{ color: '#667788', marginBottom: 24 }}>Mach ein Selfie oder lade ein Foto von dir hoch!</p>
+
+        {/* SELFIE UPLOAD */}
+        <div style={{ marginBottom: 24 }}>
+          <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 24px', background: '#e8ff00', color: '#070b0f', borderRadius: 4, cursor: 'pointer', fontSize: 14, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1.5 }}>
+            📸 Selfie auswählen
+            <input type="file" accept="image/*" capture="user" onChange={handleSelfie} style={{ display: 'none' }} />
+          </label>
+          {selfieName && <span style={{ color: '#667788', fontSize: 13, marginLeft: 12 }}>✓ {selfieName}</span>}
         </div>
-      )}
+
+        {preview && (
+          <img src={preview} alt="Vorschau"
+            style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '50%', marginBottom: '24px', border: '3px solid #e8ff00' }} />
+        )}
+
+        <div>
+          <button onClick={handleSearch} disabled={searching}
+            style={{ padding: '12px 32px', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '4px', cursor: searching ? 'not-allowed' : 'pointer', fontSize: '16px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase' }}>
+            {searching ? 'Suche läuft...' : '🔍 Fotos suchen'}
+          </button>
+        </div>
+
+        {message && <p style={{ marginTop: '20px', fontWeight: 'bold', color: '#e8ff00' }}>{message}</p>}
+
+        {matches.length > 0 && (
+          <div style={{ marginTop: '30px' }}>
+            <h2 style={{ fontSize: 24, fontWeight: 900, textTransform: 'uppercase', marginBottom: 16 }}>Deine Fotos:</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+              {matches.map((filename, i) => (
+                <div key={i} style={{ borderRadius: '8px', overflow: 'hidden', background: '#0d1219', border: '1px solid #1c2a38' }}>
+                  <div onClick={() => setLightboxIndex(i)} style={{ position: 'relative', cursor: 'zoom-in' }}>
+                    <img src={getImageUrl(filename)} alt={`Foto ${i + 1}`} style={{ width: '100%', display: 'block' }} />
+                    <Watermark />
+                    <Logo />
+                  </div>
+                  <div style={{ padding: '12px' }}>
+                    <button
+                      onClick={() => {
+                        const params = new URLSearchParams()
+                        params.set('filename', filename)
+                        if (eventId) params.set('eventId', eventId)
+                        window.location.href = `/checkout?${params.toString()}`
+                      }}
+                      style={{ width: '100%', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1.5, textTransform: 'uppercase' }}>
+                      💳 Jetzt kaufen
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
