@@ -170,28 +170,48 @@ function SucheContent() {
       </div>
 
       {preview && (
-        <img src={preview} alt="Vorschau"
-          style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '50%', marginBottom: '16px', border: '3px solid #e8ff00' }} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20, marginBottom: 16 }}>
+          <img src={preview} alt="Vorschau"
+            style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '50%', border: '3px solid #e8ff00' }} />
+          <button
+            onClick={handleSearch}
+            disabled={searching}
+            onMouseEnter={() => setHoveredSearch(true)}
+            onMouseLeave={() => setHoveredSearch(false)}
+            style={{
+              padding: '10px 28px',
+              background: hoveredSearch ? '#d4e800' : '#e8ff00',
+              color: '#070b0f', border: 'none', borderRadius: '4px',
+              cursor: searching ? 'not-allowed' : 'pointer',
+              fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase',
+              transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)',
+              transition: 'all 0.15s ease'
+            }}>
+            {searching ? 'Suche läuft...' : 'Fotos suchen'}
+          </button>
+        </div>
       )}
 
-      <div>
-        <button
-          onClick={handleSearch}
-          disabled={searching}
-          onMouseEnter={() => setHoveredSearch(true)}
-          onMouseLeave={() => setHoveredSearch(false)}
-          style={{
-            padding: '10px 28px',
-            background: hoveredSearch ? '#d4e800' : '#e8ff00',
-            color: '#070b0f', border: 'none', borderRadius: '4px',
-            cursor: searching ? 'not-allowed' : 'pointer',
-            fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase',
-            transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)',
-            transition: 'all 0.15s ease'
-          }}>
-          {searching ? 'Suche läuft...' : 'Fotos suchen'}
-        </button>
-      </div>
+      {!preview && (
+        <div>
+          <button
+            onClick={handleSearch}
+            disabled={searching}
+            onMouseEnter={() => setHoveredSearch(true)}
+            onMouseLeave={() => setHoveredSearch(false)}
+            style={{
+              padding: '10px 28px',
+              background: hoveredSearch ? '#d4e800' : '#e8ff00',
+              color: '#070b0f', border: 'none', borderRadius: '4px',
+              cursor: searching ? 'not-allowed' : 'pointer',
+              fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase',
+              transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)',
+              transition: 'all 0.15s ease'
+            }}>
+            {searching ? 'Suche läuft...' : 'Fotos suchen'}
+          </button>
+        </div>
+      )}
 
       {message && <p style={{ marginTop: '16px', fontWeight: 'bold', color: '#e8ff00', fontSize: 13 }}>{message}</p>}
     </div>
@@ -241,7 +261,6 @@ function SucheContent() {
 
       {/* MAIN CONTENT */}
       {matches.length === 0 ? (
-        // VOR SUCHE – MITTIG
         <div style={{ padding: '40px 48px', maxWidth: '600px', margin: '60px auto 0', textAlign: 'center' }}>
           {event && (
             <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', textAlign: 'left', marginBottom: 32 }}>
@@ -295,12 +314,29 @@ function SucheContent() {
             {selfieName && <div style={{ color: '#667788', fontSize: 12, marginTop: 8 }}>✓ {selfieName}</div>}
           </div>
 
-          {preview && (
-            <img src={preview} alt="Vorschau"
-              style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '50%', marginBottom: '24px', border: '3px solid #e8ff00' }} />
-          )}
-
-          <div>
+          {/* VORSCHAU + BUTTON NEBENEINANDER */}
+          {preview ? (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 24, marginBottom: 16 }}>
+              <img src={preview} alt="Vorschau"
+                style={{ width: '90px', height: '90px', objectFit: 'cover', borderRadius: '50%', border: '3px solid #e8ff00' }} />
+              <button
+                onClick={handleSearch}
+                disabled={searching}
+                onMouseEnter={() => setHoveredSearch(true)}
+                onMouseLeave={() => setHoveredSearch(false)}
+                style={{
+                  padding: '10px 28px',
+                  background: hoveredSearch ? '#d4e800' : '#e8ff00',
+                  color: '#070b0f', border: 'none', borderRadius: '4px',
+                  cursor: searching ? 'not-allowed' : 'pointer',
+                  fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase',
+                  transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)',
+                  transition: 'all 0.15s ease'
+                }}>
+                {searching ? 'Suche läuft...' : 'Fotos suchen'}
+              </button>
+            </div>
+          ) : (
             <button
               onClick={handleSearch}
               disabled={searching}
@@ -317,12 +353,11 @@ function SucheContent() {
               }}>
               {searching ? 'Suche läuft...' : 'Fotos suchen'}
             </button>
-          </div>
+          )}
 
           {message && <p style={{ marginTop: '20px', fontWeight: 'bold', color: '#e8ff00' }}>{message}</p>}
         </div>
       ) : (
-        // NACH SUCHE – 2 SPALTEN
         <div style={{ padding: '40px 48px', maxWidth: '1100px', margin: '60px auto 0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'start' }}>
           {/* LINKS */}
           <LeftPanel />
