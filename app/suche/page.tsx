@@ -145,42 +145,46 @@ function SucheContent() {
 
       <div style={{ padding: '40px 48px', maxWidth: '900px', margin: '60px auto 0' }}>
 
-        {/* EVENT CARD */}
+        {/* EVENT CARD – gleicher Style wie Homepage */}
         {event && (
-          <div style={{ marginBottom: 32, background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden' }}>
-            {event.bild_url && (
-              <div style={{ height: 200, position: 'relative', overflow: 'hidden' }}>
+          <div style={{ marginBottom: 32, background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', maxWidth: 380 }}>
+            <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
+              {event.bild_url ? (
                 <img src={event.bild_url} alt={`${event.home_team} vs ${event.away_team}`}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                <div style={{ position: 'absolute', top: 10, left: 10, background: '#e8ff00', color: '#070b0f', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', padding: '4px 8px', borderRadius: 2 }}>
-                  {event.liga}
+              ) : (
+                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: 48 }}>⚽</span>
                 </div>
+              )}
+              <div style={{ position: 'absolute', top: 10, left: 10, background: '#e8ff00', color: '#070b0f', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', padding: '4px 8px', borderRadius: 2 }}>
+                {event.liga}
               </div>
-            )}
-            <div style={{ padding: '20px' }}>
-              {!event.bild_url && <div style={{ fontSize: 10, color: '#e8ff00', fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 6 }}>{event.liga}</div>}
-              <div style={{ fontSize: 20, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>{event.home_team} vs {event.away_team}</div>
-              <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 12 }}>📅 {event.date} {event.ort && `· 📍 ${event.ort}`}</div>
+            </div>
+            <div style={{ padding: '16px' }}>
+              <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>{event.home_team} vs {event.away_team}</div>
+              <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 8 }}>📅 {event.date} {event.ort && `· 📍 ${event.ort}`}</div>
               {event.sponsor_name && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
-                  {event.sponsor_logo_url && <img src={event.sponsor_logo_url} alt={event.sponsor_name} style={{ height: '16px', objectFit: 'contain' }} />}
-                  <span style={{ fontSize: 11, color: '#e8eef4', fontWeight: 700 }}>⭐ {event.sponsor_name}</span>
+                  {event.sponsor_logo_url && <img src={event.sponsor_logo_url} alt={event.sponsor_name} style={{ height: '14px', objectFit: 'contain' }} />}
+                  <span style={{ fontSize: 10, color: '#e8eef4', fontWeight: 700 }}>⭐ {event.sponsor_name}</span>
                 </div>
               )}
             </div>
           </div>
         )}
 
-        <h1 style={{ fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 8 }}>🔍 Meine Fotos finden</h1>
-        <p style={{ color: '#667788', marginBottom: 24 }}>Mach ein Selfie oder lade ein Foto von dir hoch!</p>
+        {/* TITEL */}
+        <h1 style={{ fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 8 }}>Meine Fotos finden</h1>
+        <p style={{ color: '#e8eef4', fontSize: 15, fontWeight: 600, marginBottom: 24 }}>Lade ein Selfie hoch und finde deine Fotos.</p>
 
         {/* SELFIE UPLOAD */}
-        <div style={{ marginBottom: 24 }}>
-          <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 24px', background: '#e8ff00', color: '#070b0f', borderRadius: 4, cursor: 'pointer', fontSize: 14, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1.5 }}>
-            📸 Selfie auswählen
+        <div style={{ marginBottom: 24, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 4, cursor: 'pointer', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, border: '1px solid #2a3a4a' }}>
+            📷 Foto hochladen
             <input type="file" accept="image/*" capture="user" onChange={handleSelfie} style={{ display: 'none' }} />
           </label>
-          {selfieName && <span style={{ color: '#667788', fontSize: 13, marginLeft: 12 }}>✓ {selfieName}</span>}
+          {selfieName && <span style={{ color: '#667788', fontSize: 13 }}>✓ {selfieName}</span>}
         </div>
 
         {preview && (
@@ -191,7 +195,7 @@ function SucheContent() {
         <div>
           <button onClick={handleSearch} disabled={searching}
             style={{ padding: '12px 32px', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '4px', cursor: searching ? 'not-allowed' : 'pointer', fontSize: '16px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase' }}>
-            {searching ? 'Suche läuft...' : '🔍 Fotos suchen'}
+            {searching ? 'Suche läuft...' : 'Fotos suchen'}
           </button>
         </div>
 
