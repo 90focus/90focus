@@ -177,8 +177,9 @@ function SucheContent() {
         )}
 
         {/* TITEL */}
-        <h1 style={{ fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 8 }}>Meine Fotos finden</h1>
-        <p style={{ color: '#e8eef4', fontSize: 15, fontWeight: 600, marginBottom: 32 }}>Lade ein Selfie hoch und finde deine Fotos.</p>
+        <h1 style={{ fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>
+          Lade ein Selfie hoch und finde deine Fotos
+        </h1>
 
         {/* SELFIE UPLOAD */}
         <div style={{ marginBottom: 24 }}>
