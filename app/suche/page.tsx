@@ -76,11 +76,17 @@ function SucheContent() {
     }
   }
 
-  const handleKaufen = () => {
+  const handleKaufen = async () => {
+    const { data: { session } } = await supabase.auth.getSession()
     const params = new URLSearchParams()
     params.set('filenames', matches.join(','))
     if (eventId) params.set('eventId', eventId)
-    window.location.href = `/checkout?${params.toString()}`
+    const checkoutUrl = `/checkout?${params.toString()}`
+    if (!session) {
+      router.push(`/login?redirect=${encodeURIComponent(checkoutUrl)}`)
+      return
+    }
+    window.location.href = checkoutUrl
   }
 
   const getImageUrl = (filename: string) =>
@@ -193,24 +199,22 @@ function SucheContent() {
       )}
 
       {!preview && (
-        <div>
-          <button
-            onClick={handleSearch}
-            disabled={searching}
-            onMouseEnter={() => setHoveredSearch(true)}
-            onMouseLeave={() => setHoveredSearch(false)}
-            style={{
-              padding: '10px 28px',
-              background: hoveredSearch ? '#d4e800' : '#e8ff00',
-              color: '#070b0f', border: 'none', borderRadius: '4px',
-              cursor: searching ? 'not-allowed' : 'pointer',
-              fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase',
-              transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)',
-              transition: 'all 0.15s ease'
-            }}>
-            {searching ? 'Suche läuft...' : 'Fotos suchen'}
-          </button>
-        </div>
+        <button
+          onClick={handleSearch}
+          disabled={searching}
+          onMouseEnter={() => setHoveredSearch(true)}
+          onMouseLeave={() => setHoveredSearch(false)}
+          style={{
+            padding: '10px 28px',
+            background: hoveredSearch ? '#d4e800' : '#e8ff00',
+            color: '#070b0f', border: 'none', borderRadius: '4px',
+            cursor: searching ? 'not-allowed' : 'pointer',
+            fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase',
+            transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)',
+            transition: 'all 0.15s ease'
+          }}>
+          {searching ? 'Suche läuft...' : 'Fotos suchen'}
+        </button>
       )}
 
       {message && <p style={{ marginTop: '16px', fontWeight: 'bold', color: '#e8ff00', fontSize: 13 }}>{message}</p>}
@@ -314,7 +318,6 @@ function SucheContent() {
             {selfieName && <div style={{ color: '#667788', fontSize: 12, marginTop: 8 }}>✓ {selfieName}</div>}
           </div>
 
-          {/* VORSCHAU + BUTTON NEBENEINANDER */}
           {preview ? (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 24, marginBottom: 16 }}>
               <img src={preview} alt="Vorschau"
@@ -359,10 +362,7 @@ function SucheContent() {
         </div>
       ) : (
         <div style={{ padding: '40px 48px', maxWidth: '1100px', margin: '60px auto 0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'start' }}>
-          {/* LINKS */}
           <LeftPanel />
-
-          {/* RECHTS */}
           <div>
             <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #e8ff00', borderRadius: 12, padding: '24px', marginBottom: 20, textAlign: 'center' }}>
               <div style={{ fontSize: 12, color: '#e8eef4', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 700, marginBottom: 4 }}>

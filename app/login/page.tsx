@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { supabase } from '@/app/supabase'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
-export default function LoginPage() {
+function LoginContent() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -12,6 +13,8 @@ export default function LoginPage() {
   const [mode, setMode] = useState<'login' | 'forgot'>('login')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect')
 
   const handleLogin = async () => {
     setLoading(true)
@@ -22,6 +25,14 @@ export default function LoginPage() {
       setLoading(false)
       return
     }
+
+    // Wenn redirect Parameter vorhanden direkt dorthin
+    if (redirectTo) {
+      router.push(decodeURIComponent(redirectTo))
+      setLoading(false)
+      return
+    }
+
     const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).single()
     if (profile?.role === 'photographer') {
       router.push('/meine-events')
@@ -46,7 +57,6 @@ export default function LoginPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', flexDirection: 'column', fontFamily: 'sans-serif' }}>
-      {/* NAV */}
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/')}>
           <div style={{ width: 34, height: 34, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -141,5 +151,13 @@ export default function LoginPage() {
         <div style={{ color: '#1c2a38', fontSize: 12 }}>© 2026 90Focus - Luzern</div>
       </footer>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#070b0f' }} />}>
+      <LoginContent />
+    </Suspense>
   )
 }
