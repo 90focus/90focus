@@ -73,6 +73,13 @@ function SucheContent() {
     }
   }
 
+  const handleKaufen = () => {
+    const params = new URLSearchParams()
+    params.set('filenames', matches.join(','))
+    if (eventId) params.set('eventId', eventId)
+    window.location.href = `/checkout?${params.toString()}`
+  }
+
   const getImageUrl = (filename: string) =>
     `https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`
 
@@ -149,8 +156,8 @@ function SucheContent() {
 
         {/* EVENT CARD */}
         {event && (
-          <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', textAlign: 'left', maxWidth: 500, margin: '0 auto 32px' }}>
-            <div style={{ height: 220, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', textAlign: 'left', marginBottom: 32 }}>
+            <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
               {event.bild_url ? (
                 <img src={event.bild_url} alt={`${event.home_team} vs ${event.away_team}`}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -230,27 +237,22 @@ function SucheContent() {
 
         {matches.length > 0 && (
           <div style={{ marginTop: '30px', textAlign: 'left' }}>
-            <h2 style={{ fontSize: 24, fontWeight: 900, textTransform: 'uppercase', marginBottom: 16 }}>Deine Fotos:</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+            {/* JETZT KAUFEN BUTTON OBEN */}
+            <div style={{ background: '#0d1219', border: '1px solid #e8ff00', borderRadius: 8, padding: '20px', marginBottom: 20, textAlign: 'center' }}>
+              <div style={{ fontSize: 13, color: '#8899aa', marginBottom: 8 }}>{matches.length} Foto(s) gefunden – alle als Paket kaufen</div>
+              <button onClick={handleKaufen}
+                style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '12px 32px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1.5, textTransform: 'uppercase' }}>
+                💳 Jetzt kaufen
+              </button>
+            </div>
+
+            {/* FOTOS GRID – KLEINE QUADRATE */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
               {matches.map((filename, i) => (
-                <div key={i} style={{ borderRadius: '8px', overflow: 'hidden', background: '#0d1219', border: '1px solid #1c2a38' }}>
-                  <div onClick={() => setLightboxIndex(i)} style={{ position: 'relative', cursor: 'zoom-in' }}>
-                    <img src={getImageUrl(filename)} alt={`Foto ${i + 1}`} style={{ width: '100%', display: 'block' }} />
-                    <Watermark />
-                    <Logo />
-                  </div>
-                  <div style={{ padding: '12px' }}>
-                    <button
-                      onClick={() => {
-                        const params = new URLSearchParams()
-                        params.set('filename', filename)
-                        if (eventId) params.set('eventId', eventId)
-                        window.location.href = `/checkout?${params.toString()}`
-                      }}
-                      style={{ width: '100%', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px', fontWeight: 900, fontSize: 12, cursor: 'pointer', letterSpacing: 1.5, textTransform: 'uppercase' }}>
-                      💳 Jetzt kaufen
-                    </button>
-                  </div>
+                <div key={i} onClick={() => setLightboxIndex(i)} style={{ position: 'relative', cursor: 'zoom-in', borderRadius: 4, overflow: 'hidden', aspectRatio: '1' }}>
+                  <img src={getImageUrl(filename)} alt={`Foto ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  <Watermark />
+                  <Logo />
                 </div>
               ))}
             </div>
