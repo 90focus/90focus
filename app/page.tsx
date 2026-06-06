@@ -29,12 +29,14 @@ export default function Home() {
       }
     }
     fetchEvents()
+
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session?.user) {
         const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
         if (profile?.role === 'photographer') {
           router.push('/meine-events')
+          setLoading(false)
           return
         }
         setUser(session.user)
