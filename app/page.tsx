@@ -136,8 +136,8 @@ export default function Home() {
                 transform: hoveredHeroBtn ? "scale(1.03)" : "scale(1)",
                 transition: "all 0.15s ease"
               }}
-              onClick={() => user ? router.push('/kunden-dashboard') : router.push('/spiele')}>
-              {user ? 'Fotos verwalten →' : 'Meine Fotos finden →'}
+              onClick={() => router.push('/spiele')}>
+              Meine Fotos finden →
             </button>
           </div>
         </div>
@@ -185,7 +185,7 @@ export default function Home() {
                     transform: hoveredCard === ev.id ? "translateY(-4px)" : "translateY(0)",
                     transition: "all 0.2s ease"
                   }}
-                  onClick={() => user ? router.push('/kunden-dashboard') : router.push(`/suche?eventId=${ev.id}`)}>
+                  onClick={() => router.push(`/suche?eventId=${ev.id}`)}>
                   <div style={{ height: 180, background: "#131e2a", position: "relative", overflow: "hidden" }}>
                     {ev.bild_url ? (
                       <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
