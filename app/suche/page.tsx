@@ -169,19 +169,8 @@ function SucheContent() {
       </h1>
 
       <div style={{ marginBottom: 16 }}>
-        <label
-          onMouseEnter={() => setHoveredUpload(true)}
-          onMouseLeave={() => setHoveredUpload(false)}
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-            padding: '8px 16px',
-            background: hoveredUpload ? '#1c2a38' : '#131e2a',
-            color: '#e8eef4', borderRadius: 4, cursor: 'pointer',
-            fontSize: 11, fontWeight: 700, textTransform: 'uppercase',
-            letterSpacing: 1, border: '1px solid #2a3a4a',
-            transform: hoveredUpload ? 'scale(1.03)' : 'scale(1)',
-            transition: 'all 0.15s ease'
-          }}>
+        <label onMouseEnter={() => setHoveredUpload(true)} onMouseLeave={() => setHoveredUpload(false)}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', background: hoveredUpload ? '#1c2a38' : '#131e2a', color: '#e8eef4', borderRadius: 4, cursor: 'pointer', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, border: '1px solid #2a3a4a', transform: hoveredUpload ? 'scale(1.03)' : 'scale(1)', transition: 'all 0.15s ease' }}>
           Foto hochladen
           <input type="file" accept="image/*" capture="user" onChange={handleSelfie} style={{ display: 'none' }} />
         </label>
@@ -190,8 +179,7 @@ function SucheContent() {
 
       {preview && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20, marginBottom: 16 }}>
-          <img src={preview} alt="Vorschau"
-            style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '50%', border: '3px solid #e8ff00' }} />
+          <img src={preview} alt="Vorschau" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '50%', border: '3px solid #e8ff00' }} />
           <button onClick={handleSearch} disabled={searching}
             onMouseEnter={() => setHoveredSearch(true)} onMouseLeave={() => setHoveredSearch(false)}
             style={{ padding: '10px 28px', background: hoveredSearch ? '#d4e800' : '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '4px', cursor: searching ? 'not-allowed' : 'pointer', fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase', transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)', transition: 'all 0.15s ease' }}>
@@ -251,6 +239,8 @@ function SucheContent() {
             <>
               <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
                 onClick={() => router.push('/kunden-dashboard')}>Meine Fotos</button>
+              <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+                onClick={() => router.push('/kunden-profil')}>Profil</button>
               <button style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
                 onClick={handleLogout}>Abmelden</button>
             </>
