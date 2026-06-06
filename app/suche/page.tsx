@@ -16,6 +16,7 @@ function SucheContent() {
   const [hoveredUpload, setHoveredUpload] = useState(false)
   const [hoveredSearch, setHoveredSearch] = useState(false)
   const [hoveredKaufen, setHoveredKaufen] = useState(false)
+  const [user, setUser] = useState<any>(null)
   const searchParams = useSearchParams()
   const eventId = searchParams.get('eventId')
   const router = useRouter()
@@ -23,6 +24,12 @@ function SucheContent() {
   const PREIS_PRO_FOTO = 4.90
 
   useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      setUser(session?.user || null)
+    }
+    checkUser()
+
     if (eventId) {
       const loadEvent = async () => {
         const { data } = await supabase.from('events').select('*').eq('id', eventId).single()
@@ -87,6 +94,12 @@ function SucheContent() {
       return
     }
     window.location.href = checkoutUrl
+  }
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    setUser(null)
+    router.push('/')
   }
 
   const getImageUrl = (filename: string) =>
@@ -179,40 +192,18 @@ function SucheContent() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20, marginBottom: 16 }}>
           <img src={preview} alt="Vorschau"
             style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '50%', border: '3px solid #e8ff00' }} />
-          <button
-            onClick={handleSearch}
-            disabled={searching}
-            onMouseEnter={() => setHoveredSearch(true)}
-            onMouseLeave={() => setHoveredSearch(false)}
-            style={{
-              padding: '10px 28px',
-              background: hoveredSearch ? '#d4e800' : '#e8ff00',
-              color: '#070b0f', border: 'none', borderRadius: '4px',
-              cursor: searching ? 'not-allowed' : 'pointer',
-              fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase',
-              transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)',
-              transition: 'all 0.15s ease'
-            }}>
+          <button onClick={handleSearch} disabled={searching}
+            onMouseEnter={() => setHoveredSearch(true)} onMouseLeave={() => setHoveredSearch(false)}
+            style={{ padding: '10px 28px', background: hoveredSearch ? '#d4e800' : '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '4px', cursor: searching ? 'not-allowed' : 'pointer', fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase', transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)', transition: 'all 0.15s ease' }}>
             {searching ? 'Suche läuft...' : 'Fotos suchen'}
           </button>
         </div>
       )}
 
       {!preview && (
-        <button
-          onClick={handleSearch}
-          disabled={searching}
-          onMouseEnter={() => setHoveredSearch(true)}
-          onMouseLeave={() => setHoveredSearch(false)}
-          style={{
-            padding: '10px 28px',
-            background: hoveredSearch ? '#d4e800' : '#e8ff00',
-            color: '#070b0f', border: 'none', borderRadius: '4px',
-            cursor: searching ? 'not-allowed' : 'pointer',
-            fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase',
-            transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)',
-            transition: 'all 0.15s ease'
-          }}>
+        <button onClick={handleSearch} disabled={searching}
+          onMouseEnter={() => setHoveredSearch(true)} onMouseLeave={() => setHoveredSearch(false)}
+          style={{ padding: '10px 28px', background: hoveredSearch ? '#d4e800' : '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '4px', cursor: searching ? 'not-allowed' : 'pointer', fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase', transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)', transition: 'all 0.15s ease' }}>
           {searching ? 'Suche läuft...' : 'Fotos suchen'}
         </button>
       )}
@@ -256,10 +247,21 @@ function SucheContent() {
             onClick={() => router.push('/')}>Home</button>
           <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
             onClick={() => router.push('/spiele')}>Alle Spiele</button>
-          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-            onClick={() => router.push('/login')}>Login</button>
-          <button style={{ background: 'transparent', color: '#e8ff00', border: '1px solid #e8ff00', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-            onClick={() => router.push('/register')}>Sign Up</button>
+          {user ? (
+            <>
+              <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+                onClick={() => router.push('/kunden-dashboard')}>Meine Fotos</button>
+              <button style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+                onClick={handleLogout}>Abmelden</button>
+            </>
+          ) : (
+            <>
+              <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+                onClick={() => router.push('/login')}>Login</button>
+              <button style={{ background: 'transparent', color: '#e8ff00', border: '1px solid #e8ff00', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+                onClick={() => router.push('/register')}>Sign Up</button>
+            </>
+          )}
         </div>
       </nav>
 
@@ -299,19 +301,8 @@ function SucheContent() {
           </h1>
 
           <div style={{ marginBottom: 24 }}>
-            <label
-              onMouseEnter={() => setHoveredUpload(true)}
-              onMouseLeave={() => setHoveredUpload(false)}
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                padding: '8px 16px',
-                background: hoveredUpload ? '#1c2a38' : '#131e2a',
-                color: '#e8eef4', borderRadius: 4, cursor: 'pointer',
-                fontSize: 11, fontWeight: 700, textTransform: 'uppercase',
-                letterSpacing: 1, border: '1px solid #2a3a4a',
-                transform: hoveredUpload ? 'scale(1.03)' : 'scale(1)',
-                transition: 'all 0.15s ease'
-              }}>
+            <label onMouseEnter={() => setHoveredUpload(true)} onMouseLeave={() => setHoveredUpload(false)}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', background: hoveredUpload ? '#1c2a38' : '#131e2a', color: '#e8eef4', borderRadius: 4, cursor: 'pointer', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, border: '1px solid #2a3a4a', transform: hoveredUpload ? 'scale(1.03)' : 'scale(1)', transition: 'all 0.15s ease' }}>
               Foto hochladen
               <input type="file" accept="image/*" capture="user" onChange={handleSelfie} style={{ display: 'none' }} />
             </label>
@@ -320,40 +311,17 @@ function SucheContent() {
 
           {preview ? (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 24, marginBottom: 16 }}>
-              <img src={preview} alt="Vorschau"
-                style={{ width: '90px', height: '90px', objectFit: 'cover', borderRadius: '50%', border: '3px solid #e8ff00' }} />
-              <button
-                onClick={handleSearch}
-                disabled={searching}
-                onMouseEnter={() => setHoveredSearch(true)}
-                onMouseLeave={() => setHoveredSearch(false)}
-                style={{
-                  padding: '10px 28px',
-                  background: hoveredSearch ? '#d4e800' : '#e8ff00',
-                  color: '#070b0f', border: 'none', borderRadius: '4px',
-                  cursor: searching ? 'not-allowed' : 'pointer',
-                  fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase',
-                  transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)',
-                  transition: 'all 0.15s ease'
-                }}>
+              <img src={preview} alt="Vorschau" style={{ width: '90px', height: '90px', objectFit: 'cover', borderRadius: '50%', border: '3px solid #e8ff00' }} />
+              <button onClick={handleSearch} disabled={searching}
+                onMouseEnter={() => setHoveredSearch(true)} onMouseLeave={() => setHoveredSearch(false)}
+                style={{ padding: '10px 28px', background: hoveredSearch ? '#d4e800' : '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '4px', cursor: searching ? 'not-allowed' : 'pointer', fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase', transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)', transition: 'all 0.15s ease' }}>
                 {searching ? 'Suche läuft...' : 'Fotos suchen'}
               </button>
             </div>
           ) : (
-            <button
-              onClick={handleSearch}
-              disabled={searching}
-              onMouseEnter={() => setHoveredSearch(true)}
-              onMouseLeave={() => setHoveredSearch(false)}
-              style={{
-                padding: '10px 28px',
-                background: hoveredSearch ? '#d4e800' : '#e8ff00',
-                color: '#070b0f', border: 'none', borderRadius: '4px',
-                cursor: searching ? 'not-allowed' : 'pointer',
-                fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase',
-                transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)',
-                transition: 'all 0.15s ease'
-              }}>
+            <button onClick={handleSearch} disabled={searching}
+              onMouseEnter={() => setHoveredSearch(true)} onMouseLeave={() => setHoveredSearch(false)}
+              style={{ padding: '10px 28px', background: hoveredSearch ? '#d4e800' : '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '4px', cursor: searching ? 'not-allowed' : 'pointer', fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase', transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)', transition: 'all 0.15s ease' }}>
               {searching ? 'Suche läuft...' : 'Fotos suchen'}
             </button>
           )}
@@ -371,18 +339,9 @@ function SucheContent() {
               <div style={{ fontSize: 28, fontWeight: 900, color: '#e8ff00', marginBottom: 16 }}>
                 CHF {total}
               </div>
-              <button
-                onClick={handleKaufen}
-                onMouseEnter={() => setHoveredKaufen(true)}
-                onMouseLeave={() => setHoveredKaufen(false)}
-                style={{
-                  background: hoveredKaufen ? '#d4e800' : '#e8ff00',
-                  color: '#070b0f', border: 'none', borderRadius: 4,
-                  padding: '11px 32px', fontWeight: 900, fontSize: 14,
-                  cursor: 'pointer', letterSpacing: 1.5, textTransform: 'uppercase',
-                  transform: hoveredKaufen ? 'scale(1.03)' : 'scale(1)',
-                  transition: 'all 0.15s ease'
-                }}>
+              <button onClick={handleKaufen}
+                onMouseEnter={() => setHoveredKaufen(true)} onMouseLeave={() => setHoveredKaufen(false)}
+                style={{ background: hoveredKaufen ? '#d4e800' : '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '11px 32px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1.5, textTransform: 'uppercase', transform: hoveredKaufen ? 'scale(1.03)' : 'scale(1)', transition: 'all 0.15s ease' }}>
                 Jetzt kaufen
               </button>
             </div>
