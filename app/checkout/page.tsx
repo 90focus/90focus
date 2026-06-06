@@ -91,6 +91,11 @@ function CheckoutContent() {
     boxSizing: 'border-box' as any, outline: 'none'
   }
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/')
+  }
+
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
 
@@ -121,10 +126,27 @@ function CheckoutContent() {
           </div>
           <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
         </div>
-        <button onClick={() => router.back()}
-          style={{ background: 'transparent', color: '#667788', border: '1px solid #1c2a38', borderRadius: 4, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>
-          ← Zurück
-        </button>
+        <div style={{ display: 'flex', gap: 12 }}>
+          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/')}>Home</button>
+          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+            onClick={() => router.push('/spiele')}>Alle Spiele</button>
+          {user ? (
+            <>
+              <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+                onClick={() => router.push('/kunden-dashboard')}>Meine Fotos</button>
+              <button style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+                onClick={handleLogout}>Abmelden</button>
+            </>
+          ) : (
+            <>
+              <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+                onClick={() => router.push('/login')}>Login</button>
+              <button style={{ background: 'transparent', color: '#e8ff00', border: '1px solid #e8ff00', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
+                onClick={() => router.push('/register')}>Sign Up</button>
+            </>
+          )}
+        </div>
       </nav>
 
       {/* 2 SPALTEN LAYOUT */}
