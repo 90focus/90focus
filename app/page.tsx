@@ -272,7 +272,7 @@ export default function Home() {
                 <span style={{ color: "#e8eef4", fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
               </div>
               <p style={{ color: "#e8eef4", fontSize: 13, maxWidth: 260, lineHeight: 1.6 }}>
-                Professionelle Sportfotografie Fussball. Deine Momente für immer festgehalten.
+                Deine Momente für immer festgehalten.
               </p>
             </div>
 
@@ -326,7 +326,7 @@ export default function Home() {
 
           {/* UNTERE ZEILE */}
           <div style={{ borderTop: "1px solid #1c2a38", paddingTop: 20 }}>
-            <span style={{ color: "#445566", fontSize: 13 }}>© 2026 90Focus</span>
+            <span style={{ color: "#e8eef4", fontSize: 13 }}>© 2026 90Focus</span>
           </div>
         </div>
       </footer>
