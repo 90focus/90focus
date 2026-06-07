@@ -74,9 +74,8 @@ export default function FaqPage() {
       </nav>
 
       <div style={{ maxWidth: 720, margin: '60px auto 0', padding: '60px 24px' }}>
-        <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>FAQ</div>
-        <h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 12 }}>Häufige Fragen</h1>
-        <p style={{ color: '#667788', fontSize: 15, marginBottom: 48 }}>Alles was du über 90Focus wissen musst.</p>
+        <div style={{ color: '#e8ff00', fontSize: 14, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>FAQ</div>
+        <h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 48 }}>Häufige Fragen</h1>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {faqs.map((faq, i) => (
