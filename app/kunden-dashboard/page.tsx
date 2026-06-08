@@ -10,6 +10,7 @@ export default function KundenDashboardPage() {
   const [loading, setLoading] = useState(true)
   const [purchases, setPurchases] = useState(0)
   const [hoveredFooter, setHoveredFooter] = useState<string | null>(null)
+  const [hoveredSpiele, setHoveredSpiele] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -81,65 +82,60 @@ export default function KundenDashboardPage() {
       </nav>
 
       <div style={{ padding: '48px 32px', maxWidth: '960px', margin: '0 auto', flex: 1, width: '100%', marginTop: 60 }}>
+
+        {/* BEGRÜSSUNG */}
         <div style={{ marginBottom: 48 }}>
-          <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Kunden Dashboard</div>
-          <h1 style={{ fontSize: 42, fontWeight: 900, textTransform: 'uppercase', margin: 0 }}>Hey, {profile?.vorname}! 👋</h1>
-          <p style={{ color: '#445566', fontSize: 15, marginTop: 8 }}>Willkommen zurück – hier findest du alles auf einen Blick.</p>
+          <h1 style={{ fontSize: 42, fontWeight: 900, textTransform: 'uppercase', margin: 0 }}>
+            Hey, {profile?.vorname}! 👋
+          </h1>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 40 }}>
+        {/* STATS */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 40 }}>
           <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #1c2a38', borderRadius: 12, padding: '28px 24px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ position: 'absolute', top: -20, right: -20, fontSize: 80, opacity: 0.05 }}>📸</div>
             <div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>Gekaufte Fotos</div>
             <div style={{ fontSize: 52, fontWeight: 900, color: '#e8ff00', lineHeight: 1 }}>{purchases}</div>
             <div style={{ color: '#445566', fontSize: 12, marginTop: 8 }}>Fotos in deiner Sammlung</div>
           </div>
-          <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #1c2a38', borderRadius: 12, padding: '28px 24px', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: -20, right: -20, fontSize: 80, opacity: 0.05 }}>⚽</div>
-            <div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>Meine Käufe</div>
-            <div style={{ fontSize: 52, fontWeight: 900, color: '#e8ff00', lineHeight: 1 }}>{purchases}</div>
-            <div style={{ color: '#445566', fontSize: 12, marginTop: 8 }}>Bestellungen insgesamt</div>
-          </div>
-          <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #e8ff00', borderRadius: 12, padding: '28px 24px', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}
-            onClick={() => router.push('/spiele')}>
-            <div style={{ position: 'absolute', top: -20, right: -20, fontSize: 80, opacity: 0.05 }}>🔍</div>
-            <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>Neue Fotos</div>
-            <div style={{ fontSize: 28, fontWeight: 900, color: '#e8eef4', lineHeight: 1 }}>Finden →</div>
-            <div style={{ color: '#667788', fontSize: 12, marginTop: 8 }}>Spiele durchsuchen</div>
-          </div>
-        </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 40 }}>
-          <div style={{ background: '#e8ff00', borderRadius: 12, padding: '24px', cursor: 'pointer' }}
-            onClick={() => router.push('/spiele')}>
-            <div style={{ fontSize: 32, marginBottom: 12 }}>⚽</div>
-            <div style={{ color: '#070b0f', fontWeight: 900, fontSize: 18, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Spiele durchsuchen</div>
-            <div style={{ color: '#1a2000', fontSize: 13 }}>Finde das Spiel bei dem du dabei warst</div>
-          </div>
-          <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 12, padding: '24px', cursor: 'pointer' }}
+          <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #1c2a38', borderRadius: 12, padding: '28px 24px', position: 'relative', overflow: 'hidden', cursor: 'pointer' }}
             onClick={() => router.push('/kunden-kaeufe')}>
-            <div style={{ fontSize: 32, marginBottom: 12 }}>🖼️</div>
-            <div style={{ color: '#e8eef4', fontWeight: 900, fontSize: 18, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Meine Käufe</div>
-            <div style={{ color: '#445566', fontSize: 13 }}>Alle gekauften Fotos herunterladen</div>
+            <div style={{ position: 'absolute', top: -20, right: -20, fontSize: 80, opacity: 0.05 }}>🖼️</div>
+            <div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>Meine Käufe</div>
+            <div style={{ fontSize: 28, fontWeight: 900, color: '#e8eef4', lineHeight: 1 }}>Anzeigen →</div>
+            <div style={{ color: '#445566', fontSize: 12, marginTop: 8 }}>Alle Fotos herunterladen</div>
           </div>
         </div>
 
-        <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 12, padding: '32px' }}>
-          <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 24 }}>So funktioniert es</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
-            {[
-              { icon: '⚽', n: '01', t: 'Spiel auswählen', d: 'Wähle das Spiel bei dem du dabei warst aus der Liste.' },
-              { icon: '🤳', n: '02', t: 'Selfie hochladen', d: 'Lade ein Selfie hoch – unsere KI findet automatisch alle Bilder von dir.' },
-              { icon: '💳', n: '03', t: 'Fotos kaufen', d: 'Kaufe deine Fotos und lade sie ohne Wasserzeichen herunter.' },
-            ].map(item => (
-              <div key={item.n} style={{ textAlign: 'center', padding: '16px' }}>
-                <div style={{ fontSize: 40, marginBottom: 12 }}>{item.icon}</div>
-                <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>{item.n}</div>
-                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{item.t}</div>
-                <div style={{ color: '#445566', fontSize: 13, lineHeight: 1.6 }}>{item.d}</div>
-              </div>
-            ))}
-          </div>
+        {/* FIND YOUR MOMENT CARD */}
+        <div style={{
+          background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)',
+          border: '1px solid #1c2a38', borderRadius: 12, padding: '40px',
+          textAlign: 'center'
+        }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>⚽</div>
+          <h2 style={{ fontSize: 28, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -1, marginBottom: 8 }}>
+            Find your Moment
+          </h2>
+          <p style={{ color: '#667788', fontSize: 14, marginBottom: 28 }}>
+            Durchsuche alle Spiele und finde deine Fotos mit einem Selfie.
+          </p>
+          <button
+            onClick={() => router.push('/spiele')}
+            onMouseEnter={() => setHoveredSpiele(true)}
+            onMouseLeave={() => setHoveredSpiele(false)}
+            style={{
+              background: hoveredSpiele ? '#d4e800' : '#e8ff00',
+              color: '#070b0f', border: 'none', borderRadius: 4,
+              padding: '14px 36px', fontWeight: 900, fontSize: 14,
+              cursor: 'pointer', letterSpacing: 1.5, textTransform: 'uppercase',
+              transform: hoveredSpiele ? 'scale(1.05)' : 'scale(1)',
+              transition: 'all 0.15s ease',
+              boxShadow: hoveredSpiele ? '0 0 20px rgba(232,255,0,0.3)' : 'none'
+            }}>
+            Zu den Spielen →
+          </button>
         </div>
       </div>
 
