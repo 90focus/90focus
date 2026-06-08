@@ -92,19 +92,17 @@ export default function KundenDashboardPage() {
 
         {/* STATS */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 40 }}>
-          <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #1c2a38', borderRadius: 12, padding: '28px 24px', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: -20, right: -20, fontSize: 80, opacity: 0.05 }}>📸</div>
-            <div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>Gekaufte Fotos</div>
+          <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #1c2a38', borderRadius: 12, padding: '28px 24px' }}>
+            <div style={{ color: '#e8eef4', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>Gekaufte Fotos</div>
             <div style={{ fontSize: 52, fontWeight: 900, color: '#e8ff00', lineHeight: 1 }}>{purchases}</div>
-            <div style={{ color: '#445566', fontSize: 12, marginTop: 8 }}>Fotos in deiner Sammlung</div>
+            <div style={{ color: '#e8eef4', fontSize: 12, marginTop: 8 }}>Fotos in deiner Sammlung</div>
           </div>
 
-          <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #1c2a38', borderRadius: 12, padding: '28px 24px', position: 'relative', overflow: 'hidden', cursor: 'pointer' }}
+          <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #1c2a38', borderRadius: 12, padding: '28px 24px', cursor: 'pointer' }}
             onClick={() => router.push('/kunden-kaeufe')}>
-            <div style={{ position: 'absolute', top: -20, right: -20, fontSize: 80, opacity: 0.05 }}>🖼️</div>
-            <div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>Meine Käufe</div>
+            <div style={{ color: '#e8eef4', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>Meine Käufe</div>
             <div style={{ fontSize: 28, fontWeight: 900, color: '#e8eef4', lineHeight: 1 }}>Anzeigen →</div>
-            <div style={{ color: '#445566', fontSize: 12, marginTop: 8 }}>Alle Fotos herunterladen</div>
+            <div style={{ color: '#e8eef4', fontSize: 12, marginTop: 8 }}>Alle Fotos herunterladen</div>
           </div>
         </div>
 
@@ -119,7 +117,7 @@ export default function KundenDashboardPage() {
             Find your Moment
           </h2>
           <p style={{ color: '#667788', fontSize: 14, marginBottom: 28 }}>
-            Durchsuche alle Spiele und finde deine Fotos mit einem Selfie.
+            Durchsuche alle Spiele und finde deine Fotos.
           </p>
           <button
             onClick={() => router.push('/spiele')}
