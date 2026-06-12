@@ -83,7 +83,8 @@ export async function POST(req: NextRequest) {
     }
 
     const buffer = canvas.toBuffer('image/png')
-    return new NextResponse(buffer, {
+    const uint8Array = new Uint8Array(buffer)
+    return new NextResponse(uint8Array, {
       headers: {
         'Content-Type': 'image/png',
         'Content-Disposition': 'attachment; filename="event.png"'
