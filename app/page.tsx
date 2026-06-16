@@ -84,7 +84,7 @@ export default function Home() {
     <main style={{ minHeight: "100vh", background: "#070b0f", color: "#e8eef4", fontFamily: "sans-serif", padding: "0" }}>
       <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "rgba(7,11,15,0.97)", borderBottom: "1px solid #131e2a", height: 60, padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", cursor: "pointer" }} onClick={() => router.push('/')}>
-          <img src={LOGO_URL} alt="90Focus" style={{ height: 48, objectFit: "contain" }} />
+          <img src={LOGO_URL} alt="90Focus" style={{ height: 36, objectFit: "contain" }} />
         </div>
         <div style={{ display: "flex", gap: 12 }}>
           <button style={{ background: "transparent", color: "#e8ff00", border: "1px solid #e8ff00", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
@@ -265,7 +265,7 @@ export default function Home() {
             {/* LOGO + BESCHREIBUNG */}
             <div>
               <div style={{ marginBottom: 12 }}>
-                <img src={LOGO_URL} alt="90Focus" style={{ height: 44, objectFit: "contain" }} />
+                <img src={LOGO_URL} alt="90Focus" style={{ height: 32, objectFit: "contain" }} />
               </div>
               <p style={{ color: "#e8eef4", fontSize: 13, maxWidth: 260, lineHeight: 1.6 }}>
                 Deine Momente für immer festgehalten.
