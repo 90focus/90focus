@@ -15,6 +15,7 @@ export default function EventDetailPage() {
   const [message, setMessage] = useState('')
   const [deleting, setDeleting] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0 })
   const [files, setFiles] = useState<FileList | null>(null)
   const [fileNames, setFileNames] = useState<string>('')
   const router = useRouter()
@@ -126,19 +127,48 @@ export default function EventDetailPage() {
     }
   }
 
+  // NEUER UPLOAD MIT PRESIGNED URLS
   const handleUpload = async () => {
     if (!files || files.length === 0) {
       setMessage('Bitte Fotos auswählen!')
       return
     }
     setUploading(true)
-    setMessage('Fotos werden hochgeladen...')
-    const formData = new FormData()
-    Array.from(files).forEach((file) => formData.append('files', file))
-    formData.append('eventId', eventId)
+    setUploadProgress({ current: 0, total: files.length })
+    setMessage(`Lade ${files.length} Foto(s) hoch...`)
+
     try {
-      const res = await fetch('/api/upload', { method: 'POST', body: formData })
-      const data = await res.json()
+      const filenames = Array.from(files).map(f => f.name)
+      const presignRes = await fetch('/api/presigned-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId, filenames })
+      })
+      const { urls } = await presignRes.json()
+
+      const uploadedKeys: string[] = []
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        const { url, key } = urls[i]
+
+        await fetch(url, {
+          method: 'PUT',
+          headers: { 'Content-Type': file.type },
+          body: file
+        })
+
+        uploadedKeys.push(key)
+        setUploadProgress({ current: i + 1, total: files.length })
+        setMessage(`Lade hoch: ${i + 1} / ${files.length}`)
+      }
+
+      setMessage('Fotos werden verarbeitet...')
+      const completeRes = await fetch('/api/upload-complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId, keys: uploadedKeys })
+      })
+      const data = await completeRes.json()
       setMessage(data.message || 'Fertig!')
       setFiles(null)
       setFileNames('')
@@ -147,6 +177,7 @@ export default function EventDetailPage() {
       setMessage('Fehler beim Hochladen!')
     } finally {
       setUploading(false)
+      setUploadProgress({ current: 0, total: 0 })
     }
   }
 
@@ -217,6 +248,22 @@ export default function EventDetailPage() {
             </label>
             {fileNames && <span style={{ color: '#667788', fontSize: 13 }}>✓ {fileNames}</span>}
           </div>
+
+          {uploading && uploadProgress.total > 0 && (
+            <div style={{ margin: '12px 0' }}>
+              <div style={{ background: '#131e2a', borderRadius: 4, height: 8, overflow: 'hidden' }}>
+                <div style={{
+                  background: '#e8ff00', height: '100%',
+                  width: `${(uploadProgress.current / uploadProgress.total) * 100}%`,
+                  transition: 'width 0.3s ease'
+                }} />
+              </div>
+              <div style={{ color: '#667788', fontSize: 12, marginTop: 4 }}>
+                {uploadProgress.current} / {uploadProgress.total} hochgeladen
+              </div>
+            </div>
+          )}
+
           <button onClick={handleUpload} disabled={uploading} style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 6, padding: '10px 24px', cursor: 'pointer', fontSize: 14, fontWeight: 900, marginTop: 12 }}>
             {uploading ? 'Lädt...' : 'Fotos hochladen'}
           </button>
