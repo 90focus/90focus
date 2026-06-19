@@ -99,7 +99,7 @@ function LoginContent() {
           <h1 style={{ color: '#e8eef4', fontSize: 24, fontWeight: 900, marginBottom: 8, textTransform: 'uppercase' }}>
             {mode === 'login' ? '🔐 Login' : '🔑 Passwort vergessen'}
           </h1>
-          <p style={{ color: '#445566', fontSize: 14, marginBottom: 24 }}>
+          <p style={{ color: '#e8eef4', fontSize: 14, marginBottom: 24 }}>
             {mode === 'login' ? 'Melde dich mit deinen Zugangsdaten an.' : 'Wir senden dir einen Reset-Link per Email.'}
           </p>
 
@@ -126,11 +126,11 @@ function LoginContent() {
             {mode === 'login' ? (
               <>
                 <button onClick={() => { setMode('forgot'); setError(''); setMessage('') }}
-                  style={{ background: 'none', border: 'none', color: '#445566', cursor: 'pointer', fontSize: 14, textDecoration: 'underline' }}>
+                  style={{ background: 'none', border: 'none', color: '#e8eef4', cursor: 'pointer', fontSize: 14, textDecoration: 'underline' }}>
                   Passwort vergessen?
                 </button>
                 <div style={{ borderTop: '1px solid #131e2a', paddingTop: 16 }}>
-                  <span style={{ color: '#445566', fontSize: 14 }}>Noch kein Konto? </span>
+                  <span style={{ color: '#e8eef4', fontSize: 14 }}>Noch kein Konto? </span>
                   <button onClick={() => router.push('/register')}
                     style={{ background: 'none', border: 'none', color: '#e8ff00', cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>
                     Jetzt registrieren →
@@ -139,7 +139,7 @@ function LoginContent() {
               </>
             ) : (
               <button onClick={() => { setMode('login'); setError(''); setMessage('') }}
-                style={{ background: 'none', border: 'none', color: '#445566', cursor: 'pointer', fontSize: 14, textDecoration: 'underline' }}>
+                style={{ background: 'none', border: 'none', color: '#e8eef4', cursor: 'pointer', fontSize: 14, textDecoration: 'underline' }}>
                 Zurück zum Login
               </button>
             )}
@@ -184,7 +184,7 @@ function LoginContent() {
             <div>
               <div style={{ color: "#e8eef4", fontWeight: 800, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>Social Media</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <a href="https://www.instagram.com/90focus" target="_blank" rel="noopener noreferrer"
+                <a href="https://www.instagram.com/90focus_official/" target="_blank" rel="noopener noreferrer"
                   style={footerA('instagram') as any}
                   onMouseEnter={() => setHoveredFooter('instagram')} onMouseLeave={() => setHoveredFooter(null)}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
