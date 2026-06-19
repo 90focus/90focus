@@ -99,7 +99,7 @@ export default function RegisterPage() {
           </div>
 
           <h1 style={{ color: '#e8eef4', fontSize: 24, fontWeight: 900, marginBottom: 8, textTransform: 'uppercase' }}>Konto erstellen</h1>
-          <p style={{ color: '#445566', fontSize: 14, marginBottom: 24 }}>Registriere dich um deine Fotos zu kaufen und zu verwalten.</p>
+          <p style={{ color: '#e8eef4', fontSize: 14, marginBottom: 24 }}>Registriere dich um deine Fotos zu kaufen und zu verwalten.</p>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
             <input type="text" placeholder="Vorname *" value={vorname} onChange={(e) => setVorname(e.target.value)}
@@ -115,7 +115,7 @@ export default function RegisterPage() {
             style={{ width: '100%', padding: '12px', margin: '6px 0', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
 
           <div style={{ margin: '6px 0' }}>
-            <label style={{ display: 'block', fontSize: '13px', color: '#667788', marginBottom: 4 }}>Geburtsdatum *</label>
+            <label style={{ display: 'block', fontSize: '13px', color: '#e8eef4', marginBottom: 4 }}>Geburtsdatum *</label>
             <input type="date" value={geburtsdatum} onChange={(e) => setGeburtsdatum(e.target.value)}
               style={{ width: '100%', padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
           </div>
@@ -141,7 +141,7 @@ export default function RegisterPage() {
           {message && <p style={{ color: '#44ff88', marginTop: '12px', fontSize: 14 }}>{message}</p>}
 
           <div style={{ marginTop: 20, textAlign: 'center' }}>
-            <span style={{ color: '#445566', fontSize: 14 }}>Bereits ein Konto? </span>
+            <span style={{ color: '#e8eef4', fontSize: 14 }}>Bereits ein Konto? </span>
             <button onClick={() => router.push('/login')}
               style={{ background: 'none', border: 'none', color: '#e8ff00', cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>
               Einloggen
@@ -187,7 +187,7 @@ export default function RegisterPage() {
             <div>
               <div style={{ color: "#e8eef4", fontWeight: 800, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>Social Media</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <a href="https://www.instagram.com/90focus" target="_blank" rel="noopener noreferrer"
+                <a href="https://www.instagram.com/90focus_official/" target="_blank" rel="noopener noreferrer"
                   style={footerA('instagram') as any}
                   onMouseEnter={() => setHoveredFooter('instagram')} onMouseLeave={() => setHoveredFooter(null)}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
