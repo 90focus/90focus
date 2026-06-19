@@ -12,19 +12,9 @@ export default function AdminPage() {
   const [time, setTime] = useState('')
   const [liga, setLiga] = useState('')
   const [ort, setOrt] = useState('')
-  const [sponsorName, setSponsorName] = useState('')
-  const [sponsorLogo, setSponsorLogo] = useState<File | null>(null)
-  const [sponsorLogoPreview, setSponsorLogoPreview] = useState<string | null>(null)
-  const [sponsorLogoName, setSponsorLogoName] = useState('')
   const [eventBild, setEventBild] = useState<File | null>(null)
   const [eventBildPreview, setEventBildPreview] = useState<string | null>(null)
   const [eventBildName, setEventBildName] = useState('')
-  const [heimLogo, setHeimLogo] = useState<File | null>(null)
-  const [heimLogoPreview, setHeimLogoPreview] = useState<string | null>(null)
-  const [gastLogo, setGastLogo] = useState<File | null>(null)
-  const [gastLogoPreview, setGastLogoPreview] = useState<string | null>(null)
-  const [generatedBild, setGeneratedBild] = useState<string | null>(null)
-  const [generating, setGenerating] = useState(false)
   const [createdEventId, setCreatedEventId] = useState<string | null>(null)
   const [createdEventName, setCreatedEventName] = useState<string>('')
   const [files, setFiles] = useState<FileList | null>(null)
@@ -43,60 +33,14 @@ export default function AdminPage() {
     checkUser()
   }, [router])
 
-  const handleSponsorLogo = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) { setSponsorLogo(file); setSponsorLogoPreview(URL.createObjectURL(file)); setSponsorLogoName(file.name) }
-  }
-
   const handleEventBild = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) { setEventBild(file); setEventBildPreview(URL.createObjectURL(file)); setEventBildName(file.name) }
   }
 
-  const handleHeimLogo = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) { setHeimLogo(file); setHeimLogoPreview(URL.createObjectURL(file)) }
-  }
-
-  const handleGastLogo = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) { setGastLogo(file); setGastLogoPreview(URL.createObjectURL(file)) }
-  }
-
-  const generateEventBild = async () => {
-    if (!heimLogo || !gastLogo) { setMessage('Bitte beide Logos hochladen!'); return }
-    setGenerating(true)
-    setMessage('Bild wird generiert...')
-    const formData = new FormData()
-    formData.append('heimLogo', heimLogo)
-    formData.append('gastLogo', gastLogo)
-    if (sponsorLogo) formData.append('sponsorLogo', sponsorLogo)
-    try {
-      const res = await fetch('/api/generate-event-bild', { method: 'POST', body: formData })
-      const blob = await res.blob()
-      const url = URL.createObjectURL(blob)
-      setGeneratedBild(url)
-      const file = new File([blob], 'event.png', { type: 'image/png' })
-      setEventBild(file)
-      setMessage('✅ Bild generiert!')
-    } catch {
-      setMessage('Fehler beim Generieren!')
-    } finally {
-      setGenerating(false)
-    }
-  }
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files
     if (f && f.length > 0) { setFiles(f); setFileNames(f.length === 1 ? f[0].name : `${f.length} Dateien ausgewählt`) }
-  }
-
-  const uploadSponsorLogo = async (file: File): Promise<string | null> => {
-    const filename = `sponsor_${Date.now()}_${file.name}`
-    const { error } = await supabase.storage.from('sponsor-logos').upload(filename, file, { contentType: file.type })
-    if (error) return null
-    const { data: urlData } = supabase.storage.from('sponsor-logos').getPublicUrl(filename)
-    return urlData.publicUrl
   }
 
   const uploadEventBild = async (file: File): Promise<string | null> => {
@@ -109,13 +53,10 @@ export default function AdminPage() {
 
   const createEvent = async () => {
     if (!homeTeam || !awayTeam || !date) { setMessage('Heimteam, Gastteam und Datum sind Pflichtfelder!'); return }
-    let sponsorLogoUrl = null
     let bildUrl = null
-    if (sponsorLogo) { setMessage('Sponsor Logo wird hochgeladen...'); sponsorLogoUrl = await uploadSponsorLogo(sponsorLogo) }
     if (eventBild) { setMessage('Event Bild wird hochgeladen...'); bildUrl = await uploadEventBild(eventBild) }
     const { data, error } = await supabase.from('events').insert({
       home_team: homeTeam, away_team: awayTeam, date, time, liga, ort,
-      sponsor_name: sponsorName, sponsor_logo_url: sponsorLogoUrl,
       bild_url: bildUrl, user_id: user.id,
     }).select().single()
     if (error) {
@@ -125,15 +66,10 @@ export default function AdminPage() {
       setCreatedEventName(`${homeTeam} vs ${awayTeam}`)
       setMessage('✅ Spiel erstellt! Jetzt kannst du Fotos hochladen.')
       setHomeTeam(''); setAwayTeam(''); setDate(''); setTime(''); setLiga(''); setOrt('')
-      setSponsorName(''); setSponsorLogo(null); setSponsorLogoPreview(null); setSponsorLogoName('')
       setEventBild(null); setEventBildPreview(null); setEventBildName('')
-      setHeimLogo(null); setHeimLogoPreview(null)
-      setGastLogo(null); setGastLogoPreview(null)
-      setGeneratedBild(null)
     }
   }
 
-  // NEUER UPLOAD MIT PRESIGNED URLS
   const handleUpload = async () => {
     if (!files || files.length === 0) { setMessage('Bitte Fotos auswählen!'); return }
     if (!createdEventId) { setMessage('Bitte zuerst ein Spiel erstellen!'); return }
@@ -142,7 +78,6 @@ export default function AdminPage() {
     setMessage(`Lade ${files.length} Foto(s) hoch...`)
 
     try {
-      // 1. Presigned URLs holen
       const filenames = Array.from(files).map(f => f.name)
       const presignRes = await fetch('/api/presigned-url', {
         method: 'POST',
@@ -151,7 +86,6 @@ export default function AdminPage() {
       })
       const { urls } = await presignRes.json()
 
-      // 2. Jede Datei direkt zu S3 hochladen
       const uploadedKeys: string[] = []
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
@@ -168,7 +102,6 @@ export default function AdminPage() {
         setMessage(`Lade hoch: ${i + 1} / ${files.length}`)
       }
 
-      // 3. Datenbank aktualisieren + Rekognition triggern
       setMessage('Fotos werden verarbeitet...')
       const completeRes = await fetch('/api/upload-complete', {
         method: 'POST',
@@ -241,77 +174,19 @@ export default function AdminPage() {
           <input type="text" placeholder="Ort (optional)" value={ort} onChange={(e) => setOrt(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
 
+          {/* EVENT BILD */}
           <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>
-            <h3 style={{ margin: '0 0 4px 0', color: '#e8eef4' }}>⚡ Event Bild – Auto Generator</h3>
-            <p style={{ color: '#445566', fontSize: 13, marginBottom: 16 }}>Lade die Club-Logos hoch und das System erstellt das Bild automatisch.</p>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-              <div>
-                <div style={{ color: '#667788', fontSize: 12, marginBottom: 8, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>Heimteam Logo</div>
-                <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 16px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 13, border: '1px solid #2a3a4a', fontWeight: 600 }}>
-                  📁 Logo hochladen
-                  <input type="file" accept="image/*" onChange={handleHeimLogo} style={{ display: 'none' }} />
-                </label>
-                {heimLogoPreview && <img src={heimLogoPreview} style={{ height: 60, marginTop: 8, objectFit: 'contain', display: 'block', background: '#131e2a', padding: 4, borderRadius: 4 }} />}
-              </div>
-              <div>
-                <div style={{ color: '#667788', fontSize: 12, marginBottom: 8, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>Gastteam Logo</div>
-                <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 16px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 13, border: '1px solid #2a3a4a', fontWeight: 600 }}>
-                  📁 Logo hochladen
-                  <input type="file" accept="image/*" onChange={handleGastLogo} style={{ display: 'none' }} />
-                </label>
-                {gastLogoPreview && <img src={gastLogoPreview} style={{ height: 60, marginTop: 8, objectFit: 'contain', display: 'block', background: '#131e2a', padding: 4, borderRadius: 4 }} />}
-              </div>
-            </div>
-
-            <button onClick={generateEventBild} disabled={generating || !heimLogo || !gastLogo}
-              style={{
-                padding: '10px 24px',
-                background: heimLogo && gastLogo ? '#e8ff00' : '#1c2a38',
-                color: heimLogo && gastLogo ? '#070b0f' : '#445566',
-                border: 'none', borderRadius: 6,
-                cursor: heimLogo && gastLogo ? 'pointer' : 'not-allowed',
-                fontSize: 14, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1
-              }}>
-              {generating ? 'Generiert...' : '⚡ Bild automatisch generieren'}
-            </button>
-
-            {generatedBild && (
-              <div style={{ marginTop: 16 }}>
-                <div style={{ color: '#44ff88', fontSize: 13, marginBottom: 8 }}>✅ Vorschau:</div>
-                <img src={generatedBild} style={{ width: '100%', borderRadius: 8, border: '1px solid #e8ff00' }} />
-              </div>
-            )}
-
-            <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid #1c2a38' }}>
-              <div style={{ color: '#445566', fontSize: 12, marginBottom: 8 }}>oder manuell hochladen:</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', background: '#1c2a38', color: '#667788', borderRadius: 6, cursor: 'pointer', fontSize: 13, border: '1px solid #1c2a38', fontWeight: 600 }}>
-                  📁 Eigenes Bild hochladen
-                  <input type="file" accept="image/*" onChange={handleEventBild} style={{ display: 'none' }} />
-                </label>
-                {eventBildName && <span style={{ color: '#667788', fontSize: 13 }}>✓ {eventBildName}</span>}
-              </div>
-              {eventBildPreview && !generatedBild && (
-                <img src={eventBildPreview} style={{ width: '100%', maxHeight: 200, objectFit: 'cover', marginTop: 12, borderRadius: 8 }} />
-              )}
-            </div>
-          </div>
-
-          <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>
-            <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4' }}>🏢 Sponsor (optional)</h3>
-            <input type="text" placeholder="Sponsor Name" value={sponsorName} onChange={(e) => setSponsorName(e.target.value)}
-              style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+            <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4' }}>🖼️ Event Bild (optional)</h3>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 14, border: '1px solid #2a3a4a', fontWeight: 600 }}>
-                📁 Logo auswählen
-                <input type="file" accept="image/*" onChange={handleSponsorLogo} style={{ display: 'none' }} />
+                📁 Bild auswählen
+                <input type="file" accept="image/*" onChange={handleEventBild} style={{ display: 'none' }} />
               </label>
-              {sponsorLogoName && <span style={{ color: '#667788', fontSize: 13 }}>✓ {sponsorLogoName}</span>}
+              {eventBildName && <span style={{ color: '#667788', fontSize: 13 }}>✓ {eventBildName}</span>}
             </div>
-            {sponsorLogoPreview && (
-              <img src={sponsorLogoPreview} alt="Logo Vorschau"
-                style={{ height: '60px', marginTop: '8px', objectFit: 'contain', background: '#131e2a', padding: '4px', borderRadius: '4px' }} />
+            {eventBildPreview && (
+              <img src={eventBildPreview} alt="Bild Vorschau"
+                style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', marginTop: '12px', borderRadius: '8px' }} />
             )}
           </div>
 
