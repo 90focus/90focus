@@ -10,9 +10,6 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [geburtsdatum, setGeburtsdatum] = useState('')
-  const [sport, setSport] = useState(false)
-  const [sportart, setSportart] = useState('')
-  const [verein, setVerein] = useState('')
   const [datenschutz, setDatenschutz] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -34,7 +31,7 @@ export default function RegisterPage() {
       email, password,
       options: {
         emailRedirectTo: `${window.location.origin}/login`,
-        data: { role: 'customer', vorname, nachname, geburtsdatum, sport: sport.toString(), sportart: sport ? sportart : '', verein: sport ? verein : '' }
+        data: { role: 'customer', vorname, nachname, geburtsdatum }
       }
     })
 
@@ -121,22 +118,6 @@ export default function RegisterPage() {
             <label style={{ display: 'block', fontSize: '13px', color: '#667788', marginBottom: 4 }}>Geburtsdatum *</label>
             <input type="date" value={geburtsdatum} onChange={(e) => setGeburtsdatum(e.target.value)}
               style={{ width: '100%', padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
-          </div>
-
-          <div style={{ margin: '16px 0', padding: '16px', background: '#131e2a', borderRadius: 8, border: '1px solid #1c2a38' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: sport ? 12 : 0 }}>
-              <input type="checkbox" id="sport" checked={sport} onChange={(e) => setSport(e.target.checked)}
-                style={{ width: 18, height: 18, cursor: 'pointer' }} />
-              <label htmlFor="sport" style={{ color: '#e8eef4', fontSize: 15, cursor: 'pointer' }}>Ich treibe Sport</label>
-            </div>
-            {sport && (
-              <>
-                <input type="text" placeholder="Sportart (z.B. Fussball)" value={sportart} onChange={(e) => setSportart(e.target.value)}
-                  style={{ width: '100%', padding: '10px', margin: '6px 0', fontSize: '14px', background: '#0d1219', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
-                <input type="text" placeholder="Verein (z.B. FC Luzern)" value={verein} onChange={(e) => setVerein(e.target.value)}
-                  style={{ width: '100%', padding: '10px', margin: '6px 0', fontSize: '14px', background: '#0d1219', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
-              </>
-            )}
           </div>
 
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, margin: '16px 0', padding: '16px', background: '#131e2a', borderRadius: 8, border: datenschutz ? '1px solid #e8ff00' : '1px solid #1c2a38' }}>
