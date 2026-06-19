@@ -70,7 +70,7 @@ export default function KundenProfilPage() {
           <div style={{ width: 34, height: 34, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>90</span>
           </div>
-          <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
+          <span style={{ color: '#e8eef4', fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
         </div>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
@@ -98,15 +98,15 @@ export default function KundenProfilPage() {
           <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>Konto Info</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: '#445566' }}>Name</span>
+              <span style={{ color: '#e8eef4' }}>Name</span>
               <span>{profile?.vorname} {profile?.nachname}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: '#445566' }}>Email</span>
+              <span style={{ color: '#e8eef4' }}>Email</span>
               <span>{user?.email}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: '#445566' }}>Mitglied seit</span>
+              <span style={{ color: '#e8eef4' }}>Mitglied seit</span>
               <span>{new Date(user?.created_at).toLocaleDateString('de-CH')}</span>
             </div>
           </div>
@@ -114,7 +114,7 @@ export default function KundenProfilPage() {
 
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px', marginBottom: 24 }}>
           <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>Meine Käufe</div>
-          <div style={{ color: '#445566', fontSize: 14, padding: '20px 0', textAlign: 'center' }}>
+          <div style={{ color: '#e8eef4', fontSize: 14, padding: '20px 0', textAlign: 'center' }}>
             Noch keine Käufe vorhanden.<br />
             <button onClick={() => router.push('/spiele')}
               style={{ background: 'transparent', color: '#e8ff00', border: 'none', cursor: 'pointer', fontSize: 14, marginTop: 8, textDecoration: 'underline' }}>
@@ -125,7 +125,7 @@ export default function KundenProfilPage() {
 
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px', marginBottom: 24 }}>
           <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>Rechnungen</div>
-          <div style={{ color: '#445566', fontSize: 14, padding: '20px 0', textAlign: 'center' }}>
+          <div style={{ color: '#e8eef4', fontSize: 14, padding: '20px 0', textAlign: 'center' }}>
             Noch keine Rechnungen vorhanden.
           </div>
         </div>
@@ -184,7 +184,7 @@ export default function KundenProfilPage() {
             <div>
               <div style={{ color: "#e8eef4", fontWeight: 800, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>Social Media</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <a href="https://www.instagram.com/90focus" target="_blank" rel="noopener noreferrer"
+                <a href="https://www.instagram.com/90focus_official/" target="_blank" rel="noopener noreferrer"
                   style={footerA('instagram') as any}
                   onMouseEnter={() => setHoveredFooter('instagram')} onMouseLeave={() => setHoveredFooter(null)}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
