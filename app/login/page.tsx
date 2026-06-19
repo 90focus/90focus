@@ -73,7 +73,7 @@ function LoginContent() {
           <div style={{ width: 34, height: 34, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>90</span>
           </div>
-          <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
+          <span style={{ color: '#e8eef4', fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
         </div>
         <div style={{ display: 'flex', gap: 12 }}>
           <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
