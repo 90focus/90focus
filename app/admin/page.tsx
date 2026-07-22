@@ -64,7 +64,7 @@ export default function AdminPage() {
     } else {
       setCreatedEventId(data.id)
       setCreatedEventName(`${homeTeam} vs ${awayTeam}`)
-      setMessage('✅ Spiel erstellt! Jetzt kannst du Fotos hochladen.')
+      setMessage('✅ Event erstellt! Jetzt kannst du Fotos hochladen.')
       setHomeTeam(''); setAwayTeam(''); setDate(''); setTime(''); setLiga(''); setOrt('')
       setEventBild(null); setEventBildPreview(null); setEventBildName('')
     }
@@ -72,7 +72,7 @@ export default function AdminPage() {
 
   const handleUpload = async () => {
     if (!files || files.length === 0) { setMessage('Bitte Fotos auswählen!'); return }
-    if (!createdEventId) { setMessage('Bitte zuerst ein Spiel erstellen!'); return }
+    if (!createdEventId) { setMessage('Bitte zuerst ein Event erstellen!'); return }
     setUploading(true)
     setUploadProgress({ current: 0, total: files.length })
     setMessage(`Lade ${files.length} Foto(s) hoch...`)
@@ -125,16 +125,15 @@ export default function AdminPage() {
     <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/meine-events')}>
-          <div style={{ width: 34, height: 34, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>90</span>
-          </div>
-          <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
+          <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 1, fontStyle: 'italic' }}>
+            <span style={{ color: '#e8eef4' }}>SPORT</span><span style={{ color: '#e8ff00' }}>SHOT</span>
+          </span>
         </div>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
             onClick={() => router.push('/meine-events')}>Meine Events</button>
           <button style={{ background: 'transparent', color: '#e8ff00', border: '1px solid #e8ff00', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-            onClick={() => router.push('/admin')}>+ Spiel erstellen</button>
+            onClick={() => router.push('/admin')}>+ Event erstellen</button>
           <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
             onClick={() => router.push('/profil')}>Profil</button>
           <button onClick={async () => { await supabase.auth.signOut(); router.push('/') }}
@@ -146,7 +145,7 @@ export default function AdminPage() {
 
       <div style={{ padding: '40px', maxWidth: '700px', margin: '60px auto 0' }}>
         <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Admin</div>
-        <h1 style={{ fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>⚽ Spiel erstellen</h1>
+        <h1 style={{ fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>📅 Event erstellen</h1>
 
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', padding: '24px', borderRadius: '8px', marginBottom: '24px' }}>
           <input type="text" placeholder="Heimteam *" value={homeTeam} onChange={(e) => setHomeTeam(e.target.value)}
@@ -174,7 +173,6 @@ export default function AdminPage() {
           <input type="text" placeholder="Ort (optional)" value={ort} onChange={(e) => setOrt(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
 
-          {/* EVENT BILD */}
           <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>
             <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4' }}>🖼️ Event Bild (optional)</h3>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -192,7 +190,7 @@ export default function AdminPage() {
 
           <button onClick={createEvent}
             style={{ padding: '12px 32px', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '16px', fontWeight: 900, marginTop: '16px', textTransform: 'uppercase', letterSpacing: 1 }}>
-            Spiel erstellen
+            Event erstellen
           </button>
         </div>
 
@@ -200,10 +198,10 @@ export default function AdminPage() {
           <h2 style={{ marginTop: 0, color: '#e8eef4' }}>📸 Fotos hochladen</h2>
           {createdEventId ? (
             <div style={{ background: '#131e2a', border: '1px solid #1c2a38', borderRadius: 6, padding: '10px 16px', marginBottom: 16, fontSize: 14, color: '#e8ff00', fontWeight: 700 }}>
-              ⚽ {createdEventName}
+              📅 {createdEventName}
             </div>
           ) : (
-            <div style={{ color: '#445566', fontSize: 14, marginBottom: 16 }}>Erstelle zuerst ein Spiel um Fotos hochzuladen.</div>
+            <div style={{ color: '#445566', fontSize: 14, marginBottom: 16 }}>Erstelle zuerst ein Event um Fotos hochzuladen.</div>
           )}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '12px 0' }}>
             <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 14, border: '1px solid #2a3a4a', fontWeight: 600, opacity: createdEventId ? 1 : 0.5 }}>
