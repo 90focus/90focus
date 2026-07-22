@@ -16,7 +16,6 @@ function SucheContent() {
   const [hoveredUpload, setHoveredUpload] = useState(false)
   const [hoveredSearch, setHoveredSearch] = useState(false)
   const [hoveredKaufen, setHoveredKaufen] = useState(false)
-  const [user, setUser] = useState<any>(null)
   const searchParams = useSearchParams()
   const eventId = searchParams.get('eventId')
   const router = useRouter()
@@ -24,12 +23,6 @@ function SucheContent() {
   const PREIS_PRO_FOTO = 4.90
 
   useEffect(() => {
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user || null)
-    }
-    checkUser()
-
     if (eventId) {
       const loadEvent = async () => {
         const { data } = await supabase.from('events').select('*').eq('id', eventId).single()
@@ -96,12 +89,6 @@ function SucheContent() {
     window.location.href = checkoutUrl
   }
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    setUser(null)
-    router.push('/')
-  }
-
   const getImageUrl = (filename: string) =>
     `https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`
 
@@ -112,7 +99,7 @@ function SucheContent() {
       {[...Array(6)].map((_, row) => (
         <div key={row} style={{ display: 'flex', gap: '40px', transform: 'rotate(-30deg) translateX(-20%)', whiteSpace: 'nowrap', marginLeft: row % 2 === 0 ? '0px' : '60px' }}>
           {[...Array(5)].map((_, col) => (
-            <span key={col} style={{ fontSize: '13px', fontWeight: 800, color: 'rgba(255,255,255,0.25)', letterSpacing: 1, userSelect: 'none' }}>90focus ⚽</span>
+            <span key={col} style={{ fontSize: '13px', fontWeight: 800, color: 'rgba(255,255,255,0.25)', letterSpacing: 1, userSelect: 'none' }}>SPORTSHOT</span>
           ))}
         </div>
       ))}
@@ -121,11 +108,10 @@ function SucheContent() {
 
   const Logo = () => (
     !event?.sponsor_logo_url ? (
-      <div style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.6)', borderRadius: 4, padding: '4px 8px', display: 'flex', alignItems: 'center', gap: 4 }}>
-        <div style={{ width: 18, height: 18, background: '#e8ff00', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 9 }}>90</span>
-        </div>
-        <span style={{ color: '#fff', fontWeight: 800, fontSize: 11, letterSpacing: 1 }}>FOCUS</span>
+      <div style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.6)', borderRadius: 4, padding: '4px 8px' }}>
+        <span style={{ fontWeight: 900, fontSize: 11, letterSpacing: 0.5, fontStyle: 'italic' }}>
+          <span style={{ color: '#fff' }}>SPORT</span><span style={{ color: '#e8ff00' }}>SHOT</span>
+        </span>
       </div>
     ) : (
       <div style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.5)', borderRadius: 4, padding: '4px 8px' }}>
@@ -203,7 +189,6 @@ function SucheContent() {
   return (
     <div style={{ background: '#070b0f', minHeight: '100vh', color: '#e8eef4', fontFamily: 'sans-serif' }}>
 
-      {/* LIGHTBOX */}
       {lightboxIndex !== null && (
         <div onClick={() => setLightboxIndex(null)} style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.95)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <button onClick={() => setLightboxIndex(null)} style={{ position: 'absolute', top: 20, right: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 28, width: 44, height: 44, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
@@ -222,40 +207,6 @@ function SucheContent() {
         </div>
       )}
 
-      {/* NAV FIXED */}
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/')}>
-          <div style={{ width: 34, height: 34, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>90</span>
-          </div>
-          <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
-        </div>
-        <div style={{ display: 'flex', gap: 12 }}>
-          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-            onClick={() => router.push('/')}>Home</button>
-          <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-            onClick={() => router.push('/spiele')}>Alle Spiele</button>
-          {user ? (
-            <>
-              <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-                onClick={() => router.push('/kunden-dashboard')}>Meine Fotos</button>
-              <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-                onClick={() => router.push('/kunden-profil')}>Profil</button>
-              <button style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-                onClick={handleLogout}>Abmelden</button>
-            </>
-          ) : (
-            <>
-              <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-                onClick={() => router.push('/login')}>Login</button>
-              <button style={{ background: 'transparent', color: '#e8ff00', border: '1px solid #e8ff00', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-                onClick={() => router.push('/register')}>Sign Up</button>
-            </>
-          )}
-        </div>
-      </nav>
-
-      {/* MAIN CONTENT */}
       {matches.length === 0 ? (
         <div style={{ padding: '40px 48px', maxWidth: '600px', margin: '60px auto 0', textAlign: 'center' }}>
           {event && (
