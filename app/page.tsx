@@ -97,7 +97,7 @@ Jeder Augenblick zählt, wir halten ihn fest
                 transition: "all 0.15s ease"
               }}
               onClick={() => router.push('/spiele')}>
-              Meine Fotos finden
+              Finde dein Event
             </button>
           </div>
         </div>
@@ -160,7 +160,7 @@ Jeder Augenblick zählt, wir halten ihn fest
                     </div>
                   </div>
                   <div style={{ padding: "16px" }}>
-                    <div style={{ fontSize: 15, fontWeight: 800, textTransform: "uppercase", marginBottom: 8 }}>{ev.home_team} vs {ev.away_team}</div>
+<div style={{ fontSize: 15, fontWeight: 800, textTransform: "uppercase", marginBottom: 8 }}>{ev.home_team}</div>
                     <div style={{ fontSize: 12, color: "#8899aa", marginBottom: 12 }}>📅 {ev.date} {ev.ort && `· 📍 ${ev.ort}`}</div>
                     {ev.sponsor_name && (
                       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12, background: "#131e2a", padding: "4px 8px", borderRadius: 4, width: "fit-content" }}>

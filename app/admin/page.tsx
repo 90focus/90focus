@@ -6,8 +6,7 @@ import { useRouter } from 'next/navigation'
 
 export default function AdminPage() {
   const [user, setUser] = useState<any>(null)
-  const [homeTeam, setHomeTeam] = useState('')
-  const [awayTeam, setAwayTeam] = useState('')
+const [eventName, setEventName] = useState('')
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
   const [liga, setLiga] = useState('')
@@ -52,20 +51,20 @@ export default function AdminPage() {
   }
 
   const createEvent = async () => {
-    if (!homeTeam || !awayTeam || !date) { setMessage('Heimteam, Gastteam und Datum sind Pflichtfelder!'); return }
+   if (!eventName || !date) { setMessage('Eventname und Datum sind Pflichtfelder!'); return }
     let bildUrl = null
     if (eventBild) { setMessage('Event Bild wird hochgeladen...'); bildUrl = await uploadEventBild(eventBild) }
-    const { data, error } = await supabase.from('events').insert({
-      home_team: homeTeam, away_team: awayTeam, date, time, liga, ort,
+const { data, error } = await supabase.from('events').insert({
+      home_team: eventName, away_team: '', date, time, liga, ort,
       bild_url: bildUrl, user_id: user.id,
     }).select().single()
     if (error) {
       setMessage('Fehler: ' + error.message)
     } else {
       setCreatedEventId(data.id)
-      setCreatedEventName(`${homeTeam} vs ${awayTeam}`)
+setCreatedEventName(eventName)
       setMessage('✅ Event erstellt! Jetzt kannst du Fotos hochladen.')
-      setHomeTeam(''); setAwayTeam(''); setDate(''); setTime(''); setLiga(''); setOrt('')
+setEventName(''); setDate(''); setTime(''); setLiga(''); setOrt('')
       setEventBild(null); setEventBildPreview(null); setEventBildName('')
     }
   }
@@ -148,9 +147,7 @@ export default function AdminPage() {
         <h1 style={{ fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>📅 Event erstellen</h1>
 
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', padding: '24px', borderRadius: '8px', marginBottom: '24px' }}>
-          <input type="text" placeholder="Heimteam *" value={homeTeam} onChange={(e) => setHomeTeam(e.target.value)}
-            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
-          <input type="text" placeholder="Gastteam *" value={awayTeam} onChange={(e) => setAwayTeam(e.target.value)}
+<input type="text" placeholder="Eventname *" value={eventName} onChange={(e) => setEventName(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
@@ -158,17 +155,14 @@ export default function AdminPage() {
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
           <select value={liga} onChange={(e) => setLiga(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }}>
-            <option value="">Liga auswählen...</option>
-            <option value="Super League">Super League</option>
-            <option value="Challenge League">Challenge League</option>
-            <option value="Promotion League">Promotion League</option>
-            <option value="1. Liga">1. Liga</option>
-            <option value="2. Liga interregional">2. Liga interregional</option>
-            <option value="2. Liga regional">2. Liga regional</option>
-            <option value="3. Liga">3. Liga</option>
-            <option value="4. Liga">4. Liga</option>
-            <option value="5. Liga">5. Liga</option>
-            <option value="6. Liga">6. Liga</option>
+<option value="">Sportart auswählen...</option>
+            <option value="Fussball">Fussball</option>
+            <option value="Handball">Handball</option>
+            <option value="Hybrid Sport">Hybrid Sport</option>
+            <option value="Laufsport">Laufsport</option>
+            <option value="Volleyball">Volleyball</option>
+            <option value="Basketball">Basketball</option>
+            <option value="Sonstige">Sonstige</option>
           </select>
           <input type="text" placeholder="Ort (optional)" value={ort} onChange={(e) => setOrt(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />

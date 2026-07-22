@@ -34,20 +34,17 @@ export default function SpielePage() {
 
         <div style={{ display: 'flex', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
           <div>
-            <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Liga</div>
+<div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Sportart</div>
             <select value={ligaFilter} onChange={(e) => setLigaFilter(e.target.value)}
               style={{ background: '#0d1219', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '10px 16px', fontSize: 14, cursor: 'pointer', minWidth: 200 }}>
-              <option value="">Alle Ligen</option>
-              <option value="Super League">Super League</option>
-              <option value="Challenge League">Challenge League</option>
-              <option value="Promotion League">Promotion League</option>
-              <option value="1. Liga">1. Liga</option>
-              <option value="2. Liga interregional">2. Liga interregional</option>
-              <option value="2. Liga regional">2. Liga regional</option>
-              <option value="3. Liga">3. Liga</option>
-              <option value="4. Liga">4. Liga</option>
-              <option value="5. Liga">5. Liga</option>
-              <option value="6. Liga">6. Liga</option>
+<option value="">Alle Sportarten</option>
+              <option value="Fussball">Fussball</option>
+              <option value="Handball">Handball</option>
+              <option value="Hybrid Sport">Hybrid Sport</option>
+              <option value="Laufsport">Laufsport</option>
+              <option value="Volleyball">Volleyball</option>
+              <option value="Basketball">Basketball</option>
+              <option value="Sonstige">Sonstige</option>
             </select>
           </div>
           <div>
@@ -74,7 +71,7 @@ export default function SpielePage() {
                 onClick={() => router.push(`/suche?eventId=${ev.id}`)}>
                 <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
                   {ev.bild_url ? (
-                    <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
+<img src={ev.bild_url} alt={ev.home_team}
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
                     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -86,7 +83,7 @@ export default function SpielePage() {
                   </div>
                 </div>
                 <div style={{ padding: '16px' }}>
-                  <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 8 }}>{ev.home_team} vs {ev.away_team}</div>
+<div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 8 }}>{ev.home_team}</div>
                   <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 12 }}>📅 {ev.date} {ev.ort && `· 📍 ${ev.ort}`}</div>
                   {ev.sponsor_name && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
