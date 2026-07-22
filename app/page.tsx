@@ -82,7 +82,7 @@ export default function Home() {
     <main style={{ minHeight: "100vh", background: "#070b0f", color: "#e8eef4", fontFamily: "sans-serif", padding: "0" }}>
       <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "rgba(7,11,15,0.97)", borderBottom: "1px solid #131e2a", height: 60, padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} onClick={() => router.push('/')}>
-<span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 1, fontStyle: "italic" }}>
+          <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 1, fontStyle: "italic" }}>
             <span style={{ color: "#e8eef4" }}>SPORT</span><span style={{ color: "#e8ff00" }}>SHOT</span>
           </span>
         </div>
@@ -90,7 +90,7 @@ export default function Home() {
           <button style={{ background: "transparent", color: "#e8ff00", border: "1px solid #e8ff00", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
             onClick={() => router.push('/')}>Home</button>
           <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid #1c2a38", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
-            onClick={() => router.push('/spiele')}>Alle Spiele</button>
+            onClick={() => router.push('/spiele')}>Alle Events</button>
           {user ? (
             <>
               <button style={{ background: "transparent", color: "#e8eef4", border: "1px solid #1c2a38", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
@@ -132,8 +132,8 @@ export default function Home() {
             PROFESSIONELLE SPORTFOTOGRAFIE
           </div>
           <h1 style={{ fontSize: "clamp(36px, 6vw, 72px)", fontWeight: 900, lineHeight: 0.95, letterSpacing: -2, textTransform: "uppercase", marginBottom: 18 }}>
-            DEIN SPIEL<br />
-            <span style={{ color: "#e8ff00" }}>DEINE MOMENTE</span>
+            DEIN EVENT<br />
+            <span style={{ color: "#e8ff00" }}>DEIN MOMENT</span>
           </h1>
           <p style={{ color: "#e8eef4", fontSize: 14, fontWeight: 800, maxWidth: 400, lineHeight: 1.6, marginBottom: 24, letterSpacing: 0.5 }}>
             Jeder Augenblick zählt. Wir halten ihn fest.
@@ -151,7 +151,7 @@ export default function Home() {
                 transition: "all 0.15s ease"
               }}
               onClick={() => router.push('/spiele')}>
-              Meine Fotos finden →
+              Meine Fotos finden
             </button>
           </div>
         </div>
@@ -182,7 +182,7 @@ export default function Home() {
                 transform: hoveredAlleSpiele1 ? "scale(1.03)" : "scale(1)",
                 transition: "all 0.15s ease"
               }}
-              onClick={() => router.push('/spiele')}>Alle Spiele →</button>
+              onClick={() => router.push('/spiele')}>Alle Events</button>
           </div>
 
           {events.length === 0 ? (
@@ -232,7 +232,7 @@ export default function Home() {
                         letterSpacing: 1, transform: hoveredBtn === ev.id ? "scale(1.02)" : "scale(1)",
                         transition: "all 0.15s ease"
                       }}>
-                      Zu den Fotos →
+                      Zu den Fotos
                     </button>
                   </div>
                 </div>
@@ -252,7 +252,7 @@ export default function Home() {
                 transform: hoveredAlleSpiele2 ? "scale(1.03)" : "scale(1)",
                 transition: "all 0.15s ease"
               }}
-              onClick={() => router.push('/spiele')}>Alle Spiele →</button>
+              onClick={() => router.push('/spiele')}>Alle Events</button>
           </div>
         </div>
       </section>
@@ -265,7 +265,7 @@ export default function Home() {
             {/* LOGO + BESCHREIBUNG */}
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-<span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 1, fontStyle: "italic" }}>
+                <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 1, fontStyle: "italic" }}>
                   <span style={{ color: "#e8eef4" }}>SPORT</span><span style={{ color: "#e8ff00" }}>SHOT</span>
                 </span>
               </div>
@@ -279,7 +279,7 @@ export default function Home() {
               <div style={{ color: "#e8eef4", fontWeight: 800, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>Links</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 <span style={footerLink('home')} onMouseEnter={() => setHoveredFooter('home')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/')}>Home</span>
-                <span style={footerLink('spiele')} onMouseEnter={() => setHoveredFooter('spiele')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/spiele')}>Alle Spiele</span>
+                <span style={footerLink('spiele')} onMouseEnter={() => setHoveredFooter('spiele')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/spiele')}>Alle Events</span>
                 <span style={footerLink('faq')} onMouseEnter={() => setHoveredFooter('faq')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/faq')}>FAQ</span>
                 <span style={footerLink('kontakt')} onMouseEnter={() => setHoveredFooter('kontakt')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/kontakt')}>Kontakt</span>
               </div>
@@ -298,7 +298,7 @@ export default function Home() {
             <div>
               <div style={{ color: "#e8eef4", fontWeight: 800, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>Social Media</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-<a href="https://www.instagram.com/90focus_official/" target="_blank" rel="noopener noreferrer"
+                <a href="https://www.instagram.com/90focus_official/" target="_blank" rel="noopener noreferrer"
                   style={footerA('instagram') as any}
                   onMouseEnter={() => setHoveredFooter('instagram')}
                   onMouseLeave={() => setHoveredFooter(null)}>
@@ -324,7 +324,7 @@ export default function Home() {
 
           {/* UNTERE ZEILE */}
           <div style={{ borderTop: "1px solid #1c2a38", paddingTop: 20 }}>
-            <span style={{ color: "#e8eef4", fontSize: 13 }}>© 2026 90Focus</span>
+            <span style={{ color: "#e8eef4", fontSize: 13 }}>© 2026 SportShot</span>
           </div>
         </div>
       </footer>
