@@ -8,7 +8,8 @@ export default function SpielePage() {
   const [events, setEvents] = useState<any[]>([])
   const [filtered, setFiltered] = useState<any[]>([])
 const [ligaFilter, setLigaFilter] = useState('')
-  const [datumFilter, setDatumFilter] = useState('')
+const [datumFilter, setDatumFilter] = useState('')
+  const [datumInput, setDatumInput] = useState('')
 const [nameFilter, setNameFilter] = useState('')
   const [nameInput, setNameInput] = useState('')
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
@@ -60,14 +61,20 @@ useEffect(() => {
               <option value="Sonstige">Sonstige</option>
             </select>
           </div>
-          <div>
+<div>
             <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Datum</div>
-            <input type="date" value={datumFilter} onChange={(e) => setDatumFilter(e.target.value)}
+            <input type="date" value={datumInput}
+              onChange={(e) => {
+                setDatumInput(e.target.value)
+                if (e.target.value === '') setDatumFilter('')
+              }}
+              onBlur={() => setDatumFilter(datumInput)}
+              onKeyDown={(e) => e.key === 'Enter' && setDatumFilter(datumInput)}
               style={{ background: '#0d1219', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '10px 16px', fontSize: 14, cursor: 'pointer' }} />
           </div>
 {(ligaFilter || datumFilter || nameFilter) && (
             <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-<button onClick={() => { setLigaFilter(''); setDatumFilter(''); setNameFilter(''); setNameInput('') }}
+<button onClick={() => { setLigaFilter(''); setDatumFilter(''); setDatumInput(''); setNameFilter(''); setNameInput('') }}
                 style={{ background: 'transparent', color: '#667788', border: '1px solid #1c2a38', borderRadius: 4, padding: '10px 16px', fontSize: 13, cursor: 'pointer' }}>
                 Filter zurücksetzen ✕
               </button>
