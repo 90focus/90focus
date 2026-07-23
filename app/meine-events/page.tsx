@@ -198,12 +198,12 @@ onClick={() => router.push('/profil')}>Profil</button>
                   <div style={{ padding: '16px' }}>
 <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>{ev.home_team}</div>
 <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#556677" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e8eef4" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                       <span>{new Date(ev.date).toLocaleDateString('de-CH')}</span>
                       {ev.ort && (
                         <>
                           <span style={{ color: '#334455' }}>·</span>
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#556677" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e8eef4" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                           <span>{ev.ort}</span>
                         </>
                       )}
