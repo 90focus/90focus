@@ -136,7 +136,17 @@ function SucheContent() {
 </div>
           <div style={{ padding: '16px' }}>
             <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>{event.home_team}</div>
-            <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 8 }}>📅 {event.date} {event.ort && `· 📍 ${event.ort}`}</div>
+<div style={{ fontSize: 12, color: '#8899aa', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#556677" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span>{new Date(event.date).toLocaleDateString('de-CH')}</span>
+              {event.ort && (
+                <>
+                  <span style={{ color: '#334455' }}>·</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#556677" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>{event.ort}</span>
+                </>
+              )}
+            </div>
             {event.sponsor_name && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
                 {event.sponsor_logo_url && <img src={event.sponsor_logo_url} alt={event.sponsor_name} style={{ height: '14px', objectFit: 'contain' }} />}
@@ -213,14 +223,22 @@ function SucheContent() {
                   <img src={event.bild_url} alt={event.home_team}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
-                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <span style={{ fontSize: 48 }}>⚽</span>
-                  </div>
+<div style={{ width: '100%', height: '100%' }}></div>
                 )}
 </div>
               <div style={{ padding: '16px' }}>
                 <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>{event.home_team}</div>
-                <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 8 }}>📅 {event.date} {event.ort && `· 📍 ${event.ort}`}</div>
+<div style={{ fontSize: 12, color: '#8899aa', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#556677" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span>{new Date(event.date).toLocaleDateString('de-CH')}</span>
+              {event.ort && (
+                <>
+                  <span style={{ color: '#334455' }}>·</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#556677" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>{event.ort}</span>
+                </>
+              )}
+            </div>
                 {event.sponsor_name && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
                     {event.sponsor_logo_url && <img src={event.sponsor_logo_url} alt={event.sponsor_name} style={{ height: '14px', objectFit: 'contain' }} />}
