@@ -184,7 +184,7 @@ function SucheContent() {
   )
 
   return (
-    <div style={{ background: '#070b0f', minHeight: '100vh', color: '#e8eef4', fontFamily: 'sans-serif' }}>
+<div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
 
       {lightboxIndex !== null && (
         <div onClick={() => setLightboxIndex(null)} style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.95)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
