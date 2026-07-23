@@ -48,7 +48,8 @@ export default function Header() {
       </div>
       <div style={{ display: "flex", gap: 12 }}>
         <button style={navBtn('/')} onClick={() => router.push('/')}>Home</button>
-        <button style={navBtn('/spiele')} onClick={() => router.push('/spiele')}>Alle Events</button>
+<button style={navBtn('/spiele')} onClick={() => router.push('/spiele')}>Alle Events</button>
+        <button style={navBtn('/kontakt')} onClick={() => router.push('/kontakt')}>Kontakt</button>
         {user ? (
           <>
             <button style={navBtn('/kunden-dashboard')} onClick={() => router.push('/kunden-dashboard')}>Meine Fotos</button>
