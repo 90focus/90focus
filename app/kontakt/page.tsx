@@ -58,30 +58,32 @@ export default function KontaktPage() {
 
             <div>
               <div style={{ marginBottom: 16 }}>
-                <label style={{ fontSize: 13, color: '#8899aa', marginBottom: 6, display: 'block' }}>Name *</label>
+<label style={{ fontSize: 13, color: '#e8eef4', marginBottom: 6, display: 'block' }}>Name <span style={{ color: '#ff4444' }}>*</span></label>
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} style={inputStyle} />
               </div>
 
               <div style={{ marginBottom: 16 }}>
-                <label style={{ fontSize: 13, color: '#8899aa', marginBottom: 6, display: 'block' }}>Email *</label>
+<label style={{ fontSize: 13, color: '#e8eef4', marginBottom: 6, display: 'block' }}>Email <span style={{ color: '#ff4444' }}>*</span></label>
                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} />
               </div>
 
               <div style={{ marginBottom: 16 }}>
-                <label style={{ fontSize: 13, color: '#8899aa', marginBottom: 6, display: 'block' }}>Betreff</label>
+                <label style={{ fontSize: 13, color: '#e8eef4', marginBottom: 6, display: 'block' }}>Betreff</label>
                 <input type="text" value={betreff} onChange={(e) => setBetreff(e.target.value)} style={inputStyle} />
               </div>
 
               <div style={{ marginBottom: 24 }}>
-                <label style={{ fontSize: 13, color: '#8899aa', marginBottom: 6, display: 'block' }}>Nachricht *</label>
+<label style={{ fontSize: 13, color: '#e8eef4', marginBottom: 6, display: 'block' }}>Nachricht <span style={{ color: '#ff4444' }}>*</span></label>
                 <textarea value={nachricht} onChange={(e) => setNachricht(e.target.value)} rows={6}
                   style={{ ...inputStyle, resize: 'vertical' as any }} />
               </div>
 
-              <button onClick={handleSubmit} disabled={loading}
-                style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '12px 32px', fontWeight: 900, fontSize: 14, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1.5 }}>
-                {loading ? 'Senden...' : 'Senden'}
-              </button>
+<div style={{ display: 'flex', justifyContent: 'center' }}>
+                <button onClick={handleSubmit} disabled={loading}
+                  style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '14px 60px', fontWeight: 900, fontSize: 14, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1.5 }}>
+                  {loading ? 'Senden...' : 'Senden'}
+                </button>
+              </div>
 
               {error && <p style={{ color: '#ff4444', marginTop: 16, fontSize: 14 }}>{error}</p>}
             </div>
@@ -97,16 +99,26 @@ export default function KontaktPage() {
               </div>
 
               <div style={{ display: 'flex', gap: 16 }}>
-                <a href="https://www.instagram.com/90focus_official/" target="_blank" rel="noopener noreferrer" style={{ color: '#e8eef4' }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                    <circle cx="12" cy="12" r="4"/>
-                    <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+<a href="https://www.instagram.com/90focus_official/" target="_blank" rel="noopener noreferrer">
+                  <svg width="20" height="20" viewBox="0 0 24 24">
+                    <defs>
+                      <linearGradient id="igGradKontakt" x1="0%" y1="100%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#feda75"/>
+                        <stop offset="25%" stopColor="#fa7e1e"/>
+                        <stop offset="50%" stopColor="#d62976"/>
+                        <stop offset="75%" stopColor="#962fbf"/>
+                        <stop offset="100%" stopColor="#4f5bd5"/>
+                      </linearGradient>
+                    </defs>
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="url(#igGradKontakt)"/>
+                    <circle cx="12" cy="12" r="4" fill="none" stroke="#fff" strokeWidth="1.8"/>
+                    <circle cx="17.3" cy="6.7" r="1.2" fill="#fff"/>
                   </svg>
                 </a>
-                <a href="https://www.facebook.com/90focus" target="_blank" rel="noopener noreferrer" style={{ color: '#e8eef4' }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                <a href="https://www.facebook.com/90focus" target="_blank" rel="noopener noreferrer">
+                  <svg width="20" height="20" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="11" fill="#1877F2"/>
+                    <path d="M15.5 8.5h-1.7c-.4 0-.8.4-.8.9v1.4h2.4l-.3 2.4h-2.1v6h-2.5v-6H8.5v-2.4h1.9V9.1c0-1.6 1.1-3 3-3h2.1v2.4z" fill="#fff"/>
                   </svg>
                 </a>
                 <a href="mailto:info@sportshot.ch" style={{ color: '#e8eef4' }}>
