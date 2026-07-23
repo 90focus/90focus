@@ -127,7 +127,6 @@ export default function EventDetailPage() {
     }
   }
 
-  // NEUER UPLOAD MIT PRESIGNED URLS
   const handleUpload = async () => {
     if (!files || files.length === 0) {
       setMessage('Bitte Fotos auswählen!')
@@ -191,7 +190,7 @@ export default function EventDetailPage() {
   )
 
   return (
-    <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
+    <div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
       {lightboxIndex !== null && (
         <div onClick={() => setLightboxIndex(null)} style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.95)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <button onClick={() => setLightboxIndex(null)} style={{ position: 'absolute', top: 20, right: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 28, width: 44, height: 44, borderRadius: '50%', cursor: 'pointer' }}>✕</button>
@@ -207,11 +206,10 @@ export default function EventDetailPage() {
       )}
 
       <nav style={{ background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/dashboard')}>
-          <div style={{ width: 34, height: 34, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>90</span>
-          </div>
-          <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/meine-events')}>
+          <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 1, fontStyle: 'italic' }}>
+            <span style={{ color: '#e8eef4' }}>SPORT</span><span style={{ color: '#e8ff00' }}>SHOT</span>
+          </span>
         </div>
         <button onClick={() => router.push('/meine-events')} style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>← Meine Events</button>
       </nav>
@@ -221,9 +219,8 @@ export default function EventDetailPage() {
           <div style={{ marginBottom: 32, background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '20px 24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
-                <div style={{ fontSize: 10, color: '#e8ff00', fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>{event.liga}</div>
-                <h1 style={{ fontSize: 28, fontWeight: 900, textTransform: 'uppercase', marginBottom: 8, margin: 0 }}>{event.home_team} vs {event.away_team}</h1>
-                <div style={{ color: '#445566', fontSize: 14, marginTop: 8 }}>📅 {event.date} {event.time && `· 🕐 ${event.time}`} {event.ort && `· 📍 ${event.ort}`}</div>
+                <h1 style={{ fontSize: 28, fontWeight: 900, textTransform: 'uppercase', marginBottom: 8, margin: 0 }}>{event.home_team}</h1>
+                <div style={{ color: '#445566', fontSize: 14, marginTop: 8 }}>📅 {event.date} {event.ort && `· 📍 ${event.ort}`}</div>
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button onClick={() => router.push(`/meine-events/${eventId}/bearbeiten`)}
