@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 export default function SpielePage() {
   const [events, setEvents] = useState<any[]>([])
   const [filtered, setFiltered] = useState<any[]>([])
-const [ligaFilter, setLigaFilter] = useState('')
+
 
 const [nameFilter, setNameFilter] = useState('')
   const [nameInput, setNameInput] = useState('')
@@ -25,9 +25,8 @@ const [nameFilter, setNameFilter] = useState('')
 useEffect(() => {
     let result = events
 if (nameFilter) result = result.filter((ev) => ev.home_team.toLowerCase().includes(nameFilter.toLowerCase()))
-    if (ligaFilter) result = result.filter((ev) => ev.liga === ligaFilter)
     setFiltered(result)
-  }, [nameFilter, ligaFilter, events])
+  }, [nameFilter, events])
 
   return (
     <main style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
@@ -44,31 +43,7 @@ if (nameFilter) result = result.filter((ev) => ev.home_team.toLowerCase().includ
             style={{ width: '100%', background: '#0d1219', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '14px 18px', fontSize: 15, boxSizing: 'border-box' as any }} />
         </div>
 
-        <div style={{ display: 'flex', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
-          <div>
-<div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Sportart</div>
-            <select value={ligaFilter} onChange={(e) => setLigaFilter(e.target.value)}
-              style={{ background: '#0d1219', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '10px 16px', fontSize: 14, cursor: 'pointer', minWidth: 200 }}>
-<option value="">Alle Sportarten</option>
-              <option value="Fussball">Fussball</option>
-              <option value="Handball">Handball</option>
-              <option value="Hybrid Sport">Hybrid Sport</option>
-              <option value="Laufsport">Laufsport</option>
-              <option value="Volleyball">Volleyball</option>
-              <option value="Basketball">Basketball</option>
-              <option value="Sonstige">Sonstige</option>
-            </select>
-          </div>
 
-{(ligaFilter || nameFilter) && (
-            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-              <button onClick={() => { setLigaFilter(''); setNameFilter(''); setNameInput('') }}
-                style={{ background: 'transparent', color: '#667788', border: '1px solid #1c2a38', borderRadius: 4, padding: '10px 16px', fontSize: 13, cursor: 'pointer' }}>
-                Filter zurücksetzen ✕
-              </button>
-            </div>
-          )}
-        </div>
 
         {filtered.length === 0 ? (
           <div style={{ color: '#445566', fontSize: 16, padding: '40px 0' }}>Keine Events gefunden. 🎯</div>
