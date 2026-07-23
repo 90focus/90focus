@@ -11,7 +11,8 @@ export default function MeineEventsPage() {
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
-  const [stats, setStats] = useState({ events: 0, fotos: 0 })
+const [stats, setStats] = useState({ events: 0, fotos: 0 })
+  const [fotoCounts, setFotoCounts] = useState<Record<string, number>>({})
   const [ligaFilter, setLigaFilter] = useState('')
   const [datumFilter, setDatumFilter] = useState('')
   const router = useRouter()
@@ -43,11 +44,19 @@ export default function MeineEventsPage() {
     const combined = [...(upcoming || []), ...(past || [])]
     setEvents(combined)
     setFiltered(combined)
-    if (combined.length > 0) {
+if (combined.length > 0) {
       const { count } = await supabase.from('event_fotos').select('*', { count: 'exact', head: true }).in('event_id', combined.map((e: any) => e.id))
       setStats({ events: combined.length, fotos: count || 0 })
+
+      const { data: fotoRows } = await supabase.from('event_fotos').select('event_id').in('event_id', combined.map((e: any) => e.id))
+      const counts: Record<string, number> = {}
+      fotoRows?.forEach((row: any) => {
+        counts[row.event_id] = (counts[row.event_id] || 0) + 1
+      })
+      setFotoCounts(counts)
     } else {
       setStats({ events: 0, fotos: 0 })
+      setFotoCounts({})
     }
   }
 
@@ -208,6 +217,7 @@ onClick={() => router.push('/profil')}>Profil</button>
                         </>
                       )}
                     </div>
+<div style={{ fontSize: 11, color: '#667788', marginBottom: 8 }}>{fotoCounts[ev.id] || 0} Foto{fotoCounts[ev.id] === 1 ? '' : 's'}</div>
                     {ev.sponsor_name && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
                         {ev.sponsor_logo_url && <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: '14px', objectFit: 'contain' }} />}
