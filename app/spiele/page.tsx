@@ -7,8 +7,9 @@ import { useRouter } from 'next/navigation'
 export default function SpielePage() {
   const [events, setEvents] = useState<any[]>([])
   const [filtered, setFiltered] = useState<any[]>([])
-  const [ligaFilter, setLigaFilter] = useState('')
+const [ligaFilter, setLigaFilter] = useState('')
   const [datumFilter, setDatumFilter] = useState('')
+  const [nameFilter, setNameFilter] = useState('')
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const router = useRouter()
 
@@ -20,17 +21,23 @@ export default function SpielePage() {
     fetchEvents()
   }, [])
 
-  useEffect(() => {
+useEffect(() => {
     let result = events
+    if (nameFilter) result = result.filter((ev) => ev.home_team.toLowerCase().includes(nameFilter.toLowerCase()))
     if (ligaFilter) result = result.filter((ev) => ev.liga === ligaFilter)
     if (datumFilter) result = result.filter((ev) => ev.date === datumFilter)
     setFiltered(result)
-  }, [ligaFilter, datumFilter, events])
+  }, [nameFilter, ligaFilter, datumFilter, events])
 
   return (
     <main style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
 <section style={{ padding: '32px 48px 40px', maxWidth: 1200, margin: '60px auto 0' }}>
 <h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 40 }}>Alle Events</h1>
+
+<div style={{ marginBottom: 24 }}>
+          <input type="text" placeholder="Finde dein Event" value={nameFilter} onChange={(e) => setNameFilter(e.target.value)}
+            style={{ width: '100%', maxWidth: 500, background: '#0d1219', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '14px 18px', fontSize: 15, boxSizing: 'border-box' as any }} />
+        </div>
 
         <div style={{ display: 'flex', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
           <div>
@@ -52,9 +59,9 @@ export default function SpielePage() {
             <input type="date" value={datumFilter} onChange={(e) => setDatumFilter(e.target.value)}
               style={{ background: '#0d1219', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '10px 16px', fontSize: 14, cursor: 'pointer' }} />
           </div>
-          {(ligaFilter || datumFilter) && (
+{(ligaFilter || datumFilter || nameFilter) && (
             <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-              <button onClick={() => { setLigaFilter(''); setDatumFilter('') }}
+              <button onClick={() => { setLigaFilter(''); setDatumFilter(''); setNameFilter('') }}
                 style={{ background: 'transparent', color: '#667788', border: '1px solid #1c2a38', borderRadius: 4, padding: '10px 16px', fontSize: 13, cursor: 'pointer' }}>
                 Filter zurücksetzen ✕
               </button>
