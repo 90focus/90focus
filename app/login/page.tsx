@@ -90,8 +90,8 @@ if (checkingSession) return (
             </span>
           </div>
 
-          <h1 style={{ color: '#e8eef4', fontSize: 24, fontWeight: 900, marginBottom: 8, textTransform: 'uppercase' }}>
-            {mode === 'login' ? '🔐 Login' : '🔑 Passwort vergessen'}
+<h1 style={{ color: '#e8eef4', fontSize: mode === 'login' ? 24 : 17, fontWeight: 900, marginBottom: 8, textTransform: 'uppercase', whiteSpace: 'nowrap', overflow: 'hidden' }}>
+            {mode === 'login' ? 'Login' : 'Passwort vergessen'}
           </h1>
           <p style={{ color: '#e8eef4', fontSize: 14, marginBottom: 24 }}>
             {mode === 'login' ? 'Melde dich mit deinen Zugangsdaten an.' : 'Wir senden dir einen Reset-Link per Email.'}

@@ -19,9 +19,10 @@ export default function Header() {
     checkUser()
   }, [])
 
-  const handleLogout = async () => {
+const handleLogout = async () => {
     await supabase.auth.signOut()
     setUser(null)
+    router.push('/')
   }
 
   const navBtn = (path: string) => ({
