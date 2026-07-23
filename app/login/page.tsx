@@ -97,8 +97,9 @@ if (checkingSession) return (
             {mode === 'login' ? 'Melde dich mit deinen Zugangsdaten an.' : 'Wir senden dir einen Reset-Link per Email.'}
           </p>
 
-          <input type="email" placeholder="Email" value={email}
+<input type="email" placeholder="Email" value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && mode === 'login' && handleLogin()}
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
 
           {mode === 'login' && (
