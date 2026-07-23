@@ -8,7 +8,7 @@ export default function Home() {
   const [events, setEvents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [slideIndex, setSlideIndex] = useState(0)
-  const [heroBilder, setHeroBilder] = useState<string[]>([])
+const [heroBilder] = useState<string[]>(['/hero/hero-1.jpg', '/hero/hero-2.jpg'])
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const [hoveredBtn, setHoveredBtn] = useState<string | null>(null)
   const [hoveredHeroBtn, setHoveredHeroBtn] = useState(false)
@@ -17,14 +17,12 @@ export default function Home() {
   const router = useRouter()
 
   useEffect(() => {
-    const fetchEvents = async () => {
+const fetchEvents = async () => {
       const today = new Date().toISOString().split('T')[0]
       const { data } = await supabase.from('events').select('*')
         .gte('date', today).order('date', { ascending: true }).limit(6)
       if (data) {
         setEvents(data)
-        const bilder = data.filter((e: any) => e.bild_url).map((e: any) => e.bild_url)
-        setHeroBilder(bilder)
       }
     }
     fetchEvents()
