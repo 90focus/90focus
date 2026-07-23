@@ -37,9 +37,9 @@ export default function KundenDashboardPage() {
     </div>
   )
 
-  return (
-    <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ padding: '48px 32px', maxWidth: '960px', margin: '0 auto', flex: 1, width: '100%', marginTop: 60 }}>
+return (
+    <div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
+      <div style={{ padding: '48px 32px', maxWidth: '960px', margin: '0 auto', width: '100%', marginTop: 60 }}>
 
         <div style={{ marginBottom: 48 }}>
           <h1 style={{ fontSize: 42, fontWeight: 900, textTransform: 'uppercase', margin: 0 }}>
@@ -62,12 +62,12 @@ export default function KundenDashboardPage() {
           </div>
         </div>
 
-        <div style={{
+<div style={{
           background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)',
-          border: '1px solid #1c2a38', borderRadius: 12, padding: '40px',
+          border: '1px solid #1c2a38', borderRadius: 12, padding: '32px',
           textAlign: 'center'
         }}>
-<h2 style={{ fontSize: 28, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -1, marginBottom: 8 }}>
+          <h2 style={{ fontSize: 28, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -1, marginBottom: 20, marginTop: -4 }}>
             Find your Moment
           </h2>
 
@@ -78,11 +78,12 @@ export default function KundenDashboardPage() {
             style={{
               background: hoveredSpiele ? '#d4e800' : '#e8ff00',
               color: '#070b0f', border: 'none', borderRadius: 4,
-              padding: '14px 36px', fontWeight: 900, fontSize: 14,
+              padding: '10px 28px', fontWeight: 900, fontSize: 12,
               cursor: 'pointer', letterSpacing: 1.5, textTransform: 'uppercase',
               transform: hoveredSpiele ? 'scale(1.05)' : 'scale(1)',
               transition: 'all 0.15s ease',
-              boxShadow: hoveredSpiele ? '0 0 20px rgba(232,255,0,0.3)' : 'none'
+              boxShadow: hoveredSpiele ? '0 0 20px rgba(232,255,0,0.3)' : 'none',
+              marginTop: 4
             }}>
             Zu den Events
           </button>
