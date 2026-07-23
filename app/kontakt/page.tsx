@@ -101,24 +101,15 @@ export default function KontaktPage() {
               <div style={{ display: 'flex', gap: 16 }}>
 <a href="https://www.instagram.com/90focus_official/" target="_blank" rel="noopener noreferrer">
                   <svg width="20" height="20" viewBox="0 0 24 24">
-                    <defs>
-                      <linearGradient id="igGradKontakt" x1="0%" y1="100%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#feda75"/>
-                        <stop offset="25%" stopColor="#fa7e1e"/>
-                        <stop offset="50%" stopColor="#d62976"/>
-                        <stop offset="75%" stopColor="#962fbf"/>
-                        <stop offset="100%" stopColor="#4f5bd5"/>
-                      </linearGradient>
-                    </defs>
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="url(#igGradKontakt)"/>
-                    <circle cx="12" cy="12" r="4" fill="none" stroke="#fff" strokeWidth="1.8"/>
-                    <circle cx="17.3" cy="6.7" r="1.2" fill="#fff"/>
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="#141414"/>
+                    <circle cx="12" cy="12" r="4" fill="none" stroke="#fff" strokeWidth="1.6"/>
+                    <circle cx="17" cy="7" r="1" fill="#fff"/>
                   </svg>
                 </a>
                 <a href="https://www.facebook.com/90focus" target="_blank" rel="noopener noreferrer">
                   <svg width="20" height="20" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="11" fill="#1877F2"/>
-                    <path d="M15.5 8.5h-1.7c-.4 0-.8.4-.8.9v1.4h2.4l-.3 2.4h-2.1v6h-2.5v-6H8.5v-2.4h1.9V9.1c0-1.6 1.1-3 3-3h2.1v2.4z" fill="#fff"/>
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="#141414"/>
+                    <path d="M14 8.5h-1.2c-.3 0-.6.3-.6.7v1h1.8l-.25 1.8h-1.55v4.5h-1.9v-4.5H9v-1.8h1.3V9c0-1.2.85-2.3 2.3-2.3H14v1.8z" fill="#fff"/>
                   </svg>
                 </a>
                 <a href="mailto:info@sportshot.ch" style={{ color: '#e8eef4' }}>

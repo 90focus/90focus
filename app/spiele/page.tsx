@@ -66,7 +66,7 @@ export default function SpielePage() {
         ) : (
 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
             {filtered.map((ev) => (
-              <div key={ev.id} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', cursor: 'pointer' }}
+<div key={ev.id} style={{ background: '#0d1219', border: '1px solid rgba(232,255,0,0.35)', borderRadius: 8, overflow: 'hidden', cursor: 'pointer' }}
                 onClick={() => router.push(`/suche?eventId=${ev.id}`)}>
 <div style={{ aspectRatio: '4 / 3', background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
                   {ev.bild_url ? (
