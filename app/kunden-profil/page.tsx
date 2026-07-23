@@ -45,8 +45,8 @@ export default function KundenProfilPage() {
   )
 
   return (
-    <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ padding: '40px 32px', maxWidth: '700px', margin: '60px auto 0', flex: 1, width: '100%' }}>
+<div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
+      <div style={{ padding: '40px 32px', maxWidth: '700px', margin: '60px auto 0', width: '100%' }}>
         <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Mein Profil</div>
         <h1 style={{ fontSize: 36, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>
           {profile?.vorname} {profile?.nachname}

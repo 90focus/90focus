@@ -73,7 +73,7 @@ export default function MeineEventsPage() {
   )
 
   return (
-    <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column' }}>
+<div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/meine-events')}>
           <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 1, fontStyle: 'italic' }}>
@@ -94,7 +94,7 @@ export default function MeineEventsPage() {
         </div>
       </nav>
 
-      <div style={{ padding: '40px 48px', maxWidth: '1200px', margin: '60px auto 0', flex: 1, width: '100%' }}>
+      <div style={{ padding: '40px 48px', maxWidth: '1200px', margin: '60px auto 0', width: '100%' }}>
         <h1 style={{ fontSize: 36, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>Meine Events</h1>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 32 }}>
