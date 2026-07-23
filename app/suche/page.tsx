@@ -124,7 +124,7 @@ function SucheContent() {
     <div style={{ textAlign: 'center' }}>
       {event && (
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', textAlign: 'left', marginBottom: 24 }}>
-          <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
+<div style={{ aspectRatio: '4 / 3', background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
             {event.bild_url ? (
               <img src={event.bild_url} alt={`${event.home_team}`}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -208,9 +208,9 @@ function SucheContent() {
         <div style={{ padding: '40px 48px', maxWidth: '600px', margin: '60px auto 0', textAlign: 'center' }}>
           {event && (
             <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', textAlign: 'left', marginBottom: 32 }}>
-              <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
+<div style={{ aspectRatio: '4 / 3', background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
                 {event.bild_url ? (
-                  <img src={event.bild_url} alt={`${event.home_team} vs ${event.away_team}`}
+                  <img src={event.bild_url} alt={event.home_team}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

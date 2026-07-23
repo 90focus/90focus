@@ -28,7 +28,7 @@ export default function SpielePage() {
 
   return (
     <main style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
-      <section style={{ padding: '60px 32px', marginTop: 60 }}>
+<section style={{ padding: '60px 32px', marginTop: 60, maxWidth: 1200, margin: '60px auto 0' }}>
 <h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 40 }}>Alle Events</h1>
 
         <div style={{ display: 'flex', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
