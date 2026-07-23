@@ -112,7 +112,7 @@ Jeder Augenblick zählt, wir halten ihn fest
         )}
       </section>
 
-      <section style={{ padding: "32px 48px 40px", borderTop: "1px solid #131e2a" }}>
+<section style={{ padding: "32px 48px 40px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 20 }}>
             <button
