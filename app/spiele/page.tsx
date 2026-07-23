@@ -9,7 +9,8 @@ export default function SpielePage() {
   const [filtered, setFiltered] = useState<any[]>([])
 const [ligaFilter, setLigaFilter] = useState('')
   const [datumFilter, setDatumFilter] = useState('')
-  const [nameFilter, setNameFilter] = useState('')
+const [nameFilter, setNameFilter] = useState('')
+  const [nameInput, setNameInput] = useState('')
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const router = useRouter()
 
@@ -34,9 +35,15 @@ useEffect(() => {
 <section style={{ padding: '32px 48px 40px', maxWidth: 1200, margin: '60px auto 0' }}>
 <h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 40 }}>Alle Events</h1>
 
-<div style={{ marginBottom: 24 }}>
-          <input type="text" placeholder="Finde dein Event" value={nameFilter} onChange={(e) => setNameFilter(e.target.value)}
-            style={{ width: '100%', maxWidth: 500, background: '#0d1219', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '14px 18px', fontSize: 15, boxSizing: 'border-box' as any }} />
+<div style={{ marginBottom: 24, display: 'flex', gap: 10, maxWidth: 560 }}>
+          <input type="text" placeholder="Finde dein Event" value={nameInput}
+            onChange={(e) => setNameInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && setNameFilter(nameInput)}
+            style={{ flex: 1, background: '#0d1219', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '14px 18px', fontSize: 15, boxSizing: 'border-box' as any }} />
+          <button onClick={() => setNameFilter(nameInput)}
+            style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '0 24px', fontWeight: 900, fontSize: 13, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1 }}>
+            Suchen
+          </button>
         </div>
 
         <div style={{ display: 'flex', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
@@ -61,7 +68,7 @@ useEffect(() => {
           </div>
 {(ligaFilter || datumFilter || nameFilter) && (
             <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-              <button onClick={() => { setLigaFilter(''); setDatumFilter(''); setNameFilter('') }}
+<button onClick={() => { setLigaFilter(''); setDatumFilter(''); setNameFilter(''); setNameInput('') }}
                 style={{ background: 'transparent', color: '#667788', border: '1px solid #1c2a38', borderRadius: 4, padding: '10px 16px', fontSize: 13, cursor: 'pointer' }}>
                 Filter zurücksetzen ✕
               </button>
