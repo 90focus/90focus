@@ -33,14 +33,17 @@ if (nameFilter) result = result.filter((ev) => ev.home_team.toLowerCase().includ
 <section style={{ padding: '32px 48px 40px', maxWidth: 1200, margin: '60px auto 0' }}>
 <h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 40 }}>Alle Events</h1>
 
-<div style={{ marginBottom: 24, maxWidth: 500 }}>
+<div style={{ marginBottom: 24, maxWidth: 500, position: 'relative' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8899aa" strokeWidth="2" style={{ position: 'absolute', left: 18, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
+            <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
           <input type="text" placeholder="Finde dein Event" value={nameInput}
             onChange={(e) => {
               setNameInput(e.target.value)
               if (e.target.value === '') setNameFilter('')
             }}
             onKeyDown={(e) => e.key === 'Enter' && setNameFilter(nameInput)}
-            style={{ width: '100%', background: '#0d1219', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '14px 18px', fontSize: 15, boxSizing: 'border-box' as any }} />
+            style={{ width: '100%', background: '#0d1219', color: '#fff', border: '1px solid #1c2a38', borderRadius: 6, padding: '14px 18px 14px 46px', fontSize: 15, boxSizing: 'border-box' as any, boxShadow: '0 0 20px rgba(232,255,0,0.15)' }} />
         </div>
 
 
