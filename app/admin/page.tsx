@@ -184,7 +184,8 @@ onClick={() => router.push('/profil')}>Profil</button>
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
 
           <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>
-            <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4' }}>🖼️ Event Bild (optional)</h3>
+<h3 style={{ margin: '0 0 4px 0', color: '#e8eef4' }}>🖼️ Event Bild (optional)</h3>
+            <p style={{ margin: '0 0 12px 0', color: '#667788', fontSize: 12 }}>Empfohlene Grösse: 1200 × 900 Pixel (4:3)</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 14, border: '1px solid #2a3a4a', fontWeight: 600 }}>
                 📁 Bild auswählen

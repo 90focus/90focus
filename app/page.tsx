@@ -158,8 +158,8 @@ Jeder Augenblick zählt, wir halten ihn fest
 
                   </div>
                   <div style={{ padding: "16px" }}>
-<div style={{ fontSize: 15, fontWeight: 800, textTransform: "uppercase", marginBottom: 8 }}>{ev.home_team}</div>
-<div style={{ fontSize: 12, color: "#8899aa", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
+<div style={{ fontSize: 15, fontWeight: 800, textTransform: "uppercase", marginBottom: 8, color: "#fff" }}>{ev.home_team}</div>
+<div style={{ fontSize: 12, color: "#fff", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e8eef4" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                       <span>{new Date(ev.date).toLocaleDateString('de-CH')}</span>
                       {ev.ort && (
