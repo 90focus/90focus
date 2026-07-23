@@ -10,7 +10,7 @@ const [eventName, setEventName] = useState('')
   const [homeTeam, setHomeTeam] = useState('')
   const [awayTeam, setAwayTeam] = useState('')
   const [date, setDate] = useState('')
-  const [time, setTime] = useState('')
+
   const [liga, setLiga] = useState('')
   const [ort, setOrt] = useState('')
   const [eventBild, setEventBild] = useState<File | null>(null)
@@ -59,7 +59,7 @@ const isTeamSport = liga === 'Fussball' || liga === 'Handball'
     let bildUrl = null
     if (eventBild) { setMessage('Event Bild wird hochgeladen...'); bildUrl = await uploadEventBild(eventBild) }
     const { data, error } = await supabase.from('events').insert({
-      home_team: finalName, away_team: '', date, time, liga, ort,
+home_team: finalName, away_team: '', date, liga, ort,
       bild_url: bildUrl, user_id: user.id,
     }).select().single()
     if (error) {
@@ -68,7 +68,7 @@ const isTeamSport = liga === 'Fussball' || liga === 'Handball'
       setCreatedEventId(data.id)
       setCreatedEventName(finalName)
       setMessage('✅ Event erstellt! Jetzt kannst du Fotos hochladen.')
-      setEventName(''); setHomeTeam(''); setAwayTeam(''); setDate(''); setTime(''); setLiga(''); setOrt('')
+setEventName(''); setHomeTeam(''); setAwayTeam(''); setDate(''); setLiga(''); setOrt('')
       setEventBild(null); setEventBildPreview(null); setEventBildName('')
     }
   }
@@ -177,8 +177,7 @@ const isTeamSport = liga === 'Fussball' || liga === 'Handball'
 
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
-          <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
-            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+
           <input type="text" placeholder="Ort (optional)" value={ort} onChange={(e) => setOrt(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
 

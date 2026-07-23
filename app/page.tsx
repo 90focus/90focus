@@ -152,7 +152,7 @@ Jeder Augenblick zählt, wir halten ihn fest
                         style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     ) : (
                       <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <span style={{ fontSize: 48 }}>⚽</span>
+<span style={{ fontSize: 48 }}>📷</span>
                       </div>
                     )}
 

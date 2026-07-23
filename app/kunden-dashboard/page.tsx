@@ -67,8 +67,7 @@ export default function KundenDashboardPage() {
           border: '1px solid #1c2a38', borderRadius: 12, padding: '40px',
           textAlign: 'center'
         }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>⚽</div>
-          <h2 style={{ fontSize: 28, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -1, marginBottom: 8 }}>
+<h2 style={{ fontSize: 28, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -1, marginBottom: 8 }}>
             Find your Moment
           </h2>
           <p style={{ color: '#667788', fontSize: 14, marginBottom: 28 }}>

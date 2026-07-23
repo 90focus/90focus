@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/app/supabase'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 
 function LoginContent() {
+  const [checkingSession, setCheckingSession] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -13,8 +14,23 @@ function LoginContent() {
   const [mode, setMode] = useState<'login' | 'forgot'>('login')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const searchParams = useSearchParams()
+const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirect')
+
+  useEffect(() => {
+    const check = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        if (redirectTo) { router.push(decodeURIComponent(redirectTo)); return }
+        const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
+        if (profile?.role === 'photographer') { router.push('/meine-events') }
+        else { router.push('/kunden-dashboard') }
+        return
+      }
+      setCheckingSession(false)
+    }
+    check()
+  }, [])
 
   const handleLogin = async () => {
     setLoading(true)
@@ -51,6 +67,18 @@ function LoginContent() {
     if (error) { setError('Fehler beim Senden!') } else { setMessage('✅ Email gesendet! Prüfe dein Postfach.') }
     setLoading(false)
   }
+
+if (checkingSession) return (
+    <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <p style={{ color: '#e8eef4' }}>Lade...</p>
+    </div>
+  )
+
+if (checkingSession) return (
+    <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <p style={{ color: '#e8eef4' }}>Lade...</p>
+    </div>
+  )
 
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', flexDirection: 'column', fontFamily: 'sans-serif' }}>
