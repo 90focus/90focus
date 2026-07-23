@@ -71,7 +71,7 @@ const fetchEvents = async () => {
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, #0d1219 0%, #131e2a 100%)" }} />
         )}
 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(7,11,15,0.65) 45%, rgba(7,11,15,0.15) 100%)" }} />
-<div style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-start", paddingTop: "22%", padding: "0 48px" }}>
+<div style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-start", padding: "0 48px", paddingTop: "22%" }}>
           <div style={{ color: "#e8ff00", fontSize: 16, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 20 }}>
             PROFESSIONELLE SPORTFOTOGRAFIE
           </div>
