@@ -181,7 +181,7 @@ onClick={() => router.push('/profil')}>Profil</button>
                   onMouseLeave={() => setHoveredCard(null)}
                   style={{
                     background: '#0d1219',
-border: hoveredCard === ev.id ? '1px solid #e8ff00' : '1px solid rgba(232,255,0,0.35)',
+border: hoveredCard === ev.id ? '1px solid #e8ff00' : '1px solid rgba(255,255,255,0.25)',
                     borderRadius: 8, overflow: 'hidden', cursor: 'pointer',
                     transform: hoveredCard === ev.id ? 'translateY(-4px)' : 'translateY(0)',
                     transition: 'all 0.2s ease'

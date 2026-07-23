@@ -49,25 +49,23 @@ export default function Footer() {
 
           <div>
             <div style={{ color: "#e8eef4", fontWeight: 800, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>Social Media</div>
-<div style={{ display: "flex", gap: 12 }}>
+<div style={{ display: "flex", gap: 16 }}>
               <a href="https://www.instagram.com/90focus_official/" target="_blank" rel="noopener noreferrer">
-                <svg width="26" height="26" viewBox="0 0 24 24">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="#141414"/>
-                  <circle cx="12" cy="12" r="4" fill="none" stroke="#fff" strokeWidth="1.6"/>
-                  <circle cx="17" cy="7" r="1" fill="#fff"/>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8">
+                  <rect x="3" y="3" width="18" height="18" rx="5"/>
+                  <circle cx="12" cy="12" r="4"/>
+                  <circle cx="17.2" cy="6.8" r="0.9" fill="#fff" stroke="none"/>
                 </svg>
               </a>
               <a href="https://www.facebook.com/90focus" target="_blank" rel="noopener noreferrer">
-                <svg width="26" height="26" viewBox="0 0 24 24">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="#141414"/>
-                  <path d="M14 8.5h-1.2c-.3 0-.6.3-.6.7v1h1.8l-.25 1.8h-1.55v4.5h-1.9v-4.5H9v-1.8h1.3V9c0-1.2.85-2.3 2.3-2.3H14v1.8z" fill="#fff"/>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff">
+                  <path d="M13.5 21v-7.5h2.5l.4-3h-2.9V8.6c0-.87.24-1.46 1.5-1.46h1.6V4.46C16.3 4.32 15.4 4.24 14.35 4.24c-2.4 0-4.05 1.46-4.05 4.15v2.31H7.8v3h2.5V21h3.2z"/>
                 </svg>
               </a>
               <a href="mailto:info@sportshot.ch">
-                <svg width="26" height="26" viewBox="0 0 24 24">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="#141414"/>
-                  <path d="M6 8.5l6 4 6-4" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <rect x="6" y="7.5" width="12" height="9" rx="1.5" fill="none" stroke="#fff" strokeWidth="1.5"/>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8">
+                  <rect x="3" y="5" width="18" height="14" rx="2"/>
+                  <path d="M3 7l9 6 9-6"/>
                 </svg>
               </a>
             </div>

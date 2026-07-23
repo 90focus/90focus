@@ -217,7 +217,7 @@ function SucheContent() {
       {matches.length === 0 ? (
         <div style={{ padding: '40px 48px', maxWidth: '600px', margin: '60px auto 0', textAlign: 'center' }}>
           {event && (
-<div style={{ background: '#0d1219', border: '1px solid rgba(232,255,0,0.35)', borderRadius: 8, overflow: 'hidden', textAlign: 'left', marginBottom: 32 }}>
+<div style={{ background: '#0d1219', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 8, overflow: 'hidden', textAlign: 'left', marginBottom: 32 }}>
 <div style={{ aspectRatio: '4 / 3', background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
                 {event.bild_url ? (
                   <img src={event.bild_url} alt={event.home_team}
