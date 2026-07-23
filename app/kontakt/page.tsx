@@ -41,7 +41,7 @@ export default function KontaktPage() {
   return (
     <div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
       <div style={{ maxWidth: 1000, margin: '60px auto 0', padding: '60px 24px' }}>
-        <div style={{ color: '#e8ff00', fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 40 }}>Kontakt</div>
+     <div style={{ color: '#fff', fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 40 }}>Kontakt</div>
 
         {sent ? (
           <div style={{ background: 'rgba(68,255,136,0.08)', border: '1px solid #44ff88', borderRadius: 12, padding: '48px 32px', textAlign: 'center', maxWidth: 500 }}>
