@@ -29,8 +29,7 @@ export default function SpielePage() {
   return (
     <main style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
       <section style={{ padding: '60px 32px', marginTop: 60 }}>
-        <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Alle Events</div>
-        <h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 40 }}>Events</h1>
+<h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 40 }}>Alle Events</h1>
 
         <div style={{ display: 'flex', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
           <div>
@@ -78,9 +77,7 @@ export default function SpielePage() {
                       <span style={{ fontSize: 48 }}>⚽</span>
                     </div>
                   )}
-                  <div style={{ position: 'absolute', top: 10, left: 10, background: '#e8ff00', color: '#070b0f', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', padding: '4px 8px', borderRadius: 2 }}>
-                    {ev.liga}
-                  </div>
+
                 </div>
                 <div style={{ padding: '16px' }}>
 <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 8 }}>{ev.home_team}</div>

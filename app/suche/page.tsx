@@ -133,12 +133,9 @@ function SucheContent() {
                 <span style={{ fontSize: 48 }}>⚽</span>
               </div>
             )}
-            <div style={{ position: 'absolute', top: 10, left: 10, background: '#e8ff00', color: '#070b0f', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', padding: '4px 8px', borderRadius: 2 }}>
-              {event.liga}
-            </div>
-          </div>
+</div>
           <div style={{ padding: '16px' }}>
-            <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>{event.home_team} vs {event.away_team}</div>
+            <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>{event.home_team}</div>
             <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 8 }}>📅 {event.date} {event.ort && `· 📍 ${event.ort}`}</div>
             {event.sponsor_name && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
@@ -220,10 +217,7 @@ function SucheContent() {
                     <span style={{ fontSize: 48 }}>⚽</span>
                   </div>
                 )}
-                <div style={{ position: 'absolute', top: 10, left: 10, background: '#e8ff00', color: '#070b0f', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', padding: '4px 8px', borderRadius: 2 }}>
-                  {event.liga}
-                </div>
-              </div>
+</div>
               <div style={{ padding: '16px' }}>
                 <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>{event.home_team}</div>
                 <div style={{ fontSize: 12, color: '#8899aa', marginBottom: 8 }}>📅 {event.date} {event.ort && `· 📍 ${event.ort}`}</div>

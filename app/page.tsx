@@ -155,9 +155,7 @@ Jeder Augenblick zählt, wir halten ihn fest
                         <span style={{ fontSize: 48 }}>⚽</span>
                       </div>
                     )}
-                    <div style={{ position: "absolute", top: 10, left: 10, background: "#e8ff00", color: "#070b0f", fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", padding: "4px 8px", borderRadius: 2 }}>
-                      {ev.liga}
-                    </div>
+
                   </div>
                   <div style={{ padding: "16px" }}>
 <div style={{ fontSize: 15, fontWeight: 800, textTransform: "uppercase", marginBottom: 8 }}>{ev.home_team}</div>
