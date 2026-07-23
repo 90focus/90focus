@@ -188,7 +188,7 @@ function CheckoutContent() {
               fontWeight: 900, fontSize: 15, cursor: 'not-allowed',
               letterSpacing: 1.5, textTransform: 'uppercase', opacity: 0.5
             }}>
-              Jetzt kaufen – CHF {total}
+Jetzt kaufen
             </button>
             <p style={{ color: '#445566', fontSize: 12, textAlign: 'center', marginTop: 12 }}>
               🔒 Bezahlung via Stripe – kommt bald
