@@ -8,7 +8,7 @@ export default function Home() {
   const [events, setEvents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [slideIndex, setSlideIndex] = useState(0)
-const [heroBilder] = useState<string[]>(['/hero/hero-1.jpg', '/hero/hero-2.jpg'])
+const [heroBilder] = useState<string[]>(['/hero/hero-1.jpg', '/hero/hero-2.jpg', '/hero/hero-3.jpg', '/hero/hero-4.jpg', '/hero/hero-5.jpg'])
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const [hoveredBtn, setHoveredBtn] = useState<string | null>(null)
   const [hoveredHeroBtn, setHoveredHeroBtn] = useState(false)
