@@ -38,6 +38,7 @@ if (nameFilter) result = result.filter((ev) => ev.home_team.toLowerCase().includ
             <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
 <input type="text" placeholder="Finde dein Event" value={nameInput}
+            className="search-input-white"
             onChange={(e) => {
               setNameInput(e.target.value)
               if (e.target.value === '') setNameFilter('')
