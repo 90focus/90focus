@@ -163,7 +163,7 @@ onClick={() => router.push('/profil')}>Profil</button>
             </button>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
             {filtered.map((ev) => {
               const isPast = ev.date < today
               return (
@@ -177,7 +177,7 @@ onClick={() => router.push('/profil')}>Profil</button>
                     transform: hoveredCard === ev.id ? 'translateY(-4px)' : 'translateY(0)',
                     transition: 'all 0.2s ease'
                   }}>
-                  <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
+<div style={{ aspectRatio: '4 / 3', background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
 {ev.bild_url ? (
                       <img src={ev.bild_url} alt={ev.home_team}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }} />

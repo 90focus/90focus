@@ -64,11 +64,11 @@ export default function SpielePage() {
         {filtered.length === 0 ? (
           <div style={{ color: '#445566', fontSize: 16, padding: '40px 0' }}>Keine Events gefunden. 🎯</div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
             {filtered.map((ev) => (
               <div key={ev.id} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', cursor: 'pointer' }}
                 onClick={() => router.push(`/suche?eventId=${ev.id}`)}>
-                <div style={{ height: 180, background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
+<div style={{ aspectRatio: '4 / 3', background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
                   {ev.bild_url ? (
 <img src={ev.bild_url} alt={ev.home_team}
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }} />

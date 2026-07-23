@@ -134,7 +134,7 @@ Jeder Augenblick zählt, wir halten ihn fest
           {events.length === 0 ? (
             <div style={{ color: "#445566", fontSize: 16, padding: "40px 0" }}>Keine kommenden Events. 🎯</div>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+<div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
               {events.map((ev) => (
                 <div key={ev.id}
                   onMouseEnter={() => setHoveredCard(ev.id)}
@@ -146,7 +146,7 @@ Jeder Augenblick zählt, wir halten ihn fest
                     transition: "all 0.2s ease"
                   }}
                   onClick={() => router.push(`/suche?eventId=${ev.id}`)}>
-                  <div style={{ height: 180, background: "#131e2a", position: "relative", overflow: "hidden" }}>
+<div style={{ aspectRatio: "4 / 3", background: "#131e2a", position: "relative", overflow: "hidden" }}>
                     {ev.bild_url ? (
                       <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
                         style={{ width: "100%", height: "100%", objectFit: "cover" }} />
