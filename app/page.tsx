@@ -55,7 +55,7 @@ const fetchEvents = async () => {
 
   return (
     <main style={{ minHeight: "100vh", background: "#070b0f", color: "#e8eef4", fontFamily: "sans-serif", padding: "0" }}>
-<section style={{ position: "relative", height: "480px", overflow: "hidden", marginTop: 60 }}>
+<section style={{ position: "relative", aspectRatio: "16 / 5", overflow: "hidden", marginTop: 60 }}>
         {heroBilder.length > 0 ? (
           heroBilder.map((bild, i) => (
             <div key={i} style={{
