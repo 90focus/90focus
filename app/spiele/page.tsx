@@ -108,7 +108,14 @@ export default function SpielePage() {
                       <span style={{ fontSize: 11, color: '#e8eef4', fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
                     </div>
                   )}
-                  <button style={{ width: '100%', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 2, padding: '10px', fontWeight: 900, fontSize: 12, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1 }}>
+<button style={{
+                    width: '100%',
+                    background: hoveredCard === ev.id ? '#d4e800' : '#e8ff00',
+                    color: '#070b0f', border: 'none', borderRadius: 2, padding: '10px',
+                    fontWeight: 900, fontSize: 12, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1,
+                    transform: hoveredCard === ev.id ? 'scale(1.02)' : 'scale(1)',
+                    transition: 'all 0.15s ease'
+                  }}>
                     Zu den Fotos
                   </button>
                 </div>
