@@ -12,14 +12,20 @@ export default function Header() {
   useEffect(() => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession()
-      if (session?.user) {
-        setUser(session.user)
-      }
+      setUser(session?.user || null)
     }
     checkUser()
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null)
+    })
+
+    return () => {
+      listener?.subscription?.unsubscribe()
+    }
   }, [])
 
-const handleLogout = async () => {
+  const handleLogout = async () => {
     await supabase.auth.signOut()
     setUser(null)
     router.push('/')

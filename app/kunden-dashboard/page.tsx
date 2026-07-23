@@ -70,9 +70,7 @@ export default function KundenDashboardPage() {
 <h2 style={{ fontSize: 28, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -1, marginBottom: 8 }}>
             Find your Moment
           </h2>
-          <p style={{ color: '#667788', fontSize: 14, marginBottom: 28 }}>
-            Durchsuche alle Events und finde deine Fotos.
-          </p>
+
           <button
             onClick={() => router.push('/spiele')}
             onMouseEnter={() => setHoveredSpiele(true)}
