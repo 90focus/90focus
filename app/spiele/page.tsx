@@ -9,6 +9,7 @@ export default function SpielePage() {
   const [filtered, setFiltered] = useState<any[]>([])
   const [ligaFilter, setLigaFilter] = useState('')
   const [datumFilter, setDatumFilter] = useState('')
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -65,8 +66,17 @@ export default function SpielePage() {
           <div style={{ color: '#445566', fontSize: 16, padding: '40px 0' }}>Keine Events gefunden. 🎯</div>
         ) : (
 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-            {filtered.map((ev) => (
-<div key={ev.id} style={{ background: '#0d1219', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 8, overflow: 'hidden', cursor: 'pointer' }}
+{filtered.map((ev) => (
+              <div key={ev.id}
+                onMouseEnter={() => setHoveredCard(ev.id)}
+                onMouseLeave={() => setHoveredCard(null)}
+                style={{
+                  background: '#0d1219',
+                  border: hoveredCard === ev.id ? '1px solid #e8ff00' : '1px solid rgba(255,255,255,0.25)',
+                  borderRadius: 8, overflow: 'hidden', cursor: 'pointer',
+                  transform: hoveredCard === ev.id ? 'translateY(-4px)' : 'translateY(0)',
+                  transition: 'all 0.2s ease'
+                }}
                 onClick={() => router.push(`/suche?eventId=${ev.id}`)}>
 <div style={{ aspectRatio: '4 / 3', background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
                   {ev.bild_url ? (
