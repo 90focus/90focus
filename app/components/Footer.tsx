@@ -62,7 +62,7 @@ export default function Footer() {
                   <path d="M13.5 21v-7.5h2.5l.4-3h-2.9V8.6c0-.87.24-1.46 1.5-1.46h1.6V4.46C16.3 4.32 15.4 4.24 14.35 4.24c-2.4 0-4.05 1.46-4.05 4.15v2.31H7.8v3h2.5V21h3.2z"/>
                 </svg>
               </a>
-              <a href="mailto:info@sportshot.ch">
+              <a href="mailto:info@sport-shot.ch">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8">
                   <rect x="3" y="5" width="18" height="14" rx="2"/>
                   <path d="M3 7l9 6 9-6"/>
