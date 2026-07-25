@@ -26,11 +26,11 @@ export default function RegisterPage() {
     setLoading(true)
     setError('')
 
-    const { data, error: signUpError } = await supabase.auth.signUp({
+const { data, error: signUpError } = await supabase.auth.signUp({
       email, password,
       options: {
         emailRedirectTo: `${window.location.origin}/login`,
-        data: { role: 'customer', vorname, nachname, geburtsdatum }
+        data: { role: 'customer', vorname, nachname, geburtsdatum, datenschutz_akzeptiert_am: new Date().toISOString() }
       }
     })
 
