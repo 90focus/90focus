@@ -65,8 +65,8 @@ export default function RegisterPage() {
                   <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
               </div>
-              <div style={{ fontWeight: 800, fontSize: 18, color: '#44ff88', marginBottom: 8 }}>Registrierung erfolgreich!</div>
-              <div style={{ color: '#8899aa', fontSize: 14 }}>Bitte prüfe deine Email und bestätige dein Konto.</div>
+<div style={{ fontWeight: 800, fontSize: 18, color: '#44ff88', marginBottom: 8 }}>Registrierung erfolgreich!</div>
+              <div style={{ color: '#8899aa', fontSize: 14 }}>Bitte prüfe deine Email und bestätige dein Konto. Schau auch im Spam-Ordner nach.</div>
             </div>
           ) : (
             <>
