@@ -67,7 +67,7 @@ export default function RegisterPage() {
               </div>
 <div style={{ fontWeight: 800, fontSize: 18, color: '#44ff88', marginBottom: 8 }}>Registrierung erfolgreich!</div>
               <div style={{ color: '#8899aa', fontSize: 14, marginBottom: 8 }}>Bitte prüfe deine Email und bestätige dein Konto.</div>
-              <div style={{ color: '#e8ff00', fontSize: 13, fontWeight: 700 }}>Schau auch im Spam-Ordner nach.</div>
+<div style={{ color: '#e8ff00', fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap' }}>Schau auch im Spam-Ordner nach.</div>
             </div>
           ) : (
             <>
