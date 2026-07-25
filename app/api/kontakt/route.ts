@@ -8,16 +8,16 @@ export async function POST(req: NextRequest) {
     host: 'asmtp.mail.hostpoint.ch',
     port: 465,
     secure: true,
-    auth: {
-      user: 'info@90focus.ch',
+auth: {
+      user: 'info@sport-shot.ch',
       pass: process.env.EMAIL_PASSWORD,
     },
   })
 
   try {
     await transporter.sendMail({
-      from: 'info@90focus.ch',
-      to: 'info@90focus.ch',
+      from: 'info@sport-shot.ch',
+      to: 'info@sport-shot.ch',
       subject: `Neue Kontaktanfrage von ${name}`,
       html: `
         <h2>Neue Kontaktanfrage</h2>
