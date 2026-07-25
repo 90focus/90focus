@@ -34,18 +34,12 @@ export default function RegisterPage() {
       }
     })
 
-    if (signUpError) {
+if (signUpError) {
       if (signUpError.message.includes('already registered')) {
         setError('Diese Email ist bereits registriert! Bitte einloggen.')
       } else {
         setError('Fehler: ' + signUpError.message)
       }
-      setLoading(false)
-      return
-    }
-
-    if (!data.user || data.user.identities?.length === 0) {
-      setError('Diese Email ist bereits registriert! Bitte einloggen.')
       setLoading(false)
       return
     }
