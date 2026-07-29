@@ -37,7 +37,13 @@ body {
 .search-input-white::placeholder {
   color: #fff;
   opacity: 0.7;
-}.events-grid {
+}
+
+input[type="date"] {
+  color-scheme: dark;
+}
+
+.events-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
