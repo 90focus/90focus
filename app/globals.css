@@ -69,4 +69,11 @@ input[type="date"] {
   .footer-col {
     width: 45% !important;
   }
+}@media (max-width: 700px) {
+  .kontakt-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .kontakt-info {
+    margin-top: 32px !important;
+  }
 }
