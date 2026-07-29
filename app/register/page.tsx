@@ -13,7 +13,8 @@ export default function RegisterPage() {
   const [datenschutz, setDatenschutz] = useState(false)
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
-  const [error, setError] = useState('')
+const [error, setError] = useState('')
+  const [modalUrl, setModalUrl] = useState<string | null>(null)
   const router = useRouter()
 
   const handleRegister = async () => {
@@ -98,11 +99,11 @@ data: { role: 'customer', vorname, nachname, geburtsdatum, agb_datenschutz_akzep
                   style={{ width: 18, height: 18, cursor: 'pointer', marginTop: 2, flexShrink: 0 }} />
 <label htmlFor="datenschutz" style={{ color: '#e8eef4', fontSize: 14, cursor: 'pointer', lineHeight: 1.5 }}>
                   Ich habe die{' '}
-                  <span style={{ color: '#e8ff00', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => window.open('/agb', '_blank')}>
+                  <span style={{ color: '#e8ff00', textDecoration: 'underline', cursor: 'pointer' }} onClick={(e) => { e.preventDefault(); setModalUrl('/agb') }}>
                     AGB
                   </span>
                   {' '}und{' '}
-                  <span style={{ color: '#e8ff00', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => window.open('/datenschutz', '_blank')}>
+                  <span style={{ color: '#e8ff00', textDecoration: 'underline', cursor: 'pointer' }} onClick={(e) => { e.preventDefault(); setModalUrl('/datenschutz') }}>
                     Datenschutzerklärung
                   </span>
                   {' '}gelesen und akzeptiere diese. *
@@ -123,10 +124,21 @@ data: { role: 'customer', vorname, nachname, geburtsdatum, agb_datenschutz_akzep
                   Einloggen
                 </button>
               </div>
-            </>
+</>
           )}
         </div>
       </div>
+
+      {modalUrl && (
+        <div onClick={() => setModalUrl(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: '#070b0f', border: '1px solid #1c2a38', borderRadius: 12, width: '100%', maxWidth: 700, maxHeight: '85vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '12px 16px', borderBottom: '1px solid #1c2a38' }}>
+              <button onClick={() => setModalUrl(null)} style={{ background: 'transparent', border: 'none', color: '#e8eef4', fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>✕</button>
+            </div>
+            <iframe src={modalUrl} style={{ border: 'none', flex: 1, width: '100%' }} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
