@@ -5,7 +5,7 @@ export default function AgbPage() {
     <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
       <div style={{ maxWidth: 700, margin: '60px auto 0', padding: '60px 24px' }}>
         <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Rechtliches</div>
-        <h1 style={{ fontSize: 40, fontWeight: 900, textTransform: 'uppercase', marginBottom: 40 }}>AGB</h1>
+<h1 style={{ fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 40 }}>Allgemeine Geschäftsbedingungen</h1>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
           <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
