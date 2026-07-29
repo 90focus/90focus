@@ -4,7 +4,7 @@ export default function AgbEmbedPage() {
   return (
     <div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
       <div style={{ maxWidth: 700, margin: '0 auto', padding: '32px 24px' }}>
-        <h1 style={{ fontSize: 22, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32, whiteSpace: 'nowrap' }}>Allgemeine Geschäftsbedingungen</h1>
+<h1 style={{ fontSize: 'clamp(15px, 4.5vw, 22px)', fontWeight: 900, textTransform: 'uppercase', marginBottom: 32, whiteSpace: 'nowrap' }}>Allgemeine Geschäftsbedingungen</h1>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           <div>

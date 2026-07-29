@@ -51,8 +51,8 @@ data: { role: 'customer', vorname, nachname, geburtsdatum, agb_datenschutz_akzep
 
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', flexDirection: 'column', fontFamily: 'sans-serif' }}>
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', marginTop: 60 }}>
-        <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: '12px', padding: '40px', width: '100%', maxWidth: '480px' }}>
+<div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', marginTop: 60, boxSizing: 'border-box' as any }}>
+<div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: '12px', padding: '32px 24px', width: '100%', maxWidth: '480px', boxSizing: 'border-box' as any }}>
           <div style={{ marginBottom: 32 }}>
             <span style={{ fontWeight: 900, fontSize: 22, letterSpacing: 1, fontStyle: 'italic' }}>
               <span style={{ color: '#e8eef4' }}>SPORT</span><span style={{ color: '#e8ff00' }}>SHOT</span>
