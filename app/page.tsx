@@ -132,7 +132,7 @@ Jeder Augenblick zählt, wir halten ihn fest
           {events.length === 0 ? (
             <div style={{ color: "#445566", fontSize: 16, padding: "40px 0" }}>Keine kommenden Events. 🎯</div>
           ) : (
-<div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+<div className="events-grid">
               {events.map((ev) => (
                 <div key={ev.id}
                   onMouseEnter={() => setHoveredCard(ev.id)}
