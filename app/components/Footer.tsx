@@ -42,7 +42,8 @@ export default function Footer() {
           <div className="footer-col">
             <div style={{ color: "#e8eef4", fontWeight: 800, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>Rechtliches</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <span style={footerLink('impressum')} onMouseEnter={() => setHoveredFooter('impressum')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/impressum')}>Impressum</span>
+<span style={footerLink('impressum')} onMouseEnter={() => setHoveredFooter('impressum')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/impressum')}>Impressum</span>
+              <span style={footerLink('agb')} onMouseEnter={() => setHoveredFooter('agb')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/agb')}>AGB</span>
               <span style={footerLink('datenschutz')} onMouseEnter={() => setHoveredFooter('datenschutz')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/datenschutz')}>Datenschutz</span>
             </div>
           </div>

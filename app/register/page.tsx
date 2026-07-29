@@ -30,7 +30,7 @@ const { data, error: signUpError } = await supabase.auth.signUp({
       email, password,
       options: {
         emailRedirectTo: `${window.location.origin}/login`,
-        data: { role: 'customer', vorname, nachname, geburtsdatum, datenschutz_akzeptiert_am: new Date().toISOString() }
+data: { role: 'customer', vorname, nachname, geburtsdatum, agb_datenschutz_akzeptiert_am: new Date().toISOString() }
       }
     })
 
@@ -96,8 +96,12 @@ const { data, error: signUpError } = await supabase.auth.signUp({
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, margin: '16px 0', padding: '16px', background: '#131e2a', borderRadius: 8, border: datenschutz ? '1px solid #e8ff00' : '1px solid #1c2a38' }}>
                 <input type="checkbox" id="datenschutz" checked={datenschutz} onChange={(e) => setDatenschutz(e.target.checked)}
                   style={{ width: 18, height: 18, cursor: 'pointer', marginTop: 2, flexShrink: 0 }} />
-                <label htmlFor="datenschutz" style={{ color: '#e8eef4', fontSize: 14, cursor: 'pointer', lineHeight: 1.5 }}>
+<label htmlFor="datenschutz" style={{ color: '#e8eef4', fontSize: 14, cursor: 'pointer', lineHeight: 1.5 }}>
                   Ich habe die{' '}
+                  <span style={{ color: '#e8ff00', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => window.open('/agb', '_blank')}>
+                    AGB
+                  </span>
+                  {' '}und{' '}
                   <span style={{ color: '#e8ff00', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => window.open('/datenschutz', '_blank')}>
                     Datenschutzerklärung
                   </span>
