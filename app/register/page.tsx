@@ -99,11 +99,11 @@ data: { role: 'customer', vorname, nachname, geburtsdatum, agb_datenschutz_akzep
                   style={{ width: 18, height: 18, cursor: 'pointer', marginTop: 2, flexShrink: 0 }} />
 <label htmlFor="datenschutz" style={{ color: '#e8eef4', fontSize: 14, cursor: 'pointer', lineHeight: 1.5 }}>
                   Ich habe die{' '}
-                  <span style={{ color: '#e8ff00', textDecoration: 'underline', cursor: 'pointer' }} onClick={(e) => { e.preventDefault(); setModalUrl('/agb') }}>
+                  <span style={{ color: '#e8ff00', textDecoration: 'underline', cursor: 'pointer' }} onClick={(e) => { e.preventDefault(); setModalUrl('/agb-embed') }}>
                     AGB
                   </span>
                   {' '}und{' '}
-                  <span style={{ color: '#e8ff00', textDecoration: 'underline', cursor: 'pointer' }} onClick={(e) => { e.preventDefault(); setModalUrl('/datenschutz') }}>
+                  <span style={{ color: '#e8ff00', textDecoration: 'underline', cursor: 'pointer' }} onClick={(e) => { e.preventDefault(); setModalUrl('/datenschutz-embed') }}>
                     Datenschutzerklärung
                   </span>
                   {' '}gelesen und akzeptiere diese. *
