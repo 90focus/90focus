@@ -131,7 +131,7 @@ data: { role: 'customer', vorname, nachname, geburtsdatum, agb_datenschutz_akzep
 
       {modalUrl && (
         <div onClick={() => setModalUrl(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <div onClick={(e) => e.stopPropagation()} style={{ background: '#070b0f', border: '1px solid #1c2a38', borderRadius: 12, width: '100%', maxWidth: 700, maxHeight: '85vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+<div onClick={(e) => e.stopPropagation()} style={{ background: '#070b0f', border: '1px solid #1c2a38', borderRadius: 12, width: '95vw', maxWidth: 900, height: '90vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '12px 16px', borderBottom: '1px solid #1c2a38' }}>
               <button onClick={() => setModalUrl(null)} style={{ background: 'transparent', border: 'none', color: '#e8eef4', fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>✕</button>
             </div>
