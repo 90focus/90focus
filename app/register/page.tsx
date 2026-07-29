@@ -75,11 +75,11 @@ data: { role: 'customer', vorname, nachname, geburtsdatum, agb_datenschutz_akzep
               <h1 style={{ color: '#e8eef4', fontSize: 24, fontWeight: 900, marginBottom: 8, textTransform: 'uppercase' }}>Konto erstellen</h1>
               <p style={{ color: '#e8eef4', fontSize: 14, marginBottom: 24 }}>Registriere dich um deine Fotos zu kaufen und zu verwalten.</p>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12, minWidth: 0 }}>
                 <input type="text" placeholder="Vorname *" value={vorname} onChange={(e) => setVorname(e.target.value)}
-                  style={{ padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
+                  style={{ width: '100%', minWidth: 0, padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
                 <input type="text" placeholder="Nachname *" value={nachname} onChange={(e) => setNachname(e.target.value)}
-                  style={{ padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
+                  style={{ width: '100%', minWidth: 0, padding: '12px', fontSize: '15px', background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4', boxSizing: 'border-box' as any }} />
               </div>
 
               <input type="email" placeholder="Email *" value={email} onChange={(e) => setEmail(e.target.value)}
