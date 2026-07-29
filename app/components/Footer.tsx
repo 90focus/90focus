@@ -14,11 +14,11 @@ export default function Footer() {
   })
 
   return (
-    <footer style={{ borderTop: "1px solid #1c2a38", padding: "40px 48px 32px", background: "#070b0f" }}>
+    <footer style={{ borderTop: "1px solid #1c2a38", padding: "40px 24px 32px", background: "#070b0f" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32 }}>
+        <div className="footer-columns" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32, flexWrap: 'wrap', gap: 32 }}>
 
-          <div>
+          <div className="footer-col">
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
               <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 1, fontStyle: "italic" }}>
                 <span style={{ color: "#e8eef4" }}>SPORT</span><span style={{ color: "#e8ff00" }}>SHOT</span>
@@ -29,7 +29,7 @@ export default function Footer() {
             </p>
           </div>
 
-          <div>
+          <div className="footer-col">
             <div style={{ color: "#e8eef4", fontWeight: 800, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>Links</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <span style={footerLink('home')} onMouseEnter={() => setHoveredFooter('home')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/')}>Home</span>
@@ -39,7 +39,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div>
+          <div className="footer-col">
             <div style={{ color: "#e8eef4", fontWeight: 800, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>Rechtliches</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <span style={footerLink('impressum')} onMouseEnter={() => setHoveredFooter('impressum')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/impressum')}>Impressum</span>
@@ -47,9 +47,9 @@ export default function Footer() {
             </div>
           </div>
 
-          <div>
+          <div className="footer-col">
             <div style={{ color: "#e8eef4", fontWeight: 800, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>Social Media</div>
-<div style={{ display: "flex", gap: 16 }}>
+            <div style={{ display: "flex", gap: 16 }}>
               <a href="https://www.instagram.com/90focus_official/" target="_blank" rel="noopener noreferrer">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8">
                   <rect x="3" y="3" width="18" height="18" rx="5"/>

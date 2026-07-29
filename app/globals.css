@@ -50,4 +50,8 @@ body {
   .hamburger-btn {
     display: flex !important;
   }
+}@media (max-width: 700px) {
+  .footer-col {
+    width: 45% !important;
+  }
 }
