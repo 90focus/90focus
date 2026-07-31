@@ -65,10 +65,14 @@ input[type="date"] {
   .hamburger-btn {
     display: flex !important;
   }
-}@media (max-width: 700px) {
+}
+
+@media (max-width: 700px) {
   .footer-col {
     width: 45% !important;
   }
+}
+
 @media (max-width: 700px) {
   .kontakt-grid {
     grid-template-columns: 1fr !important;
