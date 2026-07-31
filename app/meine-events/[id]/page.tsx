@@ -205,7 +205,7 @@ export default function EventDetailPage() {
         </div>
       )}
 
-      <nav style={{ background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <nav style={{ background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', minHeight: 60, padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/meine-events')}>
           <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 1, fontStyle: 'italic' }}>
             <span style={{ color: '#e8eef4' }}>SPORT</span><span style={{ color: '#e8ff00' }}>SHOT</span>
@@ -214,36 +214,36 @@ export default function EventDetailPage() {
         <button onClick={() => router.push('/meine-events')} style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>← Meine Events</button>
       </nav>
 
-      <div style={{ padding: '40px 32px', maxWidth: '1000px', margin: '0 auto' }}>
+      <div style={{ padding: '24px 16px', maxWidth: '1000px', margin: '0 auto' }}>
         {event && (
-          <div style={{ marginBottom: 32, background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '20px 24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ marginBottom: 24, background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '16px 20px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
               <div>
-                <h1 style={{ fontSize: 28, fontWeight: 900, textTransform: 'uppercase', marginBottom: 8, margin: 0 }}>{event.home_team}</h1>
-                <div style={{ color: '#445566', fontSize: 14, marginTop: 8 }}>📅 {event.date} {event.ort && `· 📍 ${event.ort}`}</div>
+                <h1 style={{ fontSize: 22, fontWeight: 900, textTransform: 'uppercase', marginBottom: 8, margin: 0 }}>{event.home_team}</h1>
+                <div style={{ color: '#445566', fontSize: 13, marginTop: 8 }}>📅 {event.date} {event.ort && `· 📍 ${event.ort}`}</div>
               </div>
-              <div style={{ display: 'flex', gap: 8 }}>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <button onClick={() => router.push(`/meine-events/${eventId}/bearbeiten`)}
-                  style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13 }}>
+                  style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12 }}>
                   ✏️ Bearbeiten
                 </button>
                 <button onClick={deleteEvent}
-                  style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>
-                  🗑 Event löschen
+                  style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
+                  🗑 Löschen
                 </button>
               </div>
             </div>
           </div>
         )}
 
-        <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '20px 24px', marginBottom: 24 }}>
-          <h3 style={{ margin: '0 0 16px 0', color: '#e8eef4' }}>📸 Fotos hochladen</h3>
+        <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '16px 20px', marginBottom: 24 }}>
+          <h3 style={{ margin: '0 0 16px 0', color: '#e8eef4', fontSize: 16 }}>📸 Fotos hochladen</h3>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 14, border: '1px solid #2a3a4a', fontWeight: 600 }}>
+            <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 13, border: '1px solid #2a3a4a', fontWeight: 600 }}>
               📁 Dateien auswählen
               <input type="file" multiple accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
             </label>
-            {fileNames && <span style={{ color: '#667788', fontSize: 13 }}>✓ {fileNames}</span>}
+            {fileNames && <span style={{ color: '#667788', fontSize: 12 }}>✓ {fileNames}</span>}
           </div>
 
           {uploading && uploadProgress.total > 0 && (
@@ -267,28 +267,28 @@ export default function EventDetailPage() {
         </div>
 
         {message && (
-          <div style={{ padding: '16px', background: message.startsWith('Fehler') ? 'rgba(255,68,68,0.1)' : 'rgba(68,255,136,0.1)', border: `1px solid ${message.startsWith('Fehler') ? '#ff4444' : '#44ff88'}`, borderRadius: '8px', color: message.startsWith('Fehler') ? '#ff4444' : '#44ff88', fontWeight: 'bold', marginBottom: 24 }}>
+          <div style={{ padding: '16px', background: message.startsWith('Fehler') ? 'rgba(255,68,68,0.1)' : 'rgba(68,255,136,0.1)', border: `1px solid ${message.startsWith('Fehler') ? '#ff4444' : '#44ff88'}`, borderRadius: '8px', color: message.startsWith('Fehler') ? '#ff4444' : '#44ff88', fontWeight: 'bold', marginBottom: 24, fontSize: 13 }}>
             {message}
           </div>
         )}
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 900 }}>Fotos ({fotos.length})</h2>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, gap: 10 }}>
+          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 900 }}>Fotos ({fotos.length})</h2>
           {fotos.length > 0 && (
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {!selectMode ? (
-                <button onClick={() => setSelectMode(true)} style={{ background: '#ff4444', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>🗑 Löschen</button>
+                <button onClick={() => setSelectMode(true)} style={{ background: '#ff4444', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>🗑 Löschen</button>
               ) : (
                 <>
-                  <button onClick={selectAll} style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13 }}>
+                  <button onClick={selectAll} style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12 }}>
                     {selected.length === fotos.length ? 'Alle abwählen' : 'Alle auswählen'}
                   </button>
                   {selected.length > 0 && (
-                    <button onClick={deleteSelected} disabled={deleting} style={{ background: '#ff4444', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>
+                    <button onClick={deleteSelected} disabled={deleting} style={{ background: '#ff4444', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
                       {deleting ? 'Löscht...' : `${selected.length} löschen`}
                     </button>
                   )}
-                  <button onClick={cancelSelect} style={{ background: 'transparent', color: '#667788', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13 }}>Abbrechen</button>
+                  <button onClick={cancelSelect} style={{ background: 'transparent', color: '#667788', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12 }}>Abbrechen</button>
                 </>
               )}
             </div>
@@ -298,7 +298,7 @@ export default function EventDetailPage() {
         {fotos.length === 0 ? (
           <div style={{ color: '#445566', padding: '40px 0', textAlign: 'center' }}>Noch keine Fotos hochgeladen.</div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+          <div className="fotos-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
             {fotos.map((foto, index) => (
               <div key={foto.id} onClick={() => handleFotoClick(index, foto.id)} style={{ position: 'relative', borderRadius: 8, overflow: 'hidden', cursor: selectMode ? 'pointer' : 'zoom-in', border: selected.includes(foto.id) ? '3px solid #e8ff00' : '3px solid transparent', transition: 'border 0.1s' }}>
                 <img src={getImageUrl(foto.filename)} alt="Foto" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }} />

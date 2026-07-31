@@ -11,10 +11,11 @@ export default function MeineEventsPage() {
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
-const [stats, setStats] = useState({ events: 0, fotos: 0 })
+  const [stats, setStats] = useState({ events: 0, fotos: 0 })
   const [fotoCounts, setFotoCounts] = useState<Record<string, number>>({})
   const [ligaFilter, setLigaFilter] = useState('')
   const [datumFilter, setDatumFilter] = useState('')
+  const [menuOpen, setMenuOpen] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -44,7 +45,7 @@ const [stats, setStats] = useState({ events: 0, fotos: 0 })
     const combined = [...(upcoming || []), ...(past || [])]
     setEvents(combined)
     setFiltered(combined)
-if (combined.length > 0) {
+    if (combined.length > 0) {
       const { count } = await supabase.from('event_fotos').select('*', { count: 'exact', head: true }).in('event_id', combined.map((e: any) => e.id))
       setStats({ events: combined.length, fotos: count || 0 })
 
@@ -75,6 +76,19 @@ if (combined.length > 0) {
 
   const today = new Date().toISOString().split('T')[0]
 
+  const mobileNavBtn = {
+    background: 'transparent', color: '#e8eef4', border: 'none',
+    borderBottom: '1px solid #1c2a38', padding: '18px 24px',
+    fontWeight: 700, fontSize: 15, letterSpacing: 1,
+    textTransform: 'uppercase' as any, cursor: 'pointer',
+    textAlign: 'left' as any, width: '100%'
+  }
+
+  const go = (path: string) => {
+    router.push(path)
+    setMenuOpen(false)
+  }
+
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <p style={{ color: '#e8eef4' }}>Lade...</p>
@@ -82,28 +96,46 @@ if (combined.length > 0) {
   )
 
   return (
-<div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
+    <div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/meine-events')}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => go('/meine-events')}>
           <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 1, fontStyle: 'italic' }}>
             <span style={{ color: '#e8eef4' }}>SPORT</span><span style={{ color: '#e8ff00' }}>SHOT</span>
           </span>
         </div>
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+        <div className="desktop-nav" style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <button style={{ background: 'transparent', color: '#e8ff00', border: '1px solid #e8ff00', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-            onClick={() => router.push('/meine-events')}>Meine Events</button>
+            onClick={() => go('/meine-events')}>Meine Events</button>
           <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-            onClick={() => router.push('/admin')}>+ Event erstellen</button>
+            onClick={() => go('/admin')}>+ Event erstellen</button>
           <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-onClick={() => router.push('/profil')}>Profil</button>
+            onClick={() => go('/profil')}>Profil</button>
           <button style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}
-            onClick={() => router.push('/kontakt')}>Kontakt</button>
+            onClick={() => go('/kontakt')}>Kontakt</button>
           <button onClick={handleLogout}
             style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 2, padding: '8px 18px', fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', cursor: 'pointer' }}>
             Abmelden
           </button>
         </div>
+        <button
+          className="hamburger-btn"
+          onClick={() => setMenuOpen(!menuOpen)}
+          style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 8, flexDirection: 'column', gap: 5, alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ width: 22, height: 2, background: '#e8eef4', display: 'block' }} />
+          <span style={{ width: 22, height: 2, background: '#e8eef4', display: 'block' }} />
+          <span style={{ width: 22, height: 2, background: '#e8eef4', display: 'block' }} />
+        </button>
       </nav>
+
+      {menuOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#070b0f', zIndex: 99, display: 'flex', flexDirection: 'column', overflowY: 'auto', paddingTop: 60 }}>
+          <button style={mobileNavBtn} onClick={() => go('/meine-events')}>Meine Events</button>
+          <button style={mobileNavBtn} onClick={() => go('/admin')}>+ Event erstellen</button>
+          <button style={mobileNavBtn} onClick={() => go('/profil')}>Profil</button>
+          <button style={mobileNavBtn} onClick={() => go('/kontakt')}>Kontakt</button>
+          <button style={{ ...mobileNavBtn, color: '#ff4444' }} onClick={handleLogout}>Abmelden</button>
+        </div>
+      )}
 
       <div style={{ padding: '40px 48px', maxWidth: '1200px', margin: '60px auto 0', width: '100%' }}>
         <h1 style={{ fontSize: 36, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>Meine Events</h1>
@@ -128,10 +160,10 @@ onClick={() => router.push('/profil')}>Profil</button>
 
         <div style={{ display: 'flex', gap: 16, marginBottom: 32, flexWrap: 'wrap' }}>
           <div>
-<div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Sportart</div>
+            <div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Sportart</div>
             <select value={ligaFilter} onChange={(e) => setLigaFilter(e.target.value)}
               style={{ background: '#0d1219', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '10px 16px', fontSize: 14, cursor: 'pointer', minWidth: 200 }}>
-<option value="">Alle Sportarten</option>
+              <option value="">Alle Sportarten</option>
               <option value="Fussball">Fussball</option>
               <option value="Handball">Handball</option>
               <option value="Hybrid Sport">Hybrid Sport</option>
@@ -164,7 +196,6 @@ onClick={() => router.push('/profil')}>Profil</button>
 
         {filtered.length === 0 ? (
           <div style={{ color: '#445566', padding: '60px 0', textAlign: 'center' }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>⚽</div>
             <div style={{ fontSize: 18, marginBottom: 16 }}>Noch keine Events vorhanden.</div>
             <button onClick={() => router.push('/admin')}
               style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '12px 24px', cursor: 'pointer', fontSize: 14, fontWeight: 900 }}>
@@ -172,7 +203,7 @@ onClick={() => router.push('/profil')}>Profil</button>
             </button>
           </div>
         ) : (
-<div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+          <div className="events-grid">
             {filtered.map((ev) => {
               const isPast = ev.date < today
               return (
@@ -181,23 +212,18 @@ onClick={() => router.push('/profil')}>Profil</button>
                   onMouseLeave={() => setHoveredCard(null)}
                   style={{
                     background: '#0d1219',
-border: hoveredCard === ev.id ? '1px solid #e8ff00' : '1px solid rgba(255,255,255,0.25)',
+                    border: hoveredCard === ev.id ? '1px solid #e8ff00' : '1px solid rgba(255,255,255,0.25)',
                     borderRadius: 8, overflow: 'hidden', cursor: 'pointer',
                     transform: hoveredCard === ev.id ? 'translateY(-4px)' : 'translateY(0)',
                     transition: 'all 0.2s ease'
                   }}>
-<div style={{ aspectRatio: '4 / 3', background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
-{ev.bild_url ? (
+                  <div style={{ aspectRatio: '4 / 3', background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
+                    {ev.bild_url ? (
                       <img src={ev.bild_url} alt={ev.home_team}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
-                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-
-                      </div>
+                      <div style={{ width: '100%', height: '100%' }}></div>
                     )}
-                    <div style={{ position: 'absolute', top: 10, left: 10, background: '#e8ff00', color: '#070b0f', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', padding: '4px 8px', borderRadius: 2 }}>
-                      {ev.liga}
-                    </div>
                     {isPast && (
                       <div style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(0,0,0,0.75)', color: '#aabbcc', fontSize: 9, fontWeight: 800, letterSpacing: 1, textTransform: 'uppercase', padding: '3px 8px', borderRadius: 2 }}>
                         Abgeschlossen
@@ -205,8 +231,8 @@ border: hoveredCard === ev.id ? '1px solid #e8ff00' : '1px solid rgba(255,255,25
                     )}
                   </div>
                   <div style={{ padding: '16px' }}>
-<div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6, color: '#fff' }}>{ev.home_team}</div>
-<div style={{ fontSize: 12, color: '#fff', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6, color: '#fff' }}>{ev.home_team}</div>
+                    <div style={{ fontSize: 12, color: '#fff', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e8eef4" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                       <span>{new Date(ev.date).toLocaleDateString('de-CH')}</span>
                       {ev.ort && (
@@ -217,7 +243,7 @@ border: hoveredCard === ev.id ? '1px solid #e8ff00' : '1px solid rgba(255,255,25
                         </>
                       )}
                     </div>
-<div style={{ fontSize: 11, color: '#667788', marginBottom: 8 }}>{fotoCounts[ev.id] || 0} Foto{fotoCounts[ev.id] === 1 ? '' : 's'}</div>
+                    <div style={{ fontSize: 11, color: '#667788', marginBottom: 8 }}>{fotoCounts[ev.id] || 0} Foto{fotoCounts[ev.id] === 1 ? '' : 's'}</div>
                     {ev.sponsor_name && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
                         {ev.sponsor_logo_url && <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: '14px', objectFit: 'contain' }} />}
@@ -245,8 +271,6 @@ border: hoveredCard === ev.id ? '1px solid #e8ff00' : '1px solid rgba(255,255,25
           </div>
         )}
       </div>
-
-
     </div>
   )
 }

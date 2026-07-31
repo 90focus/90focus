@@ -118,4 +118,8 @@ input[type="date"] {
     padding: 9px !important;
     white-space: nowrap !important;
   }
+}@media (max-width: 700px) {
+  .fotos-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
 }
