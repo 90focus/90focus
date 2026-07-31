@@ -86,17 +86,17 @@ useEffect(() => {
         )}
 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(7,11,15,0.65) 45%, rgba(7,11,15,0.15) 100%)" }} />
 <div className="hero-content" style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 48px" }}>
-          <div className="hero-label" style={{ color: "#e8ff00", fontSize: 16, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>
+<div className="hero-label hide-mobile" style={{ color: "#e8ff00", fontSize: 16, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>
             PROFESSIONELLE SPORTFOTOGRAFIE
           </div>
           <h1 className="hero-title" style={{ fontSize: "clamp(36px, 6vw, 72px)", fontWeight: 900, lineHeight: 0.95, letterSpacing: -2, textTransform: "uppercase", marginBottom: 18 }}>
             WHERE PERFORMANCE<br />
             <span style={{ color: "#e8ff00" }}>BECOMES MEMORY</span>
           </h1>
-          <p style={{ color: "#e8eef4", fontSize: 14, fontWeight: 800, maxWidth: 400, lineHeight: 1.6, marginBottom: 24, letterSpacing: 0.5 }}>
+<p className="hide-mobile" style={{ color: "#e8eef4", fontSize: 14, fontWeight: 800, maxWidth: 400, lineHeight: 1.6, marginBottom: 24, letterSpacing: 0.5 }}>
 Jeder Augenblick zählt, wir halten ihn fest
           </p>
-          <div>
+          <div className="hide-mobile">
             <button
               onMouseEnter={() => setHoveredHeroBtn(true)}
               onMouseLeave={() => setHoveredHeroBtn(false)}
