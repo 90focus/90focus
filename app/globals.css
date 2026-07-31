@@ -133,7 +133,7 @@ input[type="date"] {
     border-bottom: 1px solid #131e2a !important;
   }
 .hero-title {
-    font-size: clamp(28px, 4vw, 48px) !important;
+    font-size: clamp(32px, 4.2vw, 52px) !important;
     margin-top: 8px !important;
   }
   .hero-content {
