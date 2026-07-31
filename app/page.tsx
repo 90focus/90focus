@@ -8,7 +8,10 @@ export default function Home() {
   const [events, setEvents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [slideIndex, setSlideIndex] = useState(0)
-const [heroBilder] = useState<string[]>(['/hero/hero-1.jpg', '/hero/hero-2.jpg', '/hero/hero-3.jpg', '/hero/hero-4.jpg', '/hero/hero-5.jpg', '/hero/hero-6.jpg', '/hero/hero-7.jpg'])
+const [isMobile, setIsMobile] = useState(false)
+  const heroBilderDesktop = ['/hero/hero-1.jpg', '/hero/hero-2.jpg', '/hero/hero-3.jpg', '/hero/hero-4.jpg', '/hero/hero-5.jpg', '/hero/hero-6.jpg', '/hero/hero-7.jpg']
+  const heroBilderMobile = ['/hero/hero-1-mobile.jpg', '/hero/hero-2-mobile.jpg', '/hero/hero-3-mobile.jpg']
+  const heroBilder = isMobile ? heroBilderMobile : heroBilderDesktop
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const [hoveredBtn, setHoveredBtn] = useState<string | null>(null)
   const [hoveredHeroBtn, setHoveredHeroBtn] = useState(false)
@@ -38,6 +41,17 @@ const fetchEvents = async () => {
     }
     checkUser()
   }, [])
+
+useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 700)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  useEffect(() => {
+    setSlideIndex(0)
+  }, [isMobile])
 
   useEffect(() => {
     if (heroBilder.length <= 1) return
