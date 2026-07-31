@@ -69,7 +69,7 @@ useEffect(() => {
 
   return (
     <main style={{ minHeight: "100vh", background: "#070b0f", color: "#e8eef4", fontFamily: "sans-serif", padding: "0" }}>
-<section className="hero-section" style={{ position: "relative", aspectRatio: "3.2 / 1", overflow: "hidden", marginTop: 60, maxWidth: 1450, margin: "60px auto 0" }}>
+<section className="hero-section" style={{ position: "relative", aspectRatio: "3.2 / 1", overflow: "hidden", maxWidth: 1450, margin: "0 auto" }}>
         {heroBilder.length > 0 ? (
           heroBilder.map((bild, i) => (
             <div key={i} style={{

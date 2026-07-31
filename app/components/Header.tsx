@@ -9,6 +9,7 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
+  const isHome = pathname === '/'
 
   useEffect(() => {
     const checkUser = async () => {
@@ -61,7 +62,14 @@ export default function Header() {
 
   return (
     <>
-      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "rgba(7,11,15,0.97)", borderBottom: "1px solid #131e2a", height: 60, padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <nav className={isHome ? 'header-home' : ''} style={{
+        position: isHome ? 'absolute' : 'fixed',
+        top: 0, left: 0, right: 0, zIndex: 100,
+        background: isHome ? 'transparent' : 'rgba(7,11,15,0.97)',
+        borderBottom: isHome ? 'none' : '1px solid #131e2a',
+        height: 60, padding: '0 24px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+      }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} onClick={() => go('/')}>
           <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 1, fontStyle: "italic" }}>
             <span style={{ color: "#e8eef4" }}>SPORT</span><span style={{ color: "#e8ff00" }}>SHOT</span>
@@ -98,7 +106,7 @@ export default function Header() {
       </nav>
 
       {menuOpen && (
-        <div style={{ position: 'fixed', top: 60, left: 0, right: 0, bottom: 0, background: '#070b0f', zIndex: 99, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#070b0f', zIndex: 99, display: 'flex', flexDirection: 'column', overflowY: 'auto', paddingTop: 60 }}>
           <button style={mobileNavBtn('/')} onClick={() => go('/')}>Home</button>
           <button style={mobileNavBtn('/spiele')} onClick={() => go('/spiele')}>Alle Events</button>
           <button style={mobileNavBtn('/kontakt')} onClick={() => go('/kontakt')}>Kontakt</button>
