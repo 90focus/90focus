@@ -91,7 +91,7 @@ function CheckoutContent() {
   }
 
   return (
-<div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
+    <div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
 
       {lightboxIndex !== null && (
         <div onClick={() => setLightboxIndex(null)} style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.95)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -111,89 +111,74 @@ function CheckoutContent() {
         </div>
       )}
 
-      <div style={{ maxWidth: 1100, margin: '60px auto 0', padding: '40px 24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'start' }}>
+      <div style={{ maxWidth: 700, margin: '60px auto 0', padding: '40px 24px' }}>
 
-        <div>
-          <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>
-            Deine Fotos ({filenames.length})
+        {event && (
+          <div style={{ textAlign: 'center', marginBottom: 16, color: '#8899aa', fontSize: 13 }}>
+            {event.home_team} · {new Date(event.date).toLocaleDateString('de-CH')}
           </div>
+        )}
 
-          {event && (
-            <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '12px 16px', marginBottom: 16 }}>
-              <div style={{ fontSize: 14, fontWeight: 800 }}>{event.home_team}</div>
-              <div style={{ color: '#445566', fontSize: 12, marginTop: 2 }}>📅 {event.date} {event.ort && `— 📍 ${event.ort}`}</div>
-            </div>
-          )}
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-            {filenames.map((filename, i) => (
-              <div key={i} onClick={() => setLightboxIndex(i)} style={{ position: 'relative', borderRadius: 4, overflow: 'hidden', aspectRatio: '1', cursor: 'zoom-in' }}>
-                <img src={getImageUrl(filename)} alt={`Foto ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                <Watermark />
-                <Logo />
-              </div>
-            ))}
+        <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #e8ff00', borderRadius: 12, padding: '24px', marginBottom: 20, textAlign: 'center' }}>
+          <div style={{ fontSize: 12, color: '#e8eef4', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 700, marginBottom: 4 }}>
+            {filenames.length} Foto{filenames.length > 1 ? 's' : ''}
+          </div>
+          <div style={{ fontSize: 28, fontWeight: 900, color: '#e8ff00' }}>
+            CHF {total}
           </div>
         </div>
 
-        <div>
-          <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>
-            Bezahlung
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 32 }}>
+          {filenames.map((filename, i) => (
+            <div key={i} onClick={() => setLightboxIndex(i)} style={{ position: 'relative', borderRadius: 4, overflow: 'hidden', aspectRatio: '1', cursor: 'zoom-in' }}>
+              <img src={getImageUrl(filename)} alt={`Foto ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <Watermark />
+              <Logo />
+            </div>
+          ))}
+        </div>
+
+        <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#667788', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 20 }}>
+            Kreditkarte
           </div>
 
-          <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '16px 20px', marginBottom: 24 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-              <span style={{ color: '#667788' }}>{filenames.length} Foto(s) × CHF {preisProFoto.toFixed(2)}</span>
-              <span style={{ fontWeight: 700 }}>CHF {total}</span>
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>Karteninhaber</div>
+            <input type="text" placeholder="Max Mustermann" value={kartenName}
+              onChange={(e) => setKartenName(e.target.value)} style={inputStyle} />
+          </div>
+
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>Kartennummer</div>
+            <input type="text" placeholder="1234 5678 9012 3456" value={kartenNummer}
+              onChange={(e) => setKartenNummer(formatKartenNummer(e.target.value))} style={inputStyle} />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
+            <div>
+              <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>Ablaufdatum</div>
+              <input type="text" placeholder="MM/JJ" value={ablaufdatum}
+                onChange={(e) => setAblaufdatum(formatAblaufdatum(e.target.value))} style={inputStyle} />
             </div>
-            <div style={{ borderTop: '1px solid #1c2a38', paddingTop: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontWeight: 900, fontSize: 16 }}>Total</span>
-              <span style={{ fontWeight: 900, fontSize: 22, color: '#e8ff00' }}>CHF {total}</span>
+            <div>
+              <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>Prüfziffer (CVV)</div>
+              <input type="text" placeholder="123" value={cvv}
+                onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))} style={inputStyle} />
             </div>
           </div>
 
-          <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#667788', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 20 }}>
-              Kreditkarte
-            </div>
-
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>Karteninhaber</div>
-              <input type="text" placeholder="Max Mustermann" value={kartenName}
-                onChange={(e) => setKartenName(e.target.value)} style={inputStyle} />
-            </div>
-
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>Kartennummer</div>
-              <input type="text" placeholder="1234 5678 9012 3456" value={kartenNummer}
-                onChange={(e) => setKartenNummer(formatKartenNummer(e.target.value))} style={inputStyle} />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
-              <div>
-                <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>Ablaufdatum</div>
-                <input type="text" placeholder="MM/JJ" value={ablaufdatum}
-                  onChange={(e) => setAblaufdatum(formatAblaufdatum(e.target.value))} style={inputStyle} />
-              </div>
-              <div>
-                <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>Prüfziffer (CVV)</div>
-                <input type="text" placeholder="123" value={cvv}
-                  onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))} style={inputStyle} />
-              </div>
-            </div>
-
-            <button disabled style={{
-              width: '100%', background: '#e8ff00', color: '#070b0f',
-              border: 'none', borderRadius: 4, padding: '14px',
-              fontWeight: 900, fontSize: 15, cursor: 'not-allowed',
-              letterSpacing: 1.5, textTransform: 'uppercase', opacity: 0.5
-            }}>
-Jetzt kaufen
-            </button>
-            <p style={{ color: '#445566', fontSize: 12, textAlign: 'center', marginTop: 12 }}>
-              🔒 Bezahlung via Stripe – kommt bald
-            </p>
-          </div>
+          <button disabled style={{
+            width: '100%', background: '#e8ff00', color: '#070b0f',
+            border: 'none', borderRadius: 4, padding: '14px',
+            fontWeight: 900, fontSize: 15, cursor: 'not-allowed',
+            letterSpacing: 1.5, textTransform: 'uppercase', opacity: 0.5
+          }}>
+            Jetzt kaufen
+          </button>
+          <p style={{ color: '#445566', fontSize: 12, textAlign: 'center', marginTop: 12 }}>
+            🔒 Bezahlung via Stripe – kommt bald
+          </p>
         </div>
       </div>
     </div>
