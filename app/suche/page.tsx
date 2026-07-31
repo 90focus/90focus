@@ -210,7 +210,7 @@ function SucheContent() {
             </button>
           )}
 
-          {message && <p style={{ marginTop: '20px', fontWeight: 'bold', color: '#e8ff00' }}>{message}</p>}
+{message && !searching && <p style={{ marginTop: '20px', fontWeight: 'bold', color: '#e8ff00' }}>{message}</p>}
         </div>
       ) : (
         <div style={{ padding: '40px 24px', maxWidth: '700px', margin: '60px auto 0' }}>
