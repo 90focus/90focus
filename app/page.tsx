@@ -126,22 +126,9 @@ Jeder Augenblick zählt, wir halten ihn fest
         )}
       </section>
 
-<section className="events-section" style={{ padding: "32px 48px 40px" }}>
+<section className="events-section" style={{ padding: "16px 48px 40px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-<div className="hide-mobile" style={{ display: "flex", justifyContent: "flex-end", marginBottom: 20 }}>
-            <button
-              onMouseEnter={() => setHoveredAlleSpiele1(true)}
-              onMouseLeave={() => setHoveredAlleSpiele1(false)}
-              style={{
-                background: hoveredAlleSpiele1 ? "#d4e800" : "#e8ff00",
-                color: "#070b0f", border: "none", borderRadius: 2,
-                padding: "10px 20px", fontWeight: 900, fontSize: 12,
-                letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer",
-                transform: hoveredAlleSpiele1 ? "scale(1.03)" : "scale(1)",
-                transition: "all 0.15s ease"
-              }}
-              onClick={() => router.push('/spiele')}>Alle Events</button>
-          </div>
+
 
           {events.length === 0 ? (
             <div style={{ color: "#445566", fontSize: 16, padding: "40px 0" }}>Keine kommenden Events. 🎯</div>
