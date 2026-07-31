@@ -250,14 +250,10 @@ export default function MeineEventsPage() {
                         <span style={{ fontSize: 10, color: '#e8eef4', fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
                       </div>
                     )}
-<div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+<div style={{ marginTop: 8 }}>
                       <button onClick={() => router.push(`/meine-events/${ev.id}`)}
-                        style={{ flex: 1, background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px', cursor: 'pointer', fontSize: 12, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>
+                        style={{ width: '100%', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px', cursor: 'pointer', fontSize: 12, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>
                         Verwalten
-                      </button>
-                      <button onClick={(e) => { e.stopPropagation(); deleteEvent(ev.id) }}
-                        style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '8px 12px', cursor: 'pointer', fontSize: 12 }}>
-                        🗑️
                       </button>
                     </div>
                   </div>
