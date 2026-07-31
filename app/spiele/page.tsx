@@ -30,7 +30,7 @@ if (nameFilter) result = result.filter((ev) => ev.home_team.toLowerCase().includ
 
   return (
     <main style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
-<section style={{ padding: '32px 48px 40px', maxWidth: 1200, margin: '60px auto 0' }}>
+<section className="events-section" style={{ padding: '32px 48px 40px', maxWidth: 1200, margin: '60px auto 0' }}>
 <h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 40 }}>Alle Events</h1>
 
 <div style={{ marginBottom: 24, maxWidth: 500, position: 'relative' }}>
@@ -52,7 +52,7 @@ if (nameFilter) result = result.filter((ev) => ev.home_team.toLowerCase().includ
         {filtered.length === 0 ? (
           <div style={{ color: '#445566', fontSize: 16, padding: '40px 0' }}>Keine Events gefunden. 🎯</div>
         ) : (
-<div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+<div className="events-grid">
 {filtered.map((ev) => (
               <div key={ev.id}
                 onMouseEnter={() => setHoveredCard(ev.id)}
@@ -95,7 +95,7 @@ if (nameFilter) result = result.filter((ev) => ev.home_team.toLowerCase().includ
                       <span style={{ fontSize: 11, color: '#e8eef4', fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
                     </div>
                   )}
-<button style={{
+<button className="card-btn" style={{
                     width: '100%',
                     background: hoveredCard === ev.id ? '#d4e800' : '#e8ff00',
                     color: '#070b0f', border: 'none', borderRadius: 2, padding: '10px',
