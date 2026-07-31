@@ -6,6 +6,7 @@ import { useRouter, usePathname } from 'next/navigation'
 
 export default function Header() {
   const [user, setUser] = useState<any>(null)
+  const [role, setRole] = useState<string | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
@@ -15,11 +16,23 @@ export default function Header() {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       setUser(session?.user || null)
+      if (session?.user) {
+        const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
+        setRole(profile?.role || null)
+      } else {
+        setRole(null)
+      }
     }
     checkUser()
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user || null)
+      if (session?.user) {
+        const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
+        setRole(profile?.role || null)
+      } else {
+        setRole(null)
+      }
     })
 
     return () => {
@@ -34,9 +47,13 @@ export default function Header() {
   const handleLogout = async () => {
     await supabase.auth.signOut()
     setUser(null)
+    setRole(null)
     router.push('/')
     setMenuOpen(false)
   }
+
+  const isPhotographer = role === 'photographer'
+  const logoTarget = isPhotographer ? '/meine-events' : '/'
 
   const navBtn = (path: string) => ({
     background: 'transparent',
@@ -62,7 +79,7 @@ export default function Header() {
 
   return (
     <>
-      <nav className={isHome ? 'header-home' : ''} style={{
+      <nav style={{
         position: isHome ? 'absolute' : 'fixed',
         top: 0, left: 0, right: 0, zIndex: 100,
         background: isHome ? 'transparent' : 'rgba(7,11,15,0.97)',
@@ -70,27 +87,40 @@ export default function Header() {
         height: 60, padding: '0 24px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between'
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} onClick={() => go('/')}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} onClick={() => go(logoTarget)}>
           <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 1, fontStyle: "italic" }}>
             <span style={{ color: "#e8eef4" }}>SPORT</span><span style={{ color: "#e8ff00" }}>SHOT</span>
           </span>
         </div>
 
         <div className="desktop-nav" style={{ display: "flex", gap: 12 }}>
-          <button style={navBtn('/')} onClick={() => go('/')}>Home</button>
-          <button style={navBtn('/spiele')} onClick={() => go('/spiele')}>Alle Events</button>
-          <button style={navBtn('/kontakt')} onClick={() => go('/kontakt')}>Kontakt</button>
-          {user ? (
+          {isPhotographer ? (
             <>
-              <button style={navBtn('/kunden-dashboard')} onClick={() => go('/kunden-dashboard')}>Meine Fotos</button>
-              <button style={navBtn('/kunden-profil')} onClick={() => go('/kunden-profil')}>Profil</button>
+              <button style={navBtn('/meine-events')} onClick={() => go('/meine-events')}>Meine Events</button>
+              <button style={navBtn('/admin')} onClick={() => go('/admin')}>+ Event erstellen</button>
+              <button style={navBtn('/profil')} onClick={() => go('/profil')}>Profil</button>
+              <button style={navBtn('/kontakt')} onClick={() => go('/kontakt')}>Kontakt</button>
               <button style={{ background: "transparent", color: "#ff4444", border: "1px solid #ff4444", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
                 onClick={handleLogout}>Abmelden</button>
             </>
           ) : (
             <>
-              <button style={navBtn('/login')} onClick={() => go('/login')}>Login</button>
-              <button style={navBtn('/register')} onClick={() => go('/register')}>Sign Up</button>
+              <button style={navBtn('/')} onClick={() => go('/')}>Home</button>
+              <button style={navBtn('/spiele')} onClick={() => go('/spiele')}>Alle Events</button>
+              <button style={navBtn('/kontakt')} onClick={() => go('/kontakt')}>Kontakt</button>
+              {user ? (
+                <>
+                  <button style={navBtn('/kunden-dashboard')} onClick={() => go('/kunden-dashboard')}>Meine Fotos</button>
+                  <button style={navBtn('/kunden-profil')} onClick={() => go('/kunden-profil')}>Profil</button>
+                  <button style={{ background: "transparent", color: "#ff4444", border: "1px solid #ff4444", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
+                    onClick={handleLogout}>Abmelden</button>
+                </>
+              ) : (
+                <>
+                  <button style={navBtn('/login')} onClick={() => go('/login')}>Login</button>
+                  <button style={navBtn('/register')} onClick={() => go('/register')}>Sign Up</button>
+                </>
+              )}
             </>
           )}
         </div>
@@ -107,19 +137,31 @@ export default function Header() {
 
       {menuOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#070b0f', zIndex: 99, display: 'flex', flexDirection: 'column', overflowY: 'auto', paddingTop: 60 }}>
-          <button style={mobileNavBtn('/')} onClick={() => go('/')}>Home</button>
-          <button style={mobileNavBtn('/spiele')} onClick={() => go('/spiele')}>Alle Events</button>
-          <button style={mobileNavBtn('/kontakt')} onClick={() => go('/kontakt')}>Kontakt</button>
-          {user ? (
+          {isPhotographer ? (
             <>
-              <button style={mobileNavBtn('/kunden-dashboard')} onClick={() => go('/kunden-dashboard')}>Meine Fotos</button>
-              <button style={mobileNavBtn('/kunden-profil')} onClick={() => go('/kunden-profil')}>Profil</button>
+              <button style={mobileNavBtn('/meine-events')} onClick={() => go('/meine-events')}>Meine Events</button>
+              <button style={mobileNavBtn('/admin')} onClick={() => go('/admin')}>+ Event erstellen</button>
+              <button style={mobileNavBtn('/profil')} onClick={() => go('/profil')}>Profil</button>
+              <button style={mobileNavBtn('/kontakt')} onClick={() => go('/kontakt')}>Kontakt</button>
               <button style={{ ...mobileNavBtn(''), color: '#ff4444' }} onClick={handleLogout}>Abmelden</button>
             </>
           ) : (
             <>
-              <button style={mobileNavBtn('/login')} onClick={() => go('/login')}>Login</button>
-              <button style={mobileNavBtn('/register')} onClick={() => go('/register')}>Sign Up</button>
+              <button style={mobileNavBtn('/')} onClick={() => go('/')}>Home</button>
+              <button style={mobileNavBtn('/spiele')} onClick={() => go('/spiele')}>Alle Events</button>
+              <button style={mobileNavBtn('/kontakt')} onClick={() => go('/kontakt')}>Kontakt</button>
+              {user ? (
+                <>
+                  <button style={mobileNavBtn('/kunden-dashboard')} onClick={() => go('/kunden-dashboard')}>Meine Fotos</button>
+                  <button style={mobileNavBtn('/kunden-profil')} onClick={() => go('/kunden-profil')}>Profil</button>
+                  <button style={{ ...mobileNavBtn(''), color: '#ff4444' }} onClick={handleLogout}>Abmelden</button>
+                </>
+              ) : (
+                <>
+                  <button style={mobileNavBtn('/login')} onClick={() => go('/login')}>Login</button>
+                  <button style={mobileNavBtn('/register')} onClick={() => go('/register')}>Sign Up</button>
+                </>
+              )}
             </>
           )}
         </div>
