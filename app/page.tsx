@@ -96,7 +96,7 @@ useEffect(() => {
 <p className="hide-mobile" style={{ color: "#e8eef4", fontSize: 14, fontWeight: 800, maxWidth: 400, lineHeight: 1.6, marginBottom: 24, letterSpacing: 0.5 }}>
 Jeder Augenblick zählt, wir halten ihn fest
           </p>
-          <div className="hide-mobile">
+<div>
             <button
               onMouseEnter={() => setHoveredHeroBtn(true)}
               onMouseLeave={() => setHoveredHeroBtn(false)}
@@ -113,8 +113,8 @@ Jeder Augenblick zählt, wir halten ihn fest
             </button>
           </div>
         </div>
-        {heroBilder.length > 1 && (
-          <div style={{ position: "absolute", bottom: 16, left: 48, zIndex: 3, display: "flex", gap: 8 }}>
+{heroBilder.length > 1 && (
+          <div className="hide-mobile" style={{ position: "absolute", bottom: 16, left: 48, zIndex: 3, display: "flex", gap: 8 }}>
             {heroBilder.map((_, i) => (
               <div key={i} onClick={() => setSlideIndex(i)} style={{
                 width: i === slideIndex ? 24 : 8, height: 8,
