@@ -213,8 +213,12 @@ function SucheContent() {
 {message && !searching && <p style={{ marginTop: '20px', fontWeight: 'bold', color: '#e8ff00' }}>{message}</p>}
         </div>
       ) : (
-        <div style={{ padding: '40px 24px', maxWidth: '700px', margin: '60px auto 0' }}>
-          <EventCard />
+<div style={{ padding: '40px 24px', maxWidth: '700px', margin: '60px auto 0' }}>
+          {event && (
+            <div style={{ textAlign: 'center', marginBottom: 16, color: '#8899aa', fontSize: 13 }}>
+              {event.home_team} · {new Date(event.date).toLocaleDateString('de-CH')}
+            </div>
+          )}
 
           <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #e8ff00', borderRadius: 12, padding: '24px', marginBottom: 20, textAlign: 'center' }}>
             <div style={{ fontSize: 12, color: '#e8eef4', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 700, marginBottom: 4 }}>
