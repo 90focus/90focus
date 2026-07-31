@@ -55,7 +55,7 @@ const fetchEvents = async () => {
 
   return (
     <main style={{ minHeight: "100vh", background: "#070b0f", color: "#e8eef4", fontFamily: "sans-serif", padding: "0" }}>
-<section style={{ position: "relative", aspectRatio: "3.2 / 1", overflow: "hidden", marginTop: 60, maxWidth: 1450, margin: "60px auto 0" }}>
+<section className="hero-section" style={{ position: "relative", aspectRatio: "3.2 / 1", overflow: "hidden", marginTop: 60, maxWidth: 1450, margin: "60px auto 0" }}>
         {heroBilder.length > 0 ? (
           heroBilder.map((bild, i) => (
             <div key={i} style={{
@@ -71,11 +71,11 @@ const fetchEvents = async () => {
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, #0d1219 0%, #131e2a 100%)" }} />
         )}
 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(7,11,15,0.65) 45%, rgba(7,11,15,0.15) 100%)" }} />
-<div style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 48px" }}>
-          <div style={{ color: "#e8ff00", fontSize: 16, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>
+<div className="hero-content" style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 48px" }}>
+          <div className="hero-label" style={{ color: "#e8ff00", fontSize: 16, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>
             PROFESSIONELLE SPORTFOTOGRAFIE
           </div>
-          <h1 style={{ fontSize: "clamp(36px, 6vw, 72px)", fontWeight: 900, lineHeight: 0.95, letterSpacing: -2, textTransform: "uppercase", marginBottom: 18 }}>
+          <h1 className="hero-title" style={{ fontSize: "clamp(36px, 6vw, 72px)", fontWeight: 900, lineHeight: 0.95, letterSpacing: -2, textTransform: "uppercase", marginBottom: 18 }}>
             WHERE PERFORMANCE<br />
             <span style={{ color: "#e8ff00" }}>BECOMES MEMORY</span>
           </h1>
@@ -112,7 +112,7 @@ Jeder Augenblick zählt, wir halten ihn fest
         )}
       </section>
 
-<section style={{ padding: "32px 48px 40px" }}>
+<section className="events-section" style={{ padding: "32px 48px 40px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 20 }}>
             <button
@@ -174,7 +174,8 @@ background: "#0d1219", border: hoveredCard === ev.id ? "1px solid #e8ff00" : "1p
                         <span style={{ fontSize: 11, color: "#e8eef4", fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
                       </div>
                     )}
-                    <button
+<button
+                      className="card-btn"
                       onMouseEnter={() => setHoveredBtn(ev.id)}
                       onMouseLeave={() => setHoveredBtn(null)}
                       style={{

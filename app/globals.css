@@ -76,4 +76,27 @@ input[type="date"] {
   .kontakt-info {
     margin-top: 32px !important;
   }
+}@media (max-width: 700px) {
+  .hero-section {
+    aspect-ratio: 3 / 4 !important;
+  }
+  .hero-content {
+    padding: 0 24px !important;
+  }
+  .hero-label {
+    font-size: 11px !important;
+    margin-bottom: 8px !important;
+  }
+  .hero-title {
+    font-size: 30px !important;
+    line-height: 1.05 !important;
+  }
+  .events-section {
+    padding: 24px 16px 32px !important;
+  }
+  .card-btn {
+    font-size: 11px !important;
+    padding: 9px !important;
+    white-space: nowrap !important;
+  }
 }
