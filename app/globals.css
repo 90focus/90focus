@@ -113,11 +113,13 @@ input[type="date"] {
   .events-section {
     padding: 12px 16px 32px !important;
   }
-  .card-btn {
+.card-btn {
     font-size: 11px !important;
     padding: 9px !important;
     white-space: nowrap !important;
   }
+}
+
 @media (max-width: 700px) {
   .fotos-grid {
     grid-template-columns: repeat(2, 1fr) !important;
