@@ -132,4 +132,11 @@ input[type="date"] {
     background: rgba(7,11,15,0.97) !important;
     border-bottom: 1px solid #131e2a !important;
   }
+.hero-title {
+    font-size: clamp(28px, 4vw, 48px) !important;
+    margin-top: 8px !important;
+  }
+  .hero-content {
+    padding-top: 24px !important;
+  }
 }
