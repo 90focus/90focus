@@ -79,7 +79,7 @@ export default function Header() {
 
   return (
     <>
-      <nav style={{
+<nav className={isHome ? 'hero-nav' : ''} style={{
         position: isHome ? 'absolute' : 'fixed',
         top: 0, left: 0, right: 0, zIndex: 100,
         background: isHome ? 'transparent' : 'rgba(7,11,15,0.97)',
