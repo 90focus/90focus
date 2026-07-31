@@ -10,7 +10,7 @@ export default function Home() {
   const [slideIndex, setSlideIndex] = useState(0)
 const [isMobile, setIsMobile] = useState(false)
   const heroBilderDesktop = ['/hero/hero-1.jpg', '/hero/hero-2.jpg', '/hero/hero-3.jpg', '/hero/hero-4.jpg', '/hero/hero-5.jpg', '/hero/hero-6.jpg', '/hero/hero-7.jpg']
-const heroBilderMobile = ['/hero/hero-1-mobile.png', '/hero/hero-2-mobile.png', '/hero/hero-3-mobile.png', '/hero/hero-4-mobile.png', '/hero/hero-5-mobile.png']
+const heroBilderMobile = ['/hero/hero-1-mobile.png', '/hero/hero-2-mobile.png', '/hero/hero-3-mobile.png', '/hero/hero-4-mobile.png', '/hero/hero-5-mobile.png', '/hero/hero-6-mobile.png']
   const heroBilder = isMobile ? heroBilderMobile : heroBilderDesktop
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const [hoveredBtn, setHoveredBtn] = useState<string | null>(null)
