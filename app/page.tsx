@@ -128,7 +128,7 @@ Jeder Augenblick zählt, wir halten ihn fest
 
 <section className="events-section" style={{ padding: "32px 48px 40px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 20 }}>
+<div className="hide-mobile" style={{ display: "flex", justifyContent: "flex-end", marginBottom: 20 }}>
             <button
               onMouseEnter={() => setHoveredAlleSpiele1(true)}
               onMouseLeave={() => setHoveredAlleSpiele1(false)}

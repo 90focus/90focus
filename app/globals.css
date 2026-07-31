@@ -101,9 +101,9 @@ input[type="date"] {
   .hide-mobile {
     display: none !important;
   }
-  .hero-content {
+.hero-content {
     justify-content: flex-end !important;
-    padding-bottom: 40px !important;
+    padding-bottom: 20px !important;
   }
   .events-section {
     padding: 12px 16px 32px !important;
