@@ -118,8 +118,16 @@ input[type="date"] {
     padding: 9px !important;
     white-space: nowrap !important;
   }
-}@media (max-width: 700px) {
+@media (max-width: 700px) {
   .fotos-grid {
     grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (min-width: 701px) {
+  .hero-nav {
+    position: fixed !important;
+    background: rgba(7,11,15,0.97) !important;
+    border-bottom: 1px solid #131e2a !important;
   }
 }
