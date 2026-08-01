@@ -7,7 +7,8 @@ import { useRouter, usePathname } from 'next/navigation'
 export default function Header() {
   const [user, setUser] = useState<any>(null)
   const [role, setRole] = useState<string | null>(null)
-  const [menuOpen, setMenuOpen] = useState(false)
+const [menuOpen, setMenuOpen] = useState(false)
+  const [langOpen, setLangOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
   const isHome = pathname === '/'
@@ -122,6 +123,19 @@ export default function Header() {
                 </>
               )}
             </>
+          )}
+        </div>
+
+<div className="desktop-nav" style={{ position: 'relative' }}>
+          <button onClick={() => setLangOpen(!langOpen)}
+            style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 14px', fontWeight: 700, fontSize: 13, letterSpacing: 1, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+            🇩🇪 DE ▾
+          </button>
+          {langOpen && (
+            <div style={{ position: 'absolute', top: 44, right: 0, background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 4, overflow: 'hidden', zIndex: 200, minWidth: 100 }}>
+              <div style={{ padding: '10px 14px', color: '#e8ff00', fontSize: 13, fontWeight: 700, cursor: 'default' }}>🇩🇪 DE</div>
+              <div style={{ padding: '10px 14px', color: '#556677', fontSize: 13, cursor: 'not-allowed' }}>🇬🇧 EN</div>
+            </div>
           )}
         </div>
 
