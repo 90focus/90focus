@@ -117,29 +117,36 @@ const [menuOpen, setMenuOpen] = useState(false)
                     onClick={handleLogout}>Abmelden</button>
                 </>
               ) : (
-                <>
+<>
                   <button style={navBtn('/login')} onClick={() => go('/login')}>Login</button>
                   <button style={navBtn('/register')} onClick={() => go('/register')}>Sign Up</button>
                 </>
               )}
             </>
           )}
+
+          <div style={{ position: 'relative' }}>
+            <button onClick={() => setLangOpen(!langOpen)}
+              style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 14px', fontWeight: 700, fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <svg width="18" height="12" viewBox="0 0 18 12"><rect width="18" height="4" y="0" fill="#000"/><rect width="18" height="4" y="4" fill="#DD0000"/><rect width="18" height="4" y="8" fill="#FFCE00"/></svg>
+              DE ▾
+            </button>
+            {langOpen && (
+              <div style={{ position: 'absolute', top: 44, right: 0, background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 4, overflow: 'hidden', zIndex: 200, minWidth: 110 }}>
+                <div style={{ padding: '10px 14px', color: '#e8ff00', fontSize: 13, fontWeight: 700, cursor: 'default', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <svg width="18" height="12" viewBox="0 0 18 12"><rect width="18" height="4" y="0" fill="#000"/><rect width="18" height="4" y="4" fill="#DD0000"/><rect width="18" height="4" y="8" fill="#FFCE00"/></svg>
+                  DE
+                </div>
+                <div style={{ padding: '10px 14px', color: '#556677', fontSize: 13, cursor: 'not-allowed', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <svg width="18" height="12" viewBox="0 0 18 12"><rect width="18" height="12" fill="#00247d"/><path d="M0 0L18 12M18 0L0 12" stroke="#fff" strokeWidth="2"/><path d="M9 0V12M0 6H18" stroke="#fff" strokeWidth="3"/><path d="M9 0V12M0 6H18" stroke="#cf142b" strokeWidth="1.5"/></svg>
+                  EN
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
-<div className="desktop-nav" style={{ position: 'relative' }}>
-          <button onClick={() => setLangOpen(!langOpen)}
-            style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 14px', fontWeight: 700, fontSize: 13, letterSpacing: 1, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
-            🇩🇪 DE ▾
-          </button>
-          {langOpen && (
-            <div style={{ position: 'absolute', top: 44, right: 0, background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 4, overflow: 'hidden', zIndex: 200, minWidth: 100 }}>
-              <div style={{ padding: '10px 14px', color: '#e8ff00', fontSize: 13, fontWeight: 700, cursor: 'default' }}>🇩🇪 DE</div>
-              <div style={{ padding: '10px 14px', color: '#556677', fontSize: 13, cursor: 'not-allowed' }}>🇬🇧 EN</div>
-            </div>
-          )}
-        </div>
-
-        <button
+<button
           className="hamburger-btn"
           onClick={() => setMenuOpen(!menuOpen)}
           style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 8, flexDirection: 'column', gap: 5, alignItems: 'center', justifyContent: 'center' }}>
