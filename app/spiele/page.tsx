@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/app/supabase'
 import { useRouter } from 'next/navigation'
+import { useLanguage } from '@/app/context/LanguageContext'
 
 export default function SpielePage() {
   const [events, setEvents] = useState<any[]>([])
@@ -11,8 +12,9 @@ export default function SpielePage() {
 
 const [nameFilter, setNameFilter] = useState('')
   const [nameInput, setNameInput] = useState('')
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null)
+const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const router = useRouter()
+  const { lang } = useLanguage()
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -31,13 +33,13 @@ if (nameFilter) result = result.filter((ev) => ev.home_team.toLowerCase().includ
   return (
     <main style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
 <section className="events-section" style={{ padding: '32px 48px 40px', maxWidth: 1200, margin: '60px auto 0' }}>
-<h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 40 }}>Alle Events</h1>
+<h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 40 }}>{lang === 'de' ? 'Alle Events' : 'All Events'}</h1>
 
 <div style={{ marginBottom: 24, maxWidth: 500, position: 'relative' }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8899aa" strokeWidth="2" style={{ position: 'absolute', left: 18, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
             <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
-<input type="text" placeholder="Finde dein Event" value={nameInput}
+<input type="text" placeholder={lang === 'de' ? 'Finde dein Event' : 'Find your Event'} value={nameInput}
             className="search-input-white"
             onChange={(e) => {
               setNameInput(e.target.value)
@@ -50,7 +52,7 @@ if (nameFilter) result = result.filter((ev) => ev.home_team.toLowerCase().includ
 
 
         {filtered.length === 0 ? (
-          <div style={{ color: '#445566', fontSize: 16, padding: '40px 0' }}>Keine Events gefunden. 🎯</div>
+<div style={{ color: '#445566', fontSize: 16, padding: '40px 0' }}>{lang === 'de' ? 'Keine Events gefunden.' : 'No events found.'}</div>
         ) : (
 <div className="events-grid">
 {filtered.map((ev) => (
@@ -103,7 +105,7 @@ if (nameFilter) result = result.filter((ev) => ev.home_team.toLowerCase().includ
                     transform: hoveredCard === ev.id ? 'scale(1.02)' : 'scale(1)',
                     transition: 'all 0.15s ease'
                   }}>
-                    Zu den Fotos
+{lang === 'de' ? 'Zu den Fotos' : 'Show Photos'}
                   </button>
                 </div>
               </div>

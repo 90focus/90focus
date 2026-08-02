@@ -2,10 +2,12 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useLanguage } from '../context/LanguageContext'
 
 export default function Footer() {
-  const [hoveredFooter, setHoveredFooter] = useState<string | null>(null)
+const [hoveredFooter, setHoveredFooter] = useState<string | null>(null)
   const router = useRouter()
+  const { lang } = useLanguage()
 
   const footerLink = (key: string) => ({
     color: hoveredFooter === key ? '#e8ff00' : '#e8eef4',
@@ -24,27 +26,27 @@ export default function Footer() {
                 <span style={{ color: "#e8eef4" }}>SPORT</span><span style={{ color: "#e8ff00" }}>SHOT</span>
               </span>
             </div>
-            <p style={{ color: "#e8eef4", fontSize: 13, maxWidth: 260, lineHeight: 1.6 }}>
-              Deine Momente für immer festgehalten.
+<p style={{ color: "#e8eef4", fontSize: 13, maxWidth: 260, lineHeight: 1.6 }}>
+              {lang === 'de' ? 'Deine Momente für immer festgehalten.' : 'Your moments, captured forever.'}
             </p>
           </div>
 
           <div className="footer-col">
-            <div style={{ color: "#e8eef4", fontWeight: 800, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>Links</div>
+<div style={{ color: "#e8eef4", fontWeight: 800, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>{lang === 'de' ? 'Links' : 'Links'}</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <span style={footerLink('home')} onMouseEnter={() => setHoveredFooter('home')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/')}>Home</span>
-              <span style={footerLink('spiele')} onMouseEnter={() => setHoveredFooter('spiele')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/spiele')}>Alle Events</span>
+              <span style={footerLink('spiele')} onMouseEnter={() => setHoveredFooter('spiele')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/spiele')}>{lang === 'de' ? 'Alle Events' : 'All Events'}</span>
               <span style={footerLink('faq')} onMouseEnter={() => setHoveredFooter('faq')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/faq')}>FAQ</span>
-              <span style={footerLink('kontakt')} onMouseEnter={() => setHoveredFooter('kontakt')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/kontakt')}>Kontakt</span>
+              <span style={footerLink('kontakt')} onMouseEnter={() => setHoveredFooter('kontakt')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/kontakt')}>{lang === 'de' ? 'Kontakt' : 'Contact'}</span>
             </div>
           </div>
 
           <div className="footer-col">
-            <div style={{ color: "#e8eef4", fontWeight: 800, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>Rechtliches</div>
+<div style={{ color: "#e8eef4", fontWeight: 800, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>{lang === 'de' ? 'Rechtliches' : 'Legal'}</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
 <span style={footerLink('impressum')} onMouseEnter={() => setHoveredFooter('impressum')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/impressum')}>Impressum</span>
-              <span style={footerLink('agb')} onMouseEnter={() => setHoveredFooter('agb')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/agb')}>AGB</span>
-              <span style={footerLink('datenschutz')} onMouseEnter={() => setHoveredFooter('datenschutz')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/datenschutz')}>Datenschutz</span>
+              <span style={footerLink('agb')} onMouseEnter={() => setHoveredFooter('agb')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/agb')}>{lang === 'de' ? 'AGB' : 'Terms'}</span>
+              <span style={footerLink('datenschutz')} onMouseEnter={() => setHoveredFooter('datenschutz')} onMouseLeave={() => setHoveredFooter(null)} onClick={() => router.push('/datenschutz')}>{lang === 'de' ? 'Datenschutz' : 'Privacy'}</span>
             </div>
           </div>
 
