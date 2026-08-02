@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useLanguage } from '../context/LanguageContext'
 
-const faqs = [
+const faqsDe = [
   { frage: 'Wie finde ich meine Fotos?', antwort: 'Geh auf das Event, lade ein Selfie hoch und unsere KI findet dich automatisch auf allen Fotos.' },
   { frage: 'Was kostet ein Foto?', antwort: 'CHF 4.90 pro Foto. Du kaufst nur die Fotos auf denen du drauf bist.' },
   { frage: 'Wie bezahle ich?', antwort: 'Per Kreditkarte via Stripe. Sicher und einfach.' },
@@ -16,15 +17,37 @@ const faqs = [
   { frage: 'Kann ich Fotos zurückgeben?', antwort: 'Da es sich um digitale Produkte handelt, ist eine Rückgabe nach dem Download nicht möglich.' },
 ]
 
+const faqsEn = [
+  { frage: 'How do I find my photos?', antwort: 'Go to the event, upload a selfie, and our AI automatically finds you in all the photos.' },
+  { frage: 'How much does a photo cost?', antwort: 'CHF 4.90 per photo. You only pay for the photos you appear in.' },
+  { frage: 'How do I pay?', antwort: 'By credit card via Stripe. Secure and simple.' },
+  { frage: 'When are the photos available?', antwort: 'Usually within 24 hours after the event.' },
+  { frage: 'Do I get the photos without a watermark?', antwort: 'Yes, after purchase you immediately receive the original photos without a watermark.' },
+  { frage: 'What image quality do the photos have?', antwort: 'All photos are in professional quality and suitable for printing.' },
+  { frage: "What if I can't find myself?", antwort: 'If the search shows no results, contact us through the contact form.' },
+  { frage: 'Do I need to create an account?', antwort: 'You can search for photos without an account. To purchase, you need a free account.' },
+  { frage: 'Which events are photographed?', antwort: 'We photograph sports events of all kinds, from amateur sports to major competitions.' },
+  { frage: 'Can I return photos?', antwort: 'Since these are digital products, a return after download is not possible.' },
+]
+
 export default function FaqPage() {
   const [offen, setOffen] = useState<number | null>(null)
   const router = useRouter()
+  const { lang } = useLanguage()
+  const faqs = lang === 'de' ? faqsDe : faqsEn
+
+  const t = {
+    label: 'FAQ',
+    title: lang === 'de' ? 'Häufige Fragen' : 'Frequently Asked Questions',
+    moreQuestions: lang === 'de' ? 'Noch eine Frage? Wir helfen gerne!' : 'Have another question? We\'re happy to help!',
+    contactBtn: lang === 'de' ? 'Kontakt aufnehmen' : 'Get in Touch',
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column' }}>
       <div style={{ maxWidth: 720, margin: '60px auto 0', padding: '60px 24px', flex: 1 }}>
-        <div style={{ color: '#e8ff00', fontSize: 14, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>FAQ</div>
-        <h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 48 }}>Häufige Fragen</h1>
+        <div style={{ color: '#e8ff00', fontSize: 14, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>{t.label}</div>
+        <h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 48 }}>{t.title}</h1>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {faqs.map((faq, i) => (
@@ -44,10 +67,10 @@ export default function FaqPage() {
         </div>
 
         <div style={{ marginTop: 48, padding: '24px', background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, textAlign: 'center' }}>
-          <p style={{ color: '#e8eef4', fontSize: 15, marginBottom: 16 }}>Noch eine Frage? Wir helfen gerne!</p>
+          <p style={{ color: '#e8eef4', fontSize: 15, marginBottom: 16 }}>{t.moreQuestions}</p>
           <button onClick={() => router.push('/kontakt')}
             style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '12px 28px', fontWeight: 900, fontSize: 13, cursor: 'pointer', letterSpacing: 1.5, textTransform: 'uppercase' }}>
-            Kontakt aufnehmen
+            {t.contactBtn}
           </button>
         </div>
       </div>
