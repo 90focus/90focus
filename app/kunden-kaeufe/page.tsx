@@ -20,16 +20,23 @@ export default function KundenKaeufePage() {
     loading: lang === 'de' ? 'Lade...' : 'Loading...',
   }
 
-  useEffect(() => {
+useEffect(() => {
     const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) { router.push('/login'); return }
-      setUser(session.user)
-      const { data } = await supabase.from('purchases').select('*, events(home_team, away_team, date)').eq('user_id', session.user.id).order('datum', { ascending: false })
-      setPurchases(data || [])
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) { router.push('/login'); return }
+        setUser(session.user)
+        const { data } = await supabase.from('purchases').select('*, events(home_team, away_team, date)').eq('user_id', session.user.id).order('datum', { ascending: false })
+        setPurchases(data || [])
+      } catch (e) {
+        console.error('init error:', e)
+      }
       setLoading(false)
     }
     init()
+
+    const failsafe = setTimeout(() => setLoading(false), 5000)
+    return () => clearTimeout(failsafe)
   }, [router])
 
   const getImageUrl = (filename: string) =>

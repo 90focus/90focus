@@ -38,16 +38,23 @@ export default function KundenProfilPage() {
     loading: lang === 'de' ? 'Lade...' : 'Loading...',
   }
 
-  useEffect(() => {
+useEffect(() => {
     const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) { router.push('/login'); return }
-      setUser(session.user)
-      const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
-      setProfile(prof)
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) { router.push('/login'); return }
+        setUser(session.user)
+        const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
+        setProfile(prof)
+      } catch (e) {
+        console.error('init error:', e)
+      }
       setLoading(false)
     }
     init()
+
+    const failsafe = setTimeout(() => setLoading(false), 5000)
+    return () => clearTimeout(failsafe)
   }, [router])
 
   const handlePassword = async () => {

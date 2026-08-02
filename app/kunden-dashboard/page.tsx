@@ -26,18 +26,25 @@ export default function KundenDashboardPage() {
     loading: lang === 'de' ? 'Lade...' : 'Loading...',
   }
 
-  useEffect(() => {
+useEffect(() => {
     const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) { router.push('/login'); return }
-      setUser(session.user)
-      const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
-      setProfile(prof)
-      const { count } = await supabase.from('purchases').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id)
-      setPurchases(count || 0)
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) { router.push('/login'); return }
+        setUser(session.user)
+        const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
+        setProfile(prof)
+        const { count } = await supabase.from('purchases').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id)
+        setPurchases(count || 0)
+      } catch (e) {
+        console.error('init error:', e)
+      }
       setLoading(false)
     }
     init()
+
+    const failsafe = setTimeout(() => setLoading(false), 5000)
+    return () => clearTimeout(failsafe)
   }, [router])
 
   if (loading) return (

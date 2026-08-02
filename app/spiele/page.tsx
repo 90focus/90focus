@@ -16,10 +16,14 @@ const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const router = useRouter()
   const { lang } = useLanguage()
 
-  useEffect(() => {
+useEffect(() => {
     const fetchEvents = async () => {
-      const { data } = await supabase.from('events').select('*').order('date', { ascending: false })
-      if (data) { setEvents(data); setFiltered(data) }
+      try {
+        const { data } = await supabase.from('events').select('*').order('date', { ascending: false })
+        if (data) { setEvents(data); setFiltered(data) }
+      } catch (e) {
+        console.error('fetchEvents error:', e)
+      }
     }
     fetchEvents()
   }, [])

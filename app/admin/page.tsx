@@ -60,12 +60,20 @@ export default function AdminPage() {
     filesSelected: (n: number) => lang === 'de' ? `${n} Dateien ausgewählt` : `${n} files selected`,
   }
 
-  useEffect(() => {
+useEffect(() => {
     const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) { router.push('/login') } else { setUser(session.user); setLoading(false) }
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) { router.push('/login') } else { setUser(session.user) }
+      } catch (e) {
+        console.error('checkUser error:', e)
+      }
+      setLoading(false)
     }
     checkUser()
+
+    const failsafe = setTimeout(() => setLoading(false), 5000)
+    return () => clearTimeout(failsafe)
   }, [router])
 
   const handleEventBild = (e: React.ChangeEvent<HTMLInputElement>) => {
