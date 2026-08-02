@@ -54,16 +54,23 @@ export default function EventDetailPage() {
     filesSelected: (n: number) => lang === 'de' ? `${n} Dateien ausgewählt` : `${n} files selected`,
   }
 
-  useEffect(() => {
+useEffect(() => {
     const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) { router.push('/login'); return }
-      setUser(session.user)
-      await loadEvent(session.user.id)
-      await loadFotos()
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) { router.push('/login'); return }
+        setUser(session.user)
+        await loadEvent(session.user.id)
+        await loadFotos()
+      } catch (e) {
+        console.error('init error:', e)
+      }
       setLoading(false)
     }
     init()
+
+    const failsafe = setTimeout(() => setLoading(false), 5000)
+    return () => clearTimeout(failsafe)
   }, [eventId])
 
   useEffect(() => {
