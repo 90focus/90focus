@@ -22,12 +22,20 @@ const [hoveredAlleSpiele2, setHoveredAlleSpiele2] = useState(false)
   const { lang } = useLanguage()
 
   useEffect(() => {
-const fetchEvents = async () => {
-      const today = new Date().toISOString().split('T')[0]
-      const { data } = await supabase.from('events').select('*')
-        .gte('date', today).order('date', { ascending: true }).limit(6)
-      if (data) {
-        setEvents(data)
+const fetchEvents = async (retry = true) => {
+      try {
+        const today = new Date().toISOString().split('T')[0]
+        const { data, error } = await supabase.from('events').select('*')
+          .gte('date', today).order('date', { ascending: true }).limit(6)
+        if (error) throw error
+        if (data) {
+          setEvents(data)
+        }
+      } catch (e) {
+        console.error('fetchEvents error:', e)
+        if (retry) {
+          setTimeout(() => fetchEvents(false), 2000)
+        }
       }
     }
     fetchEvents()
