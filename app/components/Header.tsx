@@ -3,15 +3,17 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../supabase'
 import { useRouter, usePathname } from 'next/navigation'
+import { useLanguage } from '../context/LanguageContext'
 
 export default function Header() {
   const [user, setUser] = useState<any>(null)
   const [role, setRole] = useState<string | null>(null)
 const [menuOpen, setMenuOpen] = useState(false)
   const [langOpen, setLangOpen] = useState(false)
-  const router = useRouter()
+const router = useRouter()
   const pathname = usePathname()
   const isHome = pathname === '/'
+  const { lang, setLang } = useLanguage()
 
   useEffect(() => {
     const checkUser = async () => {
@@ -106,9 +108,9 @@ const [menuOpen, setMenuOpen] = useState(false)
             </>
           ) : (
             <>
-              <button style={navBtn('/')} onClick={() => go('/')}>Home</button>
-              <button style={navBtn('/spiele')} onClick={() => go('/spiele')}>Alle Events</button>
-              <button style={navBtn('/kontakt')} onClick={() => go('/kontakt')}>Kontakt</button>
+<button style={navBtn('/')} onClick={() => go('/')}>{lang === 'de' ? 'Home' : 'Home'}</button>
+              <button style={navBtn('/spiele')} onClick={() => go('/spiele')}>{lang === 'de' ? 'Alle Events' : 'All Events'}</button>
+              <button style={navBtn('/kontakt')} onClick={() => go('/kontakt')}>{lang === 'de' ? 'Kontakt' : 'Contact'}</button>
               {user ? (
                 <>
                   <button style={navBtn('/kunden-dashboard')} onClick={() => go('/kunden-dashboard')}>Meine Fotos</button>
@@ -126,18 +128,22 @@ const [menuOpen, setMenuOpen] = useState(false)
           )}
 
           <div style={{ position: 'relative' }}>
-            <button onClick={() => setLangOpen(!langOpen)}
+<button onClick={() => setLangOpen(!langOpen)}
               style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 2, padding: '8px 14px', fontWeight: 700, fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <svg width="18" height="12" viewBox="0 0 18 12"><rect width="18" height="4" y="0" fill="#000"/><rect width="18" height="4" y="4" fill="#DD0000"/><rect width="18" height="4" y="8" fill="#FFCE00"/></svg>
-              DE ▾
+              {lang === 'de' ? (
+                <svg width="18" height="12" viewBox="0 0 18 12"><rect width="18" height="4" y="0" fill="#000"/><rect width="18" height="4" y="4" fill="#DD0000"/><rect width="18" height="4" y="8" fill="#FFCE00"/></svg>
+              ) : (
+                <svg width="18" height="12" viewBox="0 0 18 12"><rect width="18" height="12" fill="#00247d"/><path d="M0 0L18 12M18 0L0 12" stroke="#fff" strokeWidth="2"/><path d="M9 0V12M0 6H18" stroke="#fff" strokeWidth="3"/><path d="M9 0V12M0 6H18" stroke="#cf142b" strokeWidth="1.5"/></svg>
+              )}
+              {lang.toUpperCase()} ▾
             </button>
-            {langOpen && (
+{langOpen && (
               <div style={{ position: 'absolute', top: 44, right: 0, background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 4, overflow: 'hidden', zIndex: 200, minWidth: 110 }}>
-                <div style={{ padding: '10px 14px', color: '#e8ff00', fontSize: 13, fontWeight: 700, cursor: 'default', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div onClick={() => { setLang('de'); setLangOpen(false) }} style={{ padding: '10px 14px', color: lang === 'de' ? '#e8ff00' : '#e8eef4', fontSize: 13, fontWeight: lang === 'de' ? 700 : 400, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
                   <svg width="18" height="12" viewBox="0 0 18 12"><rect width="18" height="4" y="0" fill="#000"/><rect width="18" height="4" y="4" fill="#DD0000"/><rect width="18" height="4" y="8" fill="#FFCE00"/></svg>
                   DE
                 </div>
-<div style={{ padding: '10px 14px', color: '#556677', fontSize: 13, cursor: 'not-allowed', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div onClick={() => { setLang('en'); setLangOpen(false) }} style={{ padding: '10px 14px', color: lang === 'en' ? '#e8ff00' : '#e8eef4', fontSize: 13, fontWeight: lang === 'en' ? 700 : 400, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
                   <svg width="18" height="12" viewBox="0 0 18 12"><rect width="18" height="12" fill="#00247d"/><path d="M0 0L18 12M18 0L0 12" stroke="#fff" strokeWidth="2"/><path d="M9 0V12M0 6H18" stroke="#fff" strokeWidth="3"/><path d="M9 0V12M0 6H18" stroke="#cf142b" strokeWidth="1.5"/></svg>
                   EN
                 </div>
