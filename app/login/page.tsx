@@ -39,19 +39,25 @@ function LoginContent() {
     emailSent: lang === 'de' ? '✅ Email gesendet! Prüfe dein Postfach.' : '✅ Email sent! Check your inbox.',
   }
 
-  useEffect(() => {
+useEffect(() => {
     const check = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        if (redirectTo) { router.push(decodeURIComponent(redirectTo)); return }
-        const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
-        if (profile?.role === 'photographer') { router.push('/meine-events') }
-        else { router.push('/kunden-dashboard') }
-        return
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session) {
+          if (redirectTo) { router.push(decodeURIComponent(redirectTo)); return }
+          const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
+          if (profile?.role === 'photographer') { router.push('/meine-events'); return }
+          else { router.push('/kunden-dashboard'); return }
+        }
+      } catch (e) {
+        console.error('check error:', e)
       }
       setCheckingSession(false)
     }
     check()
+
+    const failsafe = setTimeout(() => setCheckingSession(false), 5000)
+    return () => clearTimeout(failsafe)
   }, [])
 
   const handleLogin = async () => {
