@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { supabase } from '@/app/supabase'
+import { useLanguage } from '@/app/context/LanguageContext'
 
 function CheckoutContent() {
   const searchParams = useSearchParams()
@@ -16,6 +17,19 @@ function CheckoutContent() {
   const [kartenName, setKartenName] = useState('')
   const [ablaufdatum, setAblaufdatum] = useState('')
   const [cvv, setCvv] = useState('')
+  const { lang } = useLanguage()
+
+  const t = {
+    creditCard: lang === 'de' ? 'Kreditkarte' : 'Credit Card',
+    cardholder: lang === 'de' ? 'Karteninhaber' : 'Cardholder',
+    cardNumber: lang === 'de' ? 'Kartennummer' : 'Card Number',
+    expiry: lang === 'de' ? 'Ablaufdatum' : 'Expiry Date',
+    cvv: lang === 'de' ? 'Prüfziffer (CVV)' : 'Security Code (CVV)',
+    buyNow: lang === 'de' ? 'Jetzt kaufen' : 'Buy Now',
+    stripeHint: lang === 'de' ? '🔒 Bezahlung via Stripe – kommt bald' : '🔒 Payment via Stripe – coming soon',
+    photo: lang === 'de' ? 'Foto' : 'Photo',
+    loading: lang === 'de' ? 'Lade...' : 'Loading...',
+  }
 
   useEffect(() => {
     const init = async () => {
@@ -100,7 +114,7 @@ function CheckoutContent() {
             <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1) }} style={{ position: 'absolute', left: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 28, width: 50, height: 50, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
           )}
           <div onClick={(e) => e.stopPropagation()} style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}>
-            <img src={getImageUrl(filenames[lightboxIndex])} alt={`Foto ${lightboxIndex + 1}`} style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 8 }} />
+            <img src={getImageUrl(filenames[lightboxIndex])} alt={`${t.photo} ${lightboxIndex + 1}`} style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 8 }} />
             <Watermark />
             <Logo />
           </div>
@@ -115,13 +129,13 @@ function CheckoutContent() {
 
         {event && (
           <div style={{ textAlign: 'center', marginBottom: 16, color: '#8899aa', fontSize: 13 }}>
-            {event.home_team} · {new Date(event.date).toLocaleDateString('de-CH')}
+            {event.home_team} · {new Date(event.date).toLocaleDateString(lang === 'de' ? 'de-CH' : 'en-GB')}
           </div>
         )}
 
         <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #e8ff00', borderRadius: 12, padding: '24px', marginBottom: 20, textAlign: 'center' }}>
           <div style={{ fontSize: 12, color: '#e8eef4', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 700, marginBottom: 4 }}>
-            {filenames.length} Foto{filenames.length > 1 ? 's' : ''}
+            {filenames.length} {t.photo}{filenames.length > 1 ? 's' : ''}
           </div>
           <div style={{ fontSize: 28, fontWeight: 900, color: '#e8ff00' }}>
             CHF {total}
@@ -131,7 +145,7 @@ function CheckoutContent() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 32 }}>
           {filenames.map((filename, i) => (
             <div key={i} onClick={() => setLightboxIndex(i)} style={{ position: 'relative', borderRadius: 4, overflow: 'hidden', aspectRatio: '1', cursor: 'zoom-in' }}>
-              <img src={getImageUrl(filename)} alt={`Foto ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={getImageUrl(filename)} alt={`${t.photo} ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               <Watermark />
               <Logo />
             </div>
@@ -140,29 +154,29 @@ function CheckoutContent() {
 
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: '#667788', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 20 }}>
-            Kreditkarte
+            {t.creditCard}
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>Karteninhaber</div>
+            <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>{t.cardholder}</div>
             <input type="text" placeholder="Max Mustermann" value={kartenName}
               onChange={(e) => setKartenName(e.target.value)} style={inputStyle} />
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>Kartennummer</div>
+            <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>{t.cardNumber}</div>
             <input type="text" placeholder="1234 5678 9012 3456" value={kartenNummer}
               onChange={(e) => setKartenNummer(formatKartenNummer(e.target.value))} style={inputStyle} />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
             <div>
-              <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>Ablaufdatum</div>
-              <input type="text" placeholder="MM/JJ" value={ablaufdatum}
+              <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>{t.expiry}</div>
+              <input type="text" placeholder="MM/YY" value={ablaufdatum}
                 onChange={(e) => setAblaufdatum(formatAblaufdatum(e.target.value))} style={inputStyle} />
             </div>
             <div>
-              <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>Prüfziffer (CVV)</div>
+              <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>{t.cvv}</div>
               <input type="text" placeholder="123" value={cvv}
                 onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))} style={inputStyle} />
             </div>
@@ -174,10 +188,10 @@ function CheckoutContent() {
             fontWeight: 900, fontSize: 15, cursor: 'not-allowed',
             letterSpacing: 1.5, textTransform: 'uppercase', opacity: 0.5
           }}>
-            Jetzt kaufen
+            {t.buyNow}
           </button>
           <p style={{ color: '#445566', fontSize: 12, textAlign: 'center', marginTop: 12 }}>
-            🔒 Bezahlung via Stripe – kommt bald
+            {t.stripeHint}
           </p>
         </div>
       </div>
@@ -187,7 +201,7 @@ function CheckoutContent() {
 
 export default function CheckoutPage() {
   return (
-    <Suspense fallback={<p style={{ padding: '40px', color: '#e8eef4' }}>Lade...</p>}>
+    <Suspense fallback={<p style={{ padding: '40px', color: '#e8eef4' }}>Loading...</p>}>
       <CheckoutContent />
     </Suspense>
   )
