@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/app/supabase'
 import { useRouter } from 'next/navigation'
+import { useLanguage } from '@/app/context/LanguageContext'
 
 export default function KundenDashboardPage() {
   const [user, setUser] = useState<any>(null)
@@ -11,6 +12,19 @@ export default function KundenDashboardPage() {
   const [purchases, setPurchases] = useState(0)
   const [hoveredSpiele, setHoveredSpiele] = useState(false)
   const router = useRouter()
+  const { lang } = useLanguage()
+
+  const t = {
+    hey: lang === 'de' ? 'Hey' : 'Hey',
+    boughtPhotos: lang === 'de' ? 'Gekaufte Fotos' : 'Purchased Photos',
+    photosInCollection: lang === 'de' ? 'Fotos in deiner Sammlung' : 'Photos in your collection',
+    myPurchases: lang === 'de' ? 'Meine Käufe' : 'My Purchases',
+    view: lang === 'de' ? 'Anzeigen' : 'View',
+    downloadAll: lang === 'de' ? 'Alle Fotos herunterladen' : 'Download all photos',
+    findMoment: 'Find your Moment',
+    toEvents: lang === 'de' ? 'Zu den Events' : 'To the Events',
+    loading: lang === 'de' ? 'Lade...' : 'Loading...',
+  }
 
   useEffect(() => {
     const init = async () => {
@@ -32,43 +46,43 @@ export default function KundenDashboardPage() {
         <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 1, fontStyle: 'italic' }}>
           <span style={{ color: '#e8eef4' }}>SPORT</span><span style={{ color: '#e8ff00' }}>SHOT</span>
         </span>
-        <p style={{ color: '#445566', marginTop: 16 }}>Lade...</p>
+        <p style={{ color: '#445566', marginTop: 16 }}>{t.loading}</p>
       </div>
     </div>
   )
 
-return (
+  return (
     <div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
       <div style={{ padding: '48px 32px', maxWidth: '960px', margin: '0 auto', width: '100%', marginTop: 60 }}>
 
         <div style={{ marginBottom: 48 }}>
           <h1 style={{ fontSize: 42, fontWeight: 900, textTransform: 'uppercase', margin: 0 }}>
-            Hey, {profile?.vorname}! 👋
+            {t.hey}, {profile?.vorname}! 👋
           </h1>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 40 }}>
           <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #1c2a38', borderRadius: 12, padding: '28px 24px' }}>
-            <div style={{ color: '#e8eef4', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>Gekaufte Fotos</div>
+            <div style={{ color: '#e8eef4', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>{t.boughtPhotos}</div>
             <div style={{ fontSize: 52, fontWeight: 900, color: '#e8ff00', lineHeight: 1 }}>{purchases}</div>
-            <div style={{ color: '#e8eef4', fontSize: 12, marginTop: 8 }}>Fotos in deiner Sammlung</div>
+            <div style={{ color: '#e8eef4', fontSize: 12, marginTop: 8 }}>{t.photosInCollection}</div>
           </div>
 
           <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #1c2a38', borderRadius: 12, padding: '28px 24px', cursor: 'pointer' }}
             onClick={() => router.push('/kunden-kaeufe')}>
-            <div style={{ color: '#e8eef4', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>Meine Käufe</div>
-            <div style={{ fontSize: 28, fontWeight: 900, color: '#e8eef4', lineHeight: 1 }}>Anzeigen</div>
-            <div style={{ color: '#e8eef4', fontSize: 12, marginTop: 8 }}>Alle Fotos herunterladen</div>
+            <div style={{ color: '#e8eef4', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>{t.myPurchases}</div>
+            <div style={{ fontSize: 28, fontWeight: 900, color: '#e8eef4', lineHeight: 1 }}>{t.view}</div>
+            <div style={{ color: '#e8eef4', fontSize: 12, marginTop: 8 }}>{t.downloadAll}</div>
           </div>
         </div>
 
-<div style={{
+        <div style={{
           background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)',
           border: '1px solid #1c2a38', borderRadius: 12, padding: '32px',
           textAlign: 'center'
         }}>
           <h2 style={{ fontSize: 28, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -1, marginBottom: 20, marginTop: -4 }}>
-            Find your Moment
+            {t.findMoment}
           </h2>
 
           <button
@@ -85,7 +99,7 @@ return (
               boxShadow: hoveredSpiele ? '0 0 20px rgba(232,255,0,0.3)' : 'none',
               marginTop: 4
             }}>
-            Zu den Events
+            {t.toEvents}
           </button>
         </div>
       </div>
