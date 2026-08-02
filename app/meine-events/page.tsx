@@ -38,15 +38,22 @@ export default function MeineEventsPage() {
     loading: lang === 'de' ? 'Lade...' : 'Loading...',
   }
 
-  useEffect(() => {
+useEffect(() => {
     const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) { router.push('/login'); return }
-      setUser(session.user)
-      await loadEvents(session.user.id)
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) { router.push('/login'); return }
+        setUser(session.user)
+        await loadEvents(session.user.id)
+      } catch (e) {
+        console.error('init error:', e)
+      }
       setLoading(false)
     }
     init()
+
+    const failsafe = setTimeout(() => setLoading(false), 5000)
+    return () => clearTimeout(failsafe)
   }, [router])
 
   useEffect(() => {
