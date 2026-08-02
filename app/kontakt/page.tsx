@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useLanguage } from '@/app/context/LanguageContext'
 
 export default function KontaktPage() {
   const [name, setName] = useState('')
@@ -10,9 +11,25 @@ export default function KontaktPage() {
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState('')
+  const { lang } = useLanguage()
+
+  const t = {
+    title: lang === 'de' ? 'Kontakt' : 'Contact',
+    sentTitle: lang === 'de' ? 'Nachricht gesendet!' : 'Message sent!',
+    sentText: lang === 'de' ? 'Wir melden uns innert 24 Stunden bei dir.' : "We'll get back to you within 24 hours.",
+    name: lang === 'de' ? 'Name' : 'Name',
+    email: 'Email',
+    betreff: lang === 'de' ? 'Betreff' : 'Subject',
+    nachricht: lang === 'de' ? 'Nachricht' : 'Message',
+    senden: lang === 'de' ? 'Senden' : 'Send',
+    sending: lang === 'de' ? 'Senden...' : 'Sending...',
+    required: lang === 'de' ? 'Bitte alle Pflichtfelder ausfüllen!' : 'Please fill in all required fields!',
+    sendError: lang === 'de' ? 'Fehler beim Senden!' : 'Error sending message!',
+    responseTime: lang === 'de' ? 'Antwort innert 24 Stunden' : 'Response within 24 hours',
+  }
 
   const handleSubmit = async () => {
-    if (!name || !email || !nachricht) { setError('Bitte alle Pflichtfelder ausfüllen!'); return }
+    if (!name || !email || !nachricht) { setError(t.required); return }
     setLoading(true)
     setError('')
     try {
@@ -24,10 +41,10 @@ export default function KontaktPage() {
       if (res.ok) {
         setSent(true)
       } else {
-        setError('Fehler beim Senden!')
+        setError(t.sendError)
       }
     } catch {
-      setError('Fehler beim Senden!')
+      setError(t.sendError)
     }
     setLoading(false)
   }
@@ -41,7 +58,7 @@ export default function KontaktPage() {
   return (
     <div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
       <div style={{ maxWidth: 1000, margin: '60px auto 0', padding: '40px 20px' }}>
-        <div style={{ color: '#fff', fontSize: 28, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>Kontakt</div>
+        <div style={{ color: '#fff', fontSize: 28, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>{t.title}</div>
 
         {sent ? (
           <div style={{ background: 'rgba(68,255,136,0.08)', border: '1px solid #44ff88', borderRadius: 12, padding: '28px 20px', textAlign: 'center', maxWidth: 420 }}>
@@ -50,30 +67,30 @@ export default function KontaktPage() {
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             </div>
-            <div style={{ fontWeight: 800, fontSize: 15, color: '#44ff88', marginBottom: 6 }}>Nachricht gesendet!</div>
-            <div style={{ color: '#8899aa', fontSize: 13 }}>Wir melden uns innert 24 Stunden bei dir.</div>
+            <div style={{ fontWeight: 800, fontSize: 15, color: '#44ff88', marginBottom: 6 }}>{t.sentTitle}</div>
+            <div style={{ color: '#8899aa', fontSize: 13 }}>{t.sentText}</div>
           </div>
         ) : (
           <div className="kontakt-grid" style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 48, alignItems: 'start' }}>
 
             <div>
               <div style={{ marginBottom: 16 }}>
-                <label style={{ fontSize: 13, color: '#e8eef4', marginBottom: 6, display: 'block' }}>Name <span style={{ color: '#ff4444' }}>*</span></label>
+                <label style={{ fontSize: 13, color: '#e8eef4', marginBottom: 6, display: 'block' }}>{t.name} <span style={{ color: '#ff4444' }}>*</span></label>
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} style={inputStyle} />
               </div>
 
               <div style={{ marginBottom: 16 }}>
-                <label style={{ fontSize: 13, color: '#e8eef4', marginBottom: 6, display: 'block' }}>Email <span style={{ color: '#ff4444' }}>*</span></label>
+                <label style={{ fontSize: 13, color: '#e8eef4', marginBottom: 6, display: 'block' }}>{t.email} <span style={{ color: '#ff4444' }}>*</span></label>
                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} />
               </div>
 
               <div style={{ marginBottom: 16 }}>
-                <label style={{ fontSize: 13, color: '#e8eef4', marginBottom: 6, display: 'block' }}>Betreff</label>
+                <label style={{ fontSize: 13, color: '#e8eef4', marginBottom: 6, display: 'block' }}>{t.betreff}</label>
                 <input type="text" value={betreff} onChange={(e) => setBetreff(e.target.value)} style={inputStyle} />
               </div>
 
               <div style={{ marginBottom: 24 }}>
-                <label style={{ fontSize: 13, color: '#e8eef4', marginBottom: 6, display: 'block' }}>Nachricht <span style={{ color: '#ff4444' }}>*</span></label>
+                <label style={{ fontSize: 13, color: '#e8eef4', marginBottom: 6, display: 'block' }}>{t.nachricht} <span style={{ color: '#ff4444' }}>*</span></label>
                 <textarea value={nachricht} onChange={(e) => setNachricht(e.target.value)} rows={6}
                   style={{ ...inputStyle, resize: 'vertical' as any }} />
               </div>
@@ -81,7 +98,7 @@ export default function KontaktPage() {
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <button onClick={handleSubmit} disabled={loading}
                   style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '14px 60px', fontWeight: 900, fontSize: 14, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1.5 }}>
-                  {loading ? 'Senden...' : 'Senden'}
+                  {loading ? t.sending : t.senden}
                 </button>
               </div>
 
@@ -95,7 +112,7 @@ export default function KontaktPage() {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 28 }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e8ff00" strokeWidth="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
-                <span style={{ fontSize: 15 }}>Antwort innert 24 Stunden</span>
+                <span style={{ fontSize: 15 }}>{t.responseTime}</span>
               </div>
 
               <div style={{ display: 'flex', gap: 18 }}>
