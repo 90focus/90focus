@@ -168,7 +168,9 @@ function SucheContent() {
         </div>
       </div>
     )
-  )return (
+)
+
+  return (
     <div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
 
       {lightboxIndex !== null && (
