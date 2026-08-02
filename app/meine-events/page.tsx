@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/app/supabase'
 import { useRouter } from 'next/navigation'
+import { useLanguage } from '@/app/context/LanguageContext'
 
 export default function MeineEventsPage() {
   const [user, setUser] = useState<any>(null)
@@ -17,6 +18,25 @@ export default function MeineEventsPage() {
   const [datumFilter, setDatumFilter] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
   const router = useRouter()
+  const { lang } = useLanguage()
+
+  const t = {
+    myEvents: lang === 'de' ? 'Meine Events' : 'My Events',
+    uploadedPhotos: lang === 'de' ? 'Hochgeladene Fotos' : 'Uploaded Photos',
+    newEvent: lang === 'de' ? '+ Neues Event erstellen' : '+ Create New Event',
+    sportType: lang === 'de' ? 'Sportart' : 'Sport',
+    allSports: lang === 'de' ? 'Alle Sportarten' : 'All Sports',
+    date: lang === 'de' ? 'Datum' : 'Date',
+    resetFilter: lang === 'de' ? 'Filter zurücksetzen' : 'Reset filter',
+    noEvents: lang === 'de' ? 'Noch keine Events vorhanden.' : 'No events yet.',
+    createFirst: lang === 'de' ? 'Erstes Event erstellen' : 'Create first event',
+    completed: lang === 'de' ? 'Abgeschlossen' : 'Completed',
+    photo: lang === 'de' ? 'Foto' : 'photo',
+    manage: lang === 'de' ? 'Verwalten' : 'Manage',
+    deleteConfirm: lang === 'de' ? 'Event und alle Fotos löschen?' : 'Delete event and all photos?',
+    eventDeleted: lang === 'de' ? '✅ Event gelöscht!' : '✅ Event deleted!',
+    loading: lang === 'de' ? 'Lade...' : 'Loading...',
+  }
 
   useEffect(() => {
     const init = async () => {
@@ -67,10 +87,10 @@ export default function MeineEventsPage() {
   }
 
   const deleteEvent = async (eventId: string) => {
-    if (!confirm('Event und alle Fotos löschen?')) return
+    if (!confirm(t.deleteConfirm)) return
     await supabase.from('event_fotos').delete().eq('event_id', eventId)
     await supabase.from('events').delete().eq('id', eventId)
-    setMessage('✅ Event gelöscht!')
+    setMessage(t.eventDeleted)
     loadEvents(user.id)
   }
 
@@ -91,23 +111,23 @@ export default function MeineEventsPage() {
 
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ color: '#e8eef4' }}>Lade...</p>
+      <p style={{ color: '#e8eef4' }}>{t.loading}</p>
     </div>
   )
 
-return (
+  return (
     <div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
 
       <div style={{ padding: '40px 48px', maxWidth: '1200px', margin: '60px auto 0', width: '100%' }}>
-        <h1 style={{ fontSize: 36, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>Meine Events</h1>
+        <h1 style={{ fontSize: 36, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>{t.myEvents}</h1>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 32 }}>
           <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
-            <div style={{ color: '#445566', fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Meine Events</div>
+            <div style={{ color: '#445566', fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>{t.myEvents}</div>
             <div style={{ fontSize: 48, fontWeight: 900, color: '#e8ff00' }}>{stats.events}</div>
           </div>
           <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
-            <div style={{ color: '#445566', fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Hochgeladene Fotos</div>
+            <div style={{ color: '#445566', fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>{t.uploadedPhotos}</div>
             <div style={{ fontSize: 48, fontWeight: 900, color: '#e8ff00' }}>{stats.fotos}</div>
           </div>
         </div>
@@ -115,16 +135,16 @@ return (
         <div style={{ marginBottom: 32 }}>
           <button onClick={() => router.push('/admin')}
             style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '12px 24px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1, textTransform: 'uppercase' }}>
-            + Neues Event erstellen
+            {t.newEvent}
           </button>
         </div>
 
         <div style={{ display: 'flex', gap: 16, marginBottom: 32, flexWrap: 'wrap' }}>
           <div>
-            <div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Sportart</div>
+            <div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>{t.sportType}</div>
             <select value={ligaFilter} onChange={(e) => setLigaFilter(e.target.value)}
               style={{ background: '#0d1219', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '10px 16px', fontSize: 14, cursor: 'pointer', minWidth: 200 }}>
-              <option value="">Alle Sportarten</option>
+              <option value="">{t.allSports}</option>
               <option value="Fussball">Fussball</option>
               <option value="Handball">Handball</option>
               <option value="Hybrid Sport">Hybrid Sport</option>
@@ -135,7 +155,7 @@ return (
             </select>
           </div>
           <div>
-            <div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Datum</div>
+            <div style={{ color: '#445566', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>{t.date}</div>
             <input type="date" value={datumFilter} onChange={(e) => setDatumFilter(e.target.value)}
               style={{ background: '#0d1219', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '10px 16px', fontSize: 14, cursor: 'pointer' }} />
           </div>
@@ -143,7 +163,7 @@ return (
             <div style={{ display: 'flex', alignItems: 'flex-end' }}>
               <button onClick={() => { setLigaFilter(''); setDatumFilter('') }}
                 style={{ background: 'transparent', color: '#667788', border: '1px solid #1c2a38', borderRadius: 4, padding: '10px 16px', fontSize: 13, cursor: 'pointer' }}>
-                Filter zurücksetzen ✕
+                {t.resetFilter} ✕
               </button>
             </div>
           )}
@@ -157,10 +177,10 @@ return (
 
         {filtered.length === 0 ? (
           <div style={{ color: '#445566', padding: '60px 0', textAlign: 'center' }}>
-            <div style={{ fontSize: 18, marginBottom: 16 }}>Noch keine Events vorhanden.</div>
+            <div style={{ fontSize: 18, marginBottom: 16 }}>{t.noEvents}</div>
             <button onClick={() => router.push('/admin')}
               style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '12px 24px', cursor: 'pointer', fontSize: 14, fontWeight: 900 }}>
-              Erstes Event erstellen
+              {t.createFirst}
             </button>
           </div>
         ) : (
@@ -187,7 +207,7 @@ return (
                     )}
                     {isPast && (
                       <div style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(0,0,0,0.75)', color: '#aabbcc', fontSize: 9, fontWeight: 800, letterSpacing: 1, textTransform: 'uppercase', padding: '3px 8px', borderRadius: 2 }}>
-                        Abgeschlossen
+                        {t.completed}
                       </div>
                     )}
                   </div>
@@ -195,7 +215,7 @@ return (
                     <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6, color: '#fff' }}>{ev.home_team}</div>
                     <div style={{ fontSize: 12, color: '#fff', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e8eef4" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                      <span>{new Date(ev.date).toLocaleDateString('de-CH')}</span>
+                      <span>{new Date(ev.date).toLocaleDateString(lang === 'de' ? 'de-CH' : 'en-GB')}</span>
                       {ev.ort && (
                         <>
                           <span style={{ color: '#334455' }}>·</span>
@@ -204,17 +224,17 @@ return (
                         </>
                       )}
                     </div>
-                    <div style={{ fontSize: 11, color: '#667788', marginBottom: 8 }}>{fotoCounts[ev.id] || 0} Foto{fotoCounts[ev.id] === 1 ? '' : 's'}</div>
+                    <div style={{ fontSize: 11, color: '#667788', marginBottom: 8 }}>{fotoCounts[ev.id] || 0} {t.photo}{fotoCounts[ev.id] === 1 ? '' : 's'}</div>
                     {ev.sponsor_name && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, background: '#131e2a', padding: '4px 8px', borderRadius: 4, width: 'fit-content' }}>
                         {ev.sponsor_logo_url && <img src={ev.sponsor_logo_url} alt={ev.sponsor_name} style={{ height: '14px', objectFit: 'contain' }} />}
                         <span style={{ fontSize: 10, color: '#e8eef4', fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
                       </div>
                     )}
-<div style={{ marginTop: 8 }}>
+                    <div style={{ marginTop: 8 }}>
                       <button onClick={() => router.push(`/meine-events/${ev.id}`)}
                         style={{ width: '100%', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px', cursor: 'pointer', fontSize: 12, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>
-                        Verwalten
+                        {t.manage}
                       </button>
                     </div>
                   </div>
