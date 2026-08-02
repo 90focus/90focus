@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/app/supabase'
 import { useRouter, useParams } from 'next/navigation'
+import { useLanguage } from '@/app/context/LanguageContext'
 
 export default function EventDetailPage() {
   const [user, setUser] = useState<any>(null)
@@ -21,6 +22,37 @@ export default function EventDetailPage() {
   const router = useRouter()
   const params = useParams()
   const eventId = params.id as string
+  const { lang } = useLanguage()
+
+  const t = {
+    myEvents: lang === 'de' ? 'Meine Events' : 'My Events',
+    edit: lang === 'de' ? '✏️ Bearbeiten' : '✏️ Edit',
+    delete: lang === 'de' ? '🗑 Löschen' : '🗑 Delete',
+    uploadPhotos: lang === 'de' ? '📸 Fotos hochladen' : '📸 Upload Photos',
+    selectFiles: lang === 'de' ? '📁 Dateien auswählen' : '📁 Choose Files',
+    uploading: lang === 'de' ? 'Lädt...' : 'Uploading...',
+    uploadBtn: lang === 'de' ? 'Fotos hochladen' : 'Upload Photos',
+    uploaded: lang === 'de' ? 'hochgeladen' : 'uploaded',
+    photos: lang === 'de' ? 'Fotos' : 'Photos',
+    noPhotos: lang === 'de' ? 'Noch keine Fotos hochgeladen.' : 'No photos uploaded yet.',
+    selectAll: lang === 'de' ? 'Alle auswählen' : 'Select all',
+    deselectAll: lang === 'de' ? 'Alle abwählen' : 'Deselect all',
+    deleting: lang === 'de' ? 'Löscht...' : 'Deleting...',
+    deleteN: (n: number) => lang === 'de' ? `${n} löschen` : `Delete ${n}`,
+    cancel: lang === 'de' ? 'Abbrechen' : 'Cancel',
+    loading: lang === 'de' ? 'Lade...' : 'Loading...',
+    deleteEventConfirm: lang === 'de' ? 'Event und alle Fotos löschen?' : 'Delete event and all photos?',
+    deletePhotosConfirm: (n: number) => lang === 'de' ? `${n} Foto(s) löschen?` : `Delete ${n} photo(s)?`,
+    deletingPhotos: lang === 'de' ? 'Fotos werden gelöscht...' : 'Deleting photos...',
+    photosDeleted: (n: number) => lang === 'de' ? `✅ ${n} Foto(s) gelöscht!` : `✅ ${n} photo(s) deleted!`,
+    selectPhotos: lang === 'de' ? 'Bitte Fotos auswählen!' : 'Please select photos!',
+    loadingPhotos: (n: number) => lang === 'de' ? `Lade ${n} Foto(s) hoch...` : `Uploading ${n} photo(s)...`,
+    uploadingProgress: (i: number, n: number) => lang === 'de' ? `Lade hoch: ${i} / ${n}` : `Uploading: ${i} / ${n}`,
+    processing: lang === 'de' ? 'Fotos werden verarbeitet...' : 'Processing photos...',
+    done: lang === 'de' ? 'Fertig!' : 'Done!',
+    uploadError: lang === 'de' ? 'Fehler beim Hochladen!' : 'Error uploading!',
+    filesSelected: (n: number) => lang === 'de' ? `${n} Dateien ausgewählt` : `${n} files selected`,
+  }
 
   useEffect(() => {
     const init = async () => {
@@ -89,7 +121,7 @@ export default function EventDetailPage() {
   }
 
   const deleteEvent = async () => {
-    if (!confirm('Event und alle Fotos löschen?')) return
+    if (!confirm(t.deleteEventConfirm)) return
     await supabase.from('event_fotos').delete().eq('event_id', eventId)
     await supabase.from('events').delete().eq('id', eventId)
     router.push('/meine-events')
@@ -97,9 +129,9 @@ export default function EventDetailPage() {
 
   const deleteSelected = async () => {
     if (selected.length === 0) return
-    if (!confirm(`${selected.length} Foto(s) löschen?`)) return
+    if (!confirm(t.deletePhotosConfirm(selected.length))) return
     setDeleting(true)
-    setMessage('Fotos werden gelöscht...')
+    setMessage(t.deletingPhotos)
     const fotosToDelete = fotos.filter(f => selected.includes(f.id))
     for (const foto of fotosToDelete) {
       try {
@@ -112,7 +144,7 @@ export default function EventDetailPage() {
         console.error('Delete error:', e)
       }
     }
-    setMessage(`✅ ${selected.length} Foto(s) gelöscht!`)
+    setMessage(t.photosDeleted(selected.length))
     setSelected([])
     setSelectMode(false)
     setDeleting(false)
@@ -123,18 +155,18 @@ export default function EventDetailPage() {
     const f = e.target.files
     if (f && f.length > 0) {
       setFiles(f)
-      setFileNames(f.length === 1 ? f[0].name : `${f.length} Dateien ausgewählt`)
+      setFileNames(f.length === 1 ? f[0].name : t.filesSelected(f.length))
     }
   }
 
   const handleUpload = async () => {
     if (!files || files.length === 0) {
-      setMessage('Bitte Fotos auswählen!')
+      setMessage(t.selectPhotos)
       return
     }
     setUploading(true)
     setUploadProgress({ current: 0, total: files.length })
-    setMessage(`Lade ${files.length} Foto(s) hoch...`)
+    setMessage(t.loadingPhotos(files.length))
 
     try {
       const filenames = Array.from(files).map(f => f.name)
@@ -158,22 +190,22 @@ export default function EventDetailPage() {
 
         uploadedKeys.push(key)
         setUploadProgress({ current: i + 1, total: files.length })
-        setMessage(`Lade hoch: ${i + 1} / ${files.length}`)
+        setMessage(t.uploadingProgress(i + 1, files.length))
       }
 
-      setMessage('Fotos werden verarbeitet...')
+      setMessage(t.processing)
       const completeRes = await fetch('/api/upload-complete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ eventId, keys: uploadedKeys })
       })
       const data = await completeRes.json()
-      setMessage(data.message || 'Fertig!')
+      setMessage(data.message || t.done)
       setFiles(null)
       setFileNames('')
       loadFotos()
     } catch {
-      setMessage('Fehler beim Hochladen!')
+      setMessage(t.uploadError)
     } finally {
       setUploading(false)
       setUploadProgress({ current: 0, total: 0 })
@@ -185,7 +217,7 @@ export default function EventDetailPage() {
 
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ color: '#e8eef4' }}>Lade...</p>
+      <p style={{ color: '#e8eef4' }}>{t.loading}</p>
     </div>
   )
 
@@ -197,7 +229,7 @@ export default function EventDetailPage() {
           {lightboxIndex > 0 && (
             <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1) }} style={{ position: 'absolute', left: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 36, width: 50, height: 50, borderRadius: '50%', cursor: 'pointer' }}>‹</button>
           )}
-          <img src={getImageUrl(fotos[lightboxIndex].filename)} alt="Foto" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 8 }} />
+          <img src={getImageUrl(fotos[lightboxIndex].filename)} alt="Photo" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 8 }} />
           {lightboxIndex < fotos.length - 1 && (
             <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1) }} style={{ position: 'absolute', right: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 36, width: 50, height: 50, borderRadius: '50%', cursor: 'pointer' }}>›</button>
           )}
@@ -211,7 +243,7 @@ export default function EventDetailPage() {
             <span style={{ color: '#e8eef4' }}>SPORT</span><span style={{ color: '#e8ff00' }}>SHOT</span>
           </span>
         </div>
-        <button onClick={() => router.push('/meine-events')} style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>← Meine Events</button>
+        <button onClick={() => router.push('/meine-events')} style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>← {t.myEvents}</button>
       </nav>
 
       <div style={{ padding: '24px 16px', maxWidth: '1000px', margin: '0 auto' }}>
@@ -225,11 +257,11 @@ export default function EventDetailPage() {
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <button onClick={() => router.push(`/meine-events/${eventId}/bearbeiten`)}
                   style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12 }}>
-                  ✏️ Bearbeiten
+                  {t.edit}
                 </button>
                 <button onClick={deleteEvent}
                   style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
-                  🗑 Löschen
+                  {t.delete}
                 </button>
               </div>
             </div>
@@ -237,10 +269,10 @@ export default function EventDetailPage() {
         )}
 
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '16px 20px', marginBottom: 24 }}>
-          <h3 style={{ margin: '0 0 16px 0', color: '#e8eef4', fontSize: 16 }}>📸 Fotos hochladen</h3>
+          <h3 style={{ margin: '0 0 16px 0', color: '#e8eef4', fontSize: 16 }}>{t.uploadPhotos}</h3>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 13, border: '1px solid #2a3a4a', fontWeight: 600 }}>
-              📁 Dateien auswählen
+              {t.selectFiles}
               <input type="file" multiple accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
             </label>
             {fileNames && <span style={{ color: '#667788', fontSize: 12 }}>✓ {fileNames}</span>}
@@ -256,39 +288,39 @@ export default function EventDetailPage() {
                 }} />
               </div>
               <div style={{ color: '#667788', fontSize: 12, marginTop: 4 }}>
-                {uploadProgress.current} / {uploadProgress.total} hochgeladen
+                {uploadProgress.current} / {uploadProgress.total} {t.uploaded}
               </div>
             </div>
           )}
 
           <button onClick={handleUpload} disabled={uploading} style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 6, padding: '10px 24px', cursor: 'pointer', fontSize: 14, fontWeight: 900, marginTop: 12 }}>
-            {uploading ? 'Lädt...' : 'Fotos hochladen'}
+            {uploading ? t.uploading : t.uploadBtn}
           </button>
         </div>
 
         {message && (
-          <div style={{ padding: '16px', background: message.startsWith('Fehler') ? 'rgba(255,68,68,0.1)' : 'rgba(68,255,136,0.1)', border: `1px solid ${message.startsWith('Fehler') ? '#ff4444' : '#44ff88'}`, borderRadius: '8px', color: message.startsWith('Fehler') ? '#ff4444' : '#44ff88', fontWeight: 'bold', marginBottom: 24, fontSize: 13 }}>
+          <div style={{ padding: '16px', background: message.startsWith('Fehler') || message.startsWith('Error') ? 'rgba(255,68,68,0.1)' : 'rgba(68,255,136,0.1)', border: `1px solid ${message.startsWith('Fehler') || message.startsWith('Error') ? '#ff4444' : '#44ff88'}`, borderRadius: '8px', color: message.startsWith('Fehler') || message.startsWith('Error') ? '#ff4444' : '#44ff88', fontWeight: 'bold', marginBottom: 24, fontSize: 13 }}>
             {message}
           </div>
         )}
 
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, gap: 10 }}>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 900 }}>Fotos ({fotos.length})</h2>
+          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 900 }}>{t.photos} ({fotos.length})</h2>
           {fotos.length > 0 && (
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {!selectMode ? (
-                <button onClick={() => setSelectMode(true)} style={{ background: '#ff4444', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>🗑 Löschen</button>
+                <button onClick={() => setSelectMode(true)} style={{ background: '#ff4444', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>{t.delete}</button>
               ) : (
                 <>
                   <button onClick={selectAll} style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12 }}>
-                    {selected.length === fotos.length ? 'Alle abwählen' : 'Alle auswählen'}
+                    {selected.length === fotos.length ? t.deselectAll : t.selectAll}
                   </button>
                   {selected.length > 0 && (
                     <button onClick={deleteSelected} disabled={deleting} style={{ background: '#ff4444', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
-                      {deleting ? 'Löscht...' : `${selected.length} löschen`}
+                      {deleting ? t.deleting : t.deleteN(selected.length)}
                     </button>
                   )}
-                  <button onClick={cancelSelect} style={{ background: 'transparent', color: '#667788', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12 }}>Abbrechen</button>
+                  <button onClick={cancelSelect} style={{ background: 'transparent', color: '#667788', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12 }}>{t.cancel}</button>
                 </>
               )}
             </div>
@@ -296,12 +328,12 @@ export default function EventDetailPage() {
         </div>
 
         {fotos.length === 0 ? (
-          <div style={{ color: '#445566', padding: '40px 0', textAlign: 'center' }}>Noch keine Fotos hochgeladen.</div>
+          <div style={{ color: '#445566', padding: '40px 0', textAlign: 'center' }}>{t.noPhotos}</div>
         ) : (
           <div className="fotos-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
             {fotos.map((foto, index) => (
               <div key={foto.id} onClick={() => handleFotoClick(index, foto.id)} style={{ position: 'relative', borderRadius: 8, overflow: 'hidden', cursor: selectMode ? 'pointer' : 'zoom-in', border: selected.includes(foto.id) ? '3px solid #e8ff00' : '3px solid transparent', transition: 'border 0.1s' }}>
-                <img src={getImageUrl(foto.filename)} alt="Foto" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }} />
+                <img src={getImageUrl(foto.filename)} alt="Photo" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }} />
                 {selectMode && selected.includes(foto.id) && (
                   <div style={{ position: 'absolute', top: 8, right: 8, background: '#e8ff00', borderRadius: '50%', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 14, color: '#070b0f' }}>✓</div>
                 )}
