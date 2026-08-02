@@ -65,7 +65,7 @@ export default function KundenKaeufePage() {
                     {purchase.events?.home_team} · {purchase.events?.date}
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ color: '#e8ff00', fontWeight: 700 }}>CHF {purchase.preis?.toFixed(2)}</span>
+<span style={{ color: '#e8ff00', fontWeight: 700 }}>€ {purchase.preis?.toFixed(2)}</span>
                     <a href={getImageUrl(purchase.foto_filename)} download
                       style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '8px 16px', fontWeight: 900, fontSize: 13, cursor: 'pointer', textDecoration: 'none', textTransform: 'uppercase' }}>
                       ⬇ Download

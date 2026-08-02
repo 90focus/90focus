@@ -239,8 +239,8 @@ function SucheContent() {
             <div style={{ fontSize: 12, color: '#e8eef4', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 700, marginBottom: 4 }}>
               {t.photosFound(matches.length)}
             </div>
-            <div style={{ fontSize: 28, fontWeight: 900, color: '#e8ff00', marginBottom: 16 }}>
-              CHF {total}
+<div style={{ fontSize: 28, fontWeight: 900, color: '#e8ff00', marginBottom: 16 }}>
+              € {total}
             </div>
             <button onClick={handleKaufen}
               onMouseEnter={() => setHoveredKaufen(true)} onMouseLeave={() => setHoveredKaufen(false)}

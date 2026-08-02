@@ -138,7 +138,7 @@ function CheckoutContent() {
             {filenames.length} {t.photo}{filenames.length > 1 ? 's' : ''}
           </div>
           <div style={{ fontSize: 28, fontWeight: 900, color: '#e8ff00' }}>
-            CHF {total}
+€ {total}
           </div>
         </div>
 
