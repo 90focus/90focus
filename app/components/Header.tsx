@@ -147,15 +147,7 @@ const router = useRouter()
                   <svg width="18" height="12" viewBox="0 0 18 12"><rect width="18" height="12" fill="#00247d"/><path d="M0 0L18 12M18 0L0 12" stroke="#fff" strokeWidth="2"/><path d="M9 0V12M0 6H18" stroke="#fff" strokeWidth="3"/><path d="M9 0V12M0 6H18" stroke="#cf142b" strokeWidth="1.5"/></svg>
                   EN
                 </div>
-<div style={{ padding: '10px 14px', color: '#556677', fontSize: 13, cursor: 'not-allowed', display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <svg width="18" height="12" viewBox="0 0 18 12">
-                    <rect width="18" height="4" y="0" fill="#FF0000"/>
-                    <rect width="18" height="4" y="4" fill="#fff"/>
-                    <rect width="18" height="4" y="8" fill="#0000FF"/>
-                    <rect x="7" y="3.5" width="4" height="3.5" fill="#fff" stroke="#DD0000" strokeWidth="0.3"/>
-                  </svg>
-                  HR
-                </div>
+
               </div>
             )}
           </div>
