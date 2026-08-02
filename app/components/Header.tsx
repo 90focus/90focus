@@ -171,8 +171,18 @@ const router = useRouter()
         </button>
       </nav>
 
-      {menuOpen && (
+{menuOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#070b0f', zIndex: 99, display: 'flex', flexDirection: 'column', overflowY: 'auto', paddingTop: 60 }}>
+          <div style={{ padding: '18px 24px', borderBottom: '1px solid #1c2a38', display: 'flex', gap: 16 }}>
+            <div onClick={() => { setLang('de'); setMenuOpen(false) }} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', color: lang === 'de' ? '#e8ff00' : '#e8eef4', fontWeight: 700, fontSize: 14 }}>
+              <svg width="20" height="14" viewBox="0 0 18 12"><rect width="18" height="4" y="0" fill="#000"/><rect width="18" height="4" y="4" fill="#DD0000"/><rect width="18" height="4" y="8" fill="#FFCE00"/></svg>
+              DE
+            </div>
+            <div onClick={() => { setLang('en'); setMenuOpen(false) }} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', color: lang === 'en' ? '#e8ff00' : '#e8eef4', fontWeight: 700, fontSize: 14 }}>
+              <svg width="20" height="14" viewBox="0 0 18 12"><rect width="18" height="12" fill="#00247d"/><path d="M0 0L18 12M18 0L0 12" stroke="#fff" strokeWidth="2"/><path d="M9 0V12M0 6H18" stroke="#fff" strokeWidth="3"/><path d="M9 0V12M0 6H18" stroke="#cf142b" strokeWidth="1.5"/></svg>
+              EN
+            </div>
+          </div>
 {isPhotographer ? (
             <>
               <button style={mobileNavBtn('/meine-events')} onClick={() => go('/meine-events')}>{lang === 'de' ? 'Meine Events' : 'My Events'}</button>
