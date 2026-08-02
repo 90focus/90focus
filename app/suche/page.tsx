@@ -37,11 +37,15 @@ function SucheContent() {
     buyNow: lang === 'de' ? 'Jetzt kaufen' : 'Buy Now',
   }
 
-  useEffect(() => {
+useEffect(() => {
     if (eventId) {
       const loadEvent = async () => {
-        const { data } = await supabase.from('events').select('*').eq('id', eventId).single()
-        setEvent(data)
+        try {
+          const { data } = await supabase.from('events').select('*').eq('id', eventId).single()
+          setEvent(data)
+        } catch (e) {
+          console.error('loadEvent error:', e)
+        }
       }
       loadEvent()
     }

@@ -31,14 +31,18 @@ function CheckoutContent() {
     loading: lang === 'de' ? 'Lade...' : 'Loading...',
   }
 
-  useEffect(() => {
+useEffect(() => {
     const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) { router.push('/login'); return }
-      setUser(session.user)
-      if (eventId) {
-        const { data } = await supabase.from('events').select('*').eq('id', eventId).single()
-        setEvent(data)
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) { router.push('/login'); return }
+        setUser(session.user)
+        if (eventId) {
+          const { data } = await supabase.from('events').select('*').eq('id', eventId).single()
+          setEvent(data)
+        }
+      } catch (e) {
+        console.error('init error:', e)
       }
     }
     init()
