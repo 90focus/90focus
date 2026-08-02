@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './supabase'
 import { useRouter } from 'next/navigation'
+import { useLanguage } from './context/LanguageContext'
 
 export default function Home() {
   const [events, setEvents] = useState<any[]>([])
@@ -16,8 +17,9 @@ const heroBilderMobile = ['/hero/hero-1-mobile.png', '/hero/hero-2-mobile.png', 
   const [hoveredBtn, setHoveredBtn] = useState<string | null>(null)
   const [hoveredHeroBtn, setHoveredHeroBtn] = useState(false)
   const [hoveredAlleSpiele1, setHoveredAlleSpiele1] = useState(false)
-  const [hoveredAlleSpiele2, setHoveredAlleSpiele2] = useState(false)
+const [hoveredAlleSpiele2, setHoveredAlleSpiele2] = useState(false)
   const router = useRouter()
+  const { lang } = useLanguage()
 
   useEffect(() => {
 const fetchEvents = async () => {
@@ -94,7 +96,7 @@ useEffect(() => {
             <span style={{ color: "#e8ff00" }}>BECOMES MEMORY</span>
           </h1>
 <p className="hide-mobile" style={{ color: "#e8eef4", fontSize: 14, fontWeight: 800, maxWidth: 400, lineHeight: 1.6, marginBottom: 24, letterSpacing: 0.5 }}>
-Jeder Augenblick zählt, wir halten ihn fest
+{lang === 'de' ? 'Jeder Augenblick zählt, wir halten ihn fest' : 'Every moment matters, we capture it'}
           </p>
 <div>
             <button
@@ -108,8 +110,8 @@ Jeder Augenblick zählt, wir halten ihn fest
                 transform: hoveredHeroBtn ? "scale(1.03)" : "scale(1)",
                 transition: "all 0.15s ease"
               }}
-              onClick={() => router.push('/spiele')}>
-              Finde dein Event
+onClick={() => router.push('/spiele')}>
+              {lang === 'de' ? 'Finde dein Event' : 'Find your Event'}
             </button>
           </div>
         </div>
@@ -131,7 +133,7 @@ Jeder Augenblick zählt, wir halten ihn fest
 
 
           {events.length === 0 ? (
-            <div style={{ color: "#445566", fontSize: 16, padding: "40px 0" }}>Keine kommenden Events. 🎯</div>
+<div style={{ color: "#445566", fontSize: 16, padding: "40px 0" }}>{lang === 'de' ? 'Keine kommenden Events.' : 'No upcoming events.'}</div>
           ) : (
 <div className="events-grid">
               {events.map((ev) => (
@@ -186,7 +188,7 @@ background: "#0d1219", border: hoveredCard === ev.id ? "1px solid #e8ff00" : "1p
                         letterSpacing: 1, transform: hoveredBtn === ev.id ? "scale(1.02)" : "scale(1)",
                         transition: "all 0.15s ease"
                       }}>
-                      Zu den Fotos
+{lang === 'de' ? 'Zu den Fotos' : 'Show Photos'}
                     </button>
                   </div>
                 </div>
@@ -206,7 +208,7 @@ background: "#0d1219", border: hoveredCard === ev.id ? "1px solid #e8ff00" : "1p
                 transform: hoveredAlleSpiele2 ? "scale(1.03)" : "scale(1)",
                 transition: "all 0.15s ease"
               }}
-              onClick={() => router.push('/spiele')}>Alle Events</button>
+onClick={() => router.push('/spiele')}>{lang === 'de' ? 'Alle Events' : 'All Events'}</button>
           </div>
         </div>
       </section>
