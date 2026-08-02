@@ -96,30 +96,30 @@ const router = useRouter()
           </span>
         </div>
 
-        <div className="desktop-nav" style={{ display: "flex", gap: 12 }}>
+<div className="desktop-nav" style={{ display: "flex", gap: 12 }}>
           {isPhotographer ? (
             <>
-              <button style={navBtn('/meine-events')} onClick={() => go('/meine-events')}>Meine Events</button>
-              <button style={navBtn('/admin')} onClick={() => go('/admin')}>+ Event erstellen</button>
-              <button style={navBtn('/profil')} onClick={() => go('/profil')}>Profil</button>
-              <button style={navBtn('/kontakt')} onClick={() => go('/kontakt')}>Kontakt</button>
+              <button style={navBtn('/meine-events')} onClick={() => go('/meine-events')}>{lang === 'de' ? 'Meine Events' : 'My Events'}</button>
+              <button style={navBtn('/admin')} onClick={() => go('/admin')}>{lang === 'de' ? '+ Event erstellen' : '+ Create Event'}</button>
+              <button style={navBtn('/profil')} onClick={() => go('/profil')}>{lang === 'de' ? 'Profil' : 'Profile'}</button>
+              <button style={navBtn('/kontakt')} onClick={() => go('/kontakt')}>{lang === 'de' ? 'Kontakt' : 'Contact'}</button>
               <button style={{ background: "transparent", color: "#ff4444", border: "1px solid #ff4444", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
-                onClick={handleLogout}>Abmelden</button>
+                onClick={handleLogout}>{lang === 'de' ? 'Abmelden' : 'Log Out'}</button>
             </>
           ) : (
             <>
-<button style={navBtn('/')} onClick={() => go('/')}>{lang === 'de' ? 'Home' : 'Home'}</button>
+              <button style={navBtn('/')} onClick={() => go('/')}>{lang === 'de' ? 'Home' : 'Home'}</button>
               <button style={navBtn('/spiele')} onClick={() => go('/spiele')}>{lang === 'de' ? 'Alle Events' : 'All Events'}</button>
               <button style={navBtn('/kontakt')} onClick={() => go('/kontakt')}>{lang === 'de' ? 'Kontakt' : 'Contact'}</button>
               {user ? (
                 <>
-                  <button style={navBtn('/kunden-dashboard')} onClick={() => go('/kunden-dashboard')}>Meine Fotos</button>
-                  <button style={navBtn('/kunden-profil')} onClick={() => go('/kunden-profil')}>Profil</button>
+                  <button style={navBtn('/kunden-dashboard')} onClick={() => go('/kunden-dashboard')}>{lang === 'de' ? 'Meine Fotos' : 'My Photos'}</button>
+                  <button style={navBtn('/kunden-profil')} onClick={() => go('/kunden-profil')}>{lang === 'de' ? 'Profil' : 'Profile'}</button>
                   <button style={{ background: "transparent", color: "#ff4444", border: "1px solid #ff4444", borderRadius: 2, padding: "8px 18px", fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer" }}
-                    onClick={handleLogout}>Abmelden</button>
+                    onClick={handleLogout}>{lang === 'de' ? 'Abmelden' : 'Log Out'}</button>
                 </>
               ) : (
-<>
+                <>
                   <button style={navBtn('/login')} onClick={() => go('/login')}>Login</button>
                   <button style={navBtn('/register')} onClick={() => go('/register')}>Sign Up</button>
                 </>
@@ -173,24 +173,24 @@ const router = useRouter()
 
       {menuOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#070b0f', zIndex: 99, display: 'flex', flexDirection: 'column', overflowY: 'auto', paddingTop: 60 }}>
-          {isPhotographer ? (
+{isPhotographer ? (
             <>
-              <button style={mobileNavBtn('/meine-events')} onClick={() => go('/meine-events')}>Meine Events</button>
-              <button style={mobileNavBtn('/admin')} onClick={() => go('/admin')}>+ Event erstellen</button>
-              <button style={mobileNavBtn('/profil')} onClick={() => go('/profil')}>Profil</button>
-              <button style={mobileNavBtn('/kontakt')} onClick={() => go('/kontakt')}>Kontakt</button>
-              <button style={{ ...mobileNavBtn(''), color: '#ff4444' }} onClick={handleLogout}>Abmelden</button>
+              <button style={mobileNavBtn('/meine-events')} onClick={() => go('/meine-events')}>{lang === 'de' ? 'Meine Events' : 'My Events'}</button>
+              <button style={mobileNavBtn('/admin')} onClick={() => go('/admin')}>{lang === 'de' ? '+ Event erstellen' : '+ Create Event'}</button>
+              <button style={mobileNavBtn('/profil')} onClick={() => go('/profil')}>{lang === 'de' ? 'Profil' : 'Profile'}</button>
+              <button style={mobileNavBtn('/kontakt')} onClick={() => go('/kontakt')}>{lang === 'de' ? 'Kontakt' : 'Contact'}</button>
+              <button style={{ ...mobileNavBtn(''), color: '#ff4444' }} onClick={handleLogout}>{lang === 'de' ? 'Abmelden' : 'Log Out'}</button>
             </>
           ) : (
             <>
               <button style={mobileNavBtn('/')} onClick={() => go('/')}>Home</button>
-              <button style={mobileNavBtn('/spiele')} onClick={() => go('/spiele')}>Alle Events</button>
-              <button style={mobileNavBtn('/kontakt')} onClick={() => go('/kontakt')}>Kontakt</button>
+              <button style={mobileNavBtn('/spiele')} onClick={() => go('/spiele')}>{lang === 'de' ? 'Alle Events' : 'All Events'}</button>
+              <button style={mobileNavBtn('/kontakt')} onClick={() => go('/kontakt')}>{lang === 'de' ? 'Kontakt' : 'Contact'}</button>
               {user ? (
                 <>
-                  <button style={mobileNavBtn('/kunden-dashboard')} onClick={() => go('/kunden-dashboard')}>Meine Fotos</button>
-                  <button style={mobileNavBtn('/kunden-profil')} onClick={() => go('/kunden-profil')}>Profil</button>
-                  <button style={{ ...mobileNavBtn(''), color: '#ff4444' }} onClick={handleLogout}>Abmelden</button>
+                  <button style={mobileNavBtn('/kunden-dashboard')} onClick={() => go('/kunden-dashboard')}>{lang === 'de' ? 'Meine Fotos' : 'My Photos'}</button>
+                  <button style={mobileNavBtn('/kunden-profil')} onClick={() => go('/kunden-profil')}>{lang === 'de' ? 'Profil' : 'Profile'}</button>
+                  <button style={{ ...mobileNavBtn(''), color: '#ff4444' }} onClick={handleLogout}>{lang === 'de' ? 'Abmelden' : 'Log Out'}</button>
                 </>
               ) : (
                 <>
