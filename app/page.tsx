@@ -31,17 +31,25 @@ const fetchEvents = async () => {
       }
     }
     fetchEvents()
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session?.user) {
-        const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
-        if (profile?.role === 'photographer') {
-          router.push('/meine-events')
+const checkUser = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.user) {
+          const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
+          if (profile?.role === 'photographer') {
+            router.push('/meine-events')
+            return
+          }
         }
+      } catch (e) {
+        console.error('checkUser error:', e)
       }
       setLoading(false)
     }
     checkUser()
+
+    const failsafe = setTimeout(() => setLoading(false), 5000)
+    return () => clearTimeout(failsafe)
   }, [])
 
 useEffect(() => {
