@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { supabase } from '@/app/supabase'
+import { useLanguage } from '@/app/context/LanguageContext'
 
 function SucheContent() {
   const [selfie, setSelfie] = useState<File | null>(null)
@@ -19,8 +20,22 @@ function SucheContent() {
   const searchParams = useSearchParams()
   const eventId = searchParams.get('eventId')
   const router = useRouter()
+  const { lang } = useLanguage()
 
   const PREIS_PRO_FOTO = 4.90
+
+  const t = {
+    uploadPrompt: lang === 'de' ? 'Lade ein Selfie hoch und finde deine Fotos' : 'Upload a selfie and find your photos',
+    uploadPhoto: lang === 'de' ? 'Foto hochladen' : 'Upload Photo',
+    searching: lang === 'de' ? 'Suche läuft...' : 'Searching...',
+    searchPhotos: lang === 'de' ? 'Fotos suchen' : 'Search Photos',
+    noSelfie: lang === 'de' ? 'Bitte zuerst ein Selfie aufnehmen!' : 'Please upload a selfie first!',
+    searchError: lang === 'de' ? 'Fehler bei der Suche!' : 'Error during search!',
+    noPhotosFound: lang === 'de' ? 'Keine Fotos gefunden.' : 'No photos found.',
+    photosFoundMsg: (n: number) => lang === 'de' ? `${n} Foto(s) gefunden!` : `${n} photo(s) found!`,
+    photosFound: (n: number) => lang === 'de' ? `${n} Foto${n > 1 ? 's' : ''} gefunden` : `${n} photo${n > 1 ? 's' : ''} found`,
+    buyNow: lang === 'de' ? 'Jetzt kaufen' : 'Buy Now',
+  }
 
   useEffect(() => {
     if (eventId) {
@@ -53,9 +68,9 @@ function SucheContent() {
   }
 
   const handleSearch = async () => {
-    if (!selfie) { setMessage('Bitte zuerst ein Selfie aufnehmen!'); return }
+    if (!selfie) { setMessage(t.noSelfie); return }
     setSearching(true)
-    setMessage('Suche läuft...')
+    setMessage(t.searching)
     setMatches([])
     const formData = new FormData()
     formData.append('selfie', selfie)
@@ -65,12 +80,12 @@ function SucheContent() {
       const data = await res.json()
       if (data.matches && data.matches.length > 0) {
         setMatches(data.matches)
-        setMessage(`${data.matches.length} Foto(s) gefunden!`)
+        setMessage(t.photosFoundMsg(data.matches.length))
       } else {
-        setMessage('Keine Fotos gefunden.')
+        setMessage(t.noPhotosFound)
       }
     } catch {
-      setMessage('Fehler bei der Suche!')
+      setMessage(t.searchError)
     } finally {
       setSearching(false)
     }
@@ -153,9 +168,7 @@ function SucheContent() {
         </div>
       </div>
     )
-  )
-
-  return (
+  )return (
     <div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
 
       {lightboxIndex !== null && (
@@ -181,13 +194,13 @@ function SucheContent() {
           <EventCard />
 
           <h1 style={{ fontSize: 18, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>
-            Lade ein Selfie hoch und finde deine Fotos
+            {t.uploadPrompt}
           </h1>
 
           <div style={{ marginBottom: 24 }}>
             <label onMouseEnter={() => setHoveredUpload(true)} onMouseLeave={() => setHoveredUpload(false)}
               style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', background: hoveredUpload ? '#1c2a38' : '#131e2a', color: '#e8eef4', borderRadius: 4, cursor: 'pointer', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, border: '1px solid #2a3a4a', transform: hoveredUpload ? 'scale(1.03)' : 'scale(1)', transition: 'all 0.15s ease' }}>
-              Foto hochladen
+              {t.uploadPhoto}
               <input type="file" accept="image/*" capture="user" onChange={handleSelfie} style={{ display: 'none' }} />
             </label>
             {selfieName && <div style={{ color: '#667788', fontSize: 12, marginTop: 8 }}>✓ {selfieName}</div>}
@@ -195,25 +208,25 @@ function SucheContent() {
 
           {preview ? (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 24, marginBottom: 16 }}>
-              <img src={preview} alt="Vorschau" style={{ width: '90px', height: '90px', objectFit: 'cover', borderRadius: '50%', border: '3px solid #e8ff00' }} />
+              <img src={preview} alt="Preview" style={{ width: '90px', height: '90px', objectFit: 'cover', borderRadius: '50%', border: '3px solid #e8ff00' }} />
               <button onClick={handleSearch} disabled={searching}
                 onMouseEnter={() => setHoveredSearch(true)} onMouseLeave={() => setHoveredSearch(false)}
                 style={{ padding: '10px 28px', background: hoveredSearch ? '#d4e800' : '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '4px', cursor: searching ? 'not-allowed' : 'pointer', fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase', transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)', transition: 'all 0.15s ease' }}>
-                {searching ? 'Suche läuft...' : 'Fotos suchen'}
+                {searching ? t.searching : t.searchPhotos}
               </button>
             </div>
           ) : (
             <button onClick={handleSearch} disabled={searching}
               onMouseEnter={() => setHoveredSearch(true)} onMouseLeave={() => setHoveredSearch(false)}
               style={{ padding: '10px 28px', background: hoveredSearch ? '#d4e800' : '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '4px', cursor: searching ? 'not-allowed' : 'pointer', fontSize: '13px', fontWeight: 900, letterSpacing: 1.5, textTransform: 'uppercase', transform: hoveredSearch ? 'scale(1.03)' : 'scale(1)', transition: 'all 0.15s ease' }}>
-              {searching ? 'Suche läuft...' : 'Fotos suchen'}
+              {searching ? t.searching : t.searchPhotos}
             </button>
           )}
 
-{message && !searching && <p style={{ marginTop: '20px', fontWeight: 'bold', color: '#e8ff00' }}>{message}</p>}
+          {message && !searching && <p style={{ marginTop: '20px', fontWeight: 'bold', color: '#e8ff00' }}>{message}</p>}
         </div>
       ) : (
-<div style={{ padding: '40px 24px', maxWidth: '700px', margin: '60px auto 0' }}>
+        <div style={{ padding: '40px 24px', maxWidth: '700px', margin: '60px auto 0' }}>
           {event && (
             <div style={{ textAlign: 'center', marginBottom: 16, color: '#8899aa', fontSize: 13 }}>
               {event.home_team} · {new Date(event.date).toLocaleDateString('de-CH')}
@@ -222,7 +235,7 @@ function SucheContent() {
 
           <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #e8ff00', borderRadius: 12, padding: '24px', marginBottom: 20, textAlign: 'center' }}>
             <div style={{ fontSize: 12, color: '#e8eef4', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 700, marginBottom: 4 }}>
-              {matches.length} Foto{matches.length > 1 ? 's' : ''} gefunden
+              {t.photosFound(matches.length)}
             </div>
             <div style={{ fontSize: 28, fontWeight: 900, color: '#e8ff00', marginBottom: 16 }}>
               CHF {total}
@@ -230,7 +243,7 @@ function SucheContent() {
             <button onClick={handleKaufen}
               onMouseEnter={() => setHoveredKaufen(true)} onMouseLeave={() => setHoveredKaufen(false)}
               style={{ background: hoveredKaufen ? '#d4e800' : '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '11px 32px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1.5, textTransform: 'uppercase', transform: hoveredKaufen ? 'scale(1.03)' : 'scale(1)', transition: 'all 0.15s ease' }}>
-              Jetzt kaufen
+              {t.buyNow}
             </button>
           </div>
 
@@ -251,7 +264,7 @@ function SucheContent() {
 
 export default function SuchePage() {
   return (
-    <Suspense fallback={<p style={{ padding: '40px' }}>Lade...</p>}>
+    <Suspense fallback={<p style={{ padding: '40px' }}>Loading...</p>}>
       <SucheContent />
     </Suspense>
   )
