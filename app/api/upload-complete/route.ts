@@ -17,13 +17,18 @@ export async function POST(req: NextRequest) {
           filename: key,
         })
 
-        try {
-          await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/rekognition`, {
+try {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/rekognition`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ filename: key }),
           })
-        } catch {}
+          if (!res.ok) {
+            console.error(`Rekognition indexing failed for ${key}:`, await res.text())
+          }
+        } catch (e) {
+          console.error(`Rekognition indexing error for ${key}:`, e)
+        }
       }
     }
 
