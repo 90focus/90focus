@@ -47,12 +47,16 @@ const router = useRouter()
     setMenuOpen(false)
   }, [pathname])
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
+const handleLogout = async () => {
     setUser(null)
     setRole(null)
-    router.push('/')
     setMenuOpen(false)
+    router.push('/')
+    try {
+      await supabase.auth.signOut()
+    } catch (e) {
+      console.error('Logout error:', e)
+    }
   }
 
   const isPhotographer = role === 'photographer'
