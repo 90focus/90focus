@@ -62,8 +62,8 @@ useEffect(() => {
   const getImageUrl = (filename: string) =>
     `https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`
 
-  const preisProFoto = 4.90
-  const total = (filenames.length * preisProFoto).toFixed(2)
+const paketPreis = 19.90
+  const total = paketPreis.toFixed(2)
 
   const formatKartenNummer = (val: string) => {
     return val.replace(/\D/g, '').slice(0, 16).replace(/(.{4})/g, '$1 ').trim()
