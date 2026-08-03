@@ -26,14 +26,18 @@ export async function POST(req: NextRequest) {
       await rekognition.send(new CreateCollectionCommand({ CollectionId: COLLECTION_ID }))
     } catch {}
 
-    await rekognition.send(new IndexFacesCommand({
+const indexResult = await rekognition.send(new IndexFacesCommand({
       CollectionId: COLLECTION_ID,
       Image: { S3Object: { Bucket: '90focus-fotos-ireland', Name: filename } },
       ExternalImageId: externalImageId,
       DetectionAttributes: [],
     }))
 
-    return NextResponse.json({ success: true })
+    const indexedCount = indexResult.FaceRecords?.length || 0
+    const unindexedCount = indexResult.UnindexedFaces?.length || 0
+    console.log(`Indexed for ${filename}: ${indexedCount} faces indexed, ${unindexedCount} faces skipped`, JSON.stringify(indexResult.UnindexedFaces))
+
+    return NextResponse.json({ success: true, indexedCount, unindexedCount })
   } catch (error) {
     console.error('Rekognition error:', error)
     return NextResponse.json({ error: 'Fehler beim Indexieren' }, { status: 500 })
