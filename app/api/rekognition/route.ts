@@ -2,6 +2,8 @@ import { RekognitionClient, IndexFacesCommand, SearchFacesByImageCommand, Create
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
+export const maxDuration = 60
+
 const rekognition = new RekognitionClient({
   region: 'eu-west-1',
   credentials: {
@@ -26,7 +28,7 @@ export async function POST(req: NextRequest) {
       await rekognition.send(new CreateCollectionCommand({ CollectionId: COLLECTION_ID }))
     } catch {}
 
-const indexResult = await rekognition.send(new IndexFacesCommand({
+    const indexResult = await rekognition.send(new IndexFacesCommand({
       CollectionId: COLLECTION_ID,
       Image: { S3Object: { Bucket: '90focus-fotos-ireland', Name: filename } },
       ExternalImageId: externalImageId,
