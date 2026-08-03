@@ -15,15 +15,19 @@ const router = useRouter()
   const isHome = pathname === '/'
   const { lang, setLang } = useLanguage()
 
-  useEffect(() => {
+useEffect(() => {
     const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user || null)
-      if (session?.user) {
-        const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
-        setRole(profile?.role || null)
-      } else {
-        setRole(null)
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        setUser(session?.user || null)
+        if (session?.user) {
+          const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
+          setRole(profile?.role || null)
+        } else {
+          setRole(null)
+        }
+      } catch (e) {
+        console.error('checkUser error:', e)
       }
     }
     checkUser()
