@@ -84,24 +84,32 @@ useEffect(() => {
     return () => window.removeEventListener('keydown', handleKey)
   }, [lightboxIndex, fotos.length])
 
-  const loadEvent = async (userId: string) => {
-    const { data } = await supabase
-      .from('events')
-      .select('*')
-      .eq('id', eventId)
-      .eq('user_id', userId)
-      .single()
-    if (!data) { router.push('/meine-events'); return }
-    setEvent(data)
+const loadEvent = async (userId: string) => {
+    try {
+      const { data } = await supabase
+        .from('events')
+        .select('*')
+        .eq('id', eventId)
+        .eq('user_id', userId)
+        .single()
+      if (!data) { router.push('/meine-events'); return }
+      setEvent(data)
+    } catch (e) {
+      console.error('loadEvent error:', e)
+    }
   }
 
-  const loadFotos = async () => {
-    const { data } = await supabase
-      .from('event_fotos')
-      .select('*')
-      .eq('event_id', eventId)
-      .order('erstellt_am', { ascending: false })
-    setFotos(data || [])
+const loadFotos = async () => {
+    try {
+      const { data } = await supabase
+        .from('event_fotos')
+        .select('*')
+        .eq('event_id', eventId)
+        .order('erstellt_am', { ascending: false })
+      setFotos(data || [])
+    } catch (e) {
+      console.error('loadFotos error:', e)
+    }
   }
 
   const handleFotoClick = (index: number, fotoId: string) => {
