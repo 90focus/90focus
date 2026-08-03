@@ -63,28 +63,32 @@ useEffect(() => {
     setFiltered(result)
   }, [ligaFilter, datumFilter, events])
 
-  const loadEvents = async (userId: string) => {
-    const today = new Date().toISOString().split('T')[0]
-    const { data: upcoming } = await supabase.from('events').select('*')
-      .eq('user_id', userId).gte('date', today).order('date', { ascending: true })
-    const { data: past } = await supabase.from('events').select('*')
-      .eq('user_id', userId).lt('date', today).order('date', { ascending: false })
-    const combined = [...(upcoming || []), ...(past || [])]
-    setEvents(combined)
-    setFiltered(combined)
-    if (combined.length > 0) {
-      const { count } = await supabase.from('event_fotos').select('*', { count: 'exact', head: true }).in('event_id', combined.map((e: any) => e.id))
-      setStats({ events: combined.length, fotos: count || 0 })
+const loadEvents = async (userId: string) => {
+    try {
+      const today = new Date().toISOString().split('T')[0]
+      const { data: upcoming } = await supabase.from('events').select('*')
+        .eq('user_id', userId).gte('date', today).order('date', { ascending: true })
+      const { data: past } = await supabase.from('events').select('*')
+        .eq('user_id', userId).lt('date', today).order('date', { ascending: false })
+      const combined = [...(upcoming || []), ...(past || [])]
+      setEvents(combined)
+      setFiltered(combined)
+      if (combined.length > 0) {
+        const { count } = await supabase.from('event_fotos').select('*', { count: 'exact', head: true }).in('event_id', combined.map((e: any) => e.id))
+        setStats({ events: combined.length, fotos: count || 0 })
 
-      const { data: fotoRows } = await supabase.from('event_fotos').select('event_id').in('event_id', combined.map((e: any) => e.id))
-      const counts: Record<string, number> = {}
-      fotoRows?.forEach((row: any) => {
-        counts[row.event_id] = (counts[row.event_id] || 0) + 1
-      })
-      setFotoCounts(counts)
-    } else {
-      setStats({ events: 0, fotos: 0 })
-      setFotoCounts({})
+        const { data: fotoRows } = await supabase.from('event_fotos').select('event_id').in('event_id', combined.map((e: any) => e.id))
+        const counts: Record<string, number> = {}
+        fotoRows?.forEach((row: any) => {
+          counts[row.event_id] = (counts[row.event_id] || 0) + 1
+        })
+        setFotoCounts(counts)
+      } else {
+        setStats({ events: 0, fotos: 0 })
+        setFotoCounts({})
+      }
+    } catch (e) {
+      console.error('loadEvents error:', e)
     }
   }
 
