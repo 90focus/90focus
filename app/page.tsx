@@ -214,17 +214,17 @@ onClick={() => handleEventClick(ev)}>
                       </div>
                     )}
 <button
-                      className="card-btn"
+className="card-btn"
                       onMouseEnter={() => setHoveredBtn(ev.id)}
                       onMouseLeave={() => setHoveredBtn(null)}
                       style={{
-                        width: "100%", background: hoveredBtn === ev.id ? "#d4e800" : "#e8ff00",
-                        color: "#070b0f", border: "none", borderRadius: 2, padding: "10px",
+                        width: "100%", background: ev.date > today ? "#1c2a38" : (hoveredBtn === ev.id ? "#d4e800" : "#e8ff00"),
+                        color: ev.date > today ? "#8899aa" : "#070b0f", border: "none", borderRadius: 2, padding: "10px",
                         fontWeight: 900, fontSize: 12, cursor: "pointer", textTransform: "uppercase",
                         letterSpacing: 1, transform: hoveredBtn === ev.id ? "scale(1.02)" : "scale(1)",
                         transition: "all 0.15s ease"
                       }}>
-{lang === 'de' ? 'Zu den Fotos' : 'Show Photos'}
+{ev.date > today ? (lang === 'de' ? 'Demnächst' : 'Coming Soon') : (lang === 'de' ? 'Zu den Fotos' : 'Show Photos')}
                     </button>
                   </div>
                 </div>
