@@ -29,8 +29,14 @@ const { lang } = useLanguage()
 useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const { data } = await supabase.from('events').select('*').order('date', { ascending: false })
-        if (data) { setEvents(data); setFiltered(data) }
+        const today = new Date().toISOString().split('T')[0]
+        const { data: past } = await supabase.from('events').select('*')
+          .lte('date', today).order('date', { ascending: false })
+        const { data: upcoming } = await supabase.from('events').select('*')
+          .gt('date', today).order('date', { ascending: true })
+        const data = [...(past || []), ...(upcoming || [])]
+        setEvents(data)
+        setFiltered(data)
       } catch (e) {
         console.error('fetchEvents error:', e)
       }
