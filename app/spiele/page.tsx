@@ -14,7 +14,17 @@ const [nameFilter, setNameFilter] = useState('')
   const [nameInput, setNameInput] = useState('')
 const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const router = useRouter()
-  const { lang } = useLanguage()
+const { lang } = useLanguage()
+  const [notFinishedModal, setNotFinishedModal] = useState(false)
+  const today = new Date().toISOString().split('T')[0]
+
+  const handleEventClick = (ev: any) => {
+    if (ev.date > today) {
+      setNotFinishedModal(true)
+    } else {
+      router.push(`/suche?eventId=${ev.id}`)
+    }
+  }
 
 useEffect(() => {
     const fetchEvents = async () => {
@@ -70,7 +80,7 @@ if (nameFilter) result = result.filter((ev) => ev.home_team.toLowerCase().includ
                   transform: hoveredCard === ev.id ? 'translateY(-4px)' : 'translateY(0)',
                   transition: 'all 0.2s ease'
                 }}
-                onClick={() => router.push(`/suche?eventId=${ev.id}`)}>
+onClick={() => handleEventClick(ev)}>
 <div style={{ aspectRatio: '4 / 3', background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
                   {ev.bild_url ? (
 <img src={ev.bild_url} alt={ev.home_team}
@@ -103,20 +113,38 @@ if (nameFilter) result = result.filter((ev) => ev.home_team.toLowerCase().includ
                   )}
 <button className="card-btn" style={{
                     width: '100%',
-                    background: hoveredCard === ev.id ? '#d4e800' : '#e8ff00',
-                    color: '#070b0f', border: 'none', borderRadius: 2, padding: '10px',
+                    background: ev.date > today ? '#1c2a38' : (hoveredCard === ev.id ? '#d4e800' : '#e8ff00'),
+                    color: ev.date > today ? '#8899aa' : '#070b0f', border: 'none', borderRadius: 2, padding: '10px',
                     fontWeight: 900, fontSize: 12, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1,
                     transform: hoveredCard === ev.id ? 'scale(1.02)' : 'scale(1)',
                     transition: 'all 0.15s ease'
                   }}>
-{lang === 'de' ? 'Zu den Fotos' : 'Show Photos'}
+{ev.date > today ? (lang === 'de' ? 'Demnächst' : 'Coming Soon') : (lang === 'de' ? 'Zu den Fotos' : 'Show Photos')}
                   </button>
                 </div>
               </div>
             ))}
           </div>
         )}
-      </section>
+</section>
+
+      {notFinishedModal && (
+        <div onClick={() => setNotFinishedModal(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 12, padding: '32px 28px', maxWidth: 380, textAlign: 'center' }}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>⏳</div>
+            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 8 }}>
+              {lang === 'de' ? 'Event noch nicht abgeschlossen' : 'Event not finished yet'}
+            </div>
+            <p style={{ color: '#8899aa', fontSize: 14, marginBottom: 20, lineHeight: 1.5 }}>
+              {lang === 'de' ? 'Die Fotos sind erst nach dem Event verfügbar. Schau später nochmal vorbei!' : 'Photos will be available after the event. Please check back later!'}
+            </p>
+            <button onClick={() => setNotFinishedModal(false)}
+              style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px 28px', fontWeight: 900, fontSize: 13, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1 }}>
+              {lang === 'de' ? 'Verstanden' : 'Got it'}
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   )
 }
