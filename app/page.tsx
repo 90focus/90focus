@@ -35,8 +35,18 @@ const [hoveredAlleSpiele2, setHoveredAlleSpiele2] = useState(false)
   useEffect(() => {
 const fetchEvents = async (retry = true) => {
       try {
-        const { data, error } = await supabase.from('events').select('*')
-          .order('date', { ascending: false }).limit(6)
+const today = new Date().toISOString().split('T')[0]
+        const { data: past } = await supabase.from('events').select('*')
+          .lte('date', today).order('date', { ascending: false }).limit(6)
+        const remaining = 6 - (past?.length || 0)
+        let combined = past || []
+        if (remaining > 0) {
+          const { data: upcoming } = await supabase.from('events').select('*')
+            .gt('date', today).order('date', { ascending: true }).limit(remaining)
+          combined = [...combined, ...(upcoming || [])]
+        }
+        const data = combined
+        const error = null
         if (error) throw error
         if (data) {
           setEvents(data)
