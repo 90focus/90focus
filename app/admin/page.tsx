@@ -94,24 +94,29 @@ useEffect(() => {
     return urlData.publicUrl
   }
 
-  const createEvent = async () => {
+const createEvent = async () => {
     const isTeamSport = liga === 'Fussball' || liga === 'Handball'
     const finalName = isTeamSport && homeTeam && awayTeam ? `${homeTeam} vs ${awayTeam}` : eventName
     if (!finalName || !date) { setMessage(isTeamSport ? t.requiredTeams : t.requiredName); return }
-    let bildUrl = null
-    if (eventBild) { setMessage(t.uploadingImage); bildUrl = await uploadEventBild(eventBild) }
-    const { data, error } = await supabase.from('events').insert({
-      home_team: finalName, away_team: '', date, liga, ort,
-      bild_url: bildUrl, user_id: user.id,
-    }).select().single()
-    if (error) {
-      setMessage(t.errorPrefix + error.message)
-    } else {
-      setCreatedEventId(data.id)
-      setCreatedEventName(finalName)
-      setMessage(t.eventCreated)
-      setEventName(''); setHomeTeam(''); setAwayTeam(''); setDate(''); setLiga(''); setOrt('')
-      setEventBild(null); setEventBildPreview(null); setEventBildName('')
+    try {
+      let bildUrl = null
+      if (eventBild) { setMessage(t.uploadingImage); bildUrl = await uploadEventBild(eventBild) }
+      const { data, error } = await supabase.from('events').insert({
+        home_team: finalName, away_team: '', date, liga, ort,
+        bild_url: bildUrl, user_id: user.id,
+      }).select().single()
+      if (error) {
+        setMessage(t.errorPrefix + error.message)
+      } else {
+        setCreatedEventId(data.id)
+        setCreatedEventName(finalName)
+        setMessage(t.eventCreated)
+        setEventName(''); setHomeTeam(''); setAwayTeam(''); setDate(''); setLiga(''); setOrt('')
+        setEventBild(null); setEventBildPreview(null); setEventBildName('')
+      }
+    } catch (e) {
+      console.error('createEvent error:', e)
+      setMessage(t.errorPrefix + 'Verbindungsfehler, bitte erneut versuchen.')
     }
   }
 
