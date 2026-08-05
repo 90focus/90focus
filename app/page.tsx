@@ -37,8 +37,8 @@ const fetchEvents = async (retry = true) => {
       try {
 const today = new Date().toISOString().split('T')[0]
         const { data: past } = await supabase.from('events').select('*')
-          .lte('date', today).order('date', { ascending: false }).limit(6)
-        const remaining = 6 - (past?.length || 0)
+          .lte('date', today).order('date', { ascending: false }).limit(8)
+        const remaining = 8 - (past?.length || 0)
         let combined = past || []
         if (remaining > 0) {
           const { data: upcoming } = await supabase.from('events').select('*')
