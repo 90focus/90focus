@@ -53,13 +53,13 @@ const [hoveredFooter, setHoveredFooter] = useState<string | null>(null)
           <div className="footer-col">
             <div style={{ color: "#e8eef4", fontWeight: 800, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>Social Media</div>
             <div style={{ display: "flex", gap: 16 }}>
-<a href="https://www.instagram.com/sportshot.official/" target="_blank" rel="noopener noreferrer">
+<span style={{ opacity: 0.4, cursor: 'default' }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8">
                   <rect x="3" y="3" width="18" height="18" rx="5"/>
                   <circle cx="12" cy="12" r="4"/>
                   <circle cx="17.2" cy="6.8" r="0.9" fill="#fff" stroke="none"/>
                 </svg>
-              </a>
+              </span>
               <a href="mailto:info@sport-shot.ch">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8">
                   <rect x="3" y="5" width="18" height="14" rx="2"/>

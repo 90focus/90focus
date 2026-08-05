@@ -116,13 +116,13 @@ export default function KontaktPage() {
               </div>
 
               <div style={{ display: 'flex', gap: 18 }}>
-<a href="https://www.instagram.com/sportshot.official/" target="_blank" rel="noopener noreferrer">
+<span style={{ opacity: 0.4, cursor: 'default' }}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8">
                     <rect x="3" y="3" width="18" height="18" rx="5"/>
                     <circle cx="12" cy="12" r="4"/>
                     <circle cx="17.2" cy="6.8" r="0.9" fill="#fff" stroke="none"/>
                   </svg>
-                </a>
+                </span>
                 <a href="mailto:info@sport-shot.ch" style={{ color: '#e8eef4' }}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
                 </a>
@@ -132,6 +132,5 @@ export default function KontaktPage() {
           </div>
         )}
       </div>
-    </div>
+</div>
   )
-}
