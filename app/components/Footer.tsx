@@ -53,16 +53,11 @@ const [hoveredFooter, setHoveredFooter] = useState<string | null>(null)
           <div className="footer-col">
             <div style={{ color: "#e8eef4", fontWeight: 800, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>Social Media</div>
             <div style={{ display: "flex", gap: 16 }}>
-              <a href="https://www.instagram.com/90focus_official/" target="_blank" rel="noopener noreferrer">
+<a href="https://www.instagram.com/sportshot.official/" target="_blank" rel="noopener noreferrer">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8">
                   <rect x="3" y="3" width="18" height="18" rx="5"/>
                   <circle cx="12" cy="12" r="4"/>
                   <circle cx="17.2" cy="6.8" r="0.9" fill="#fff" stroke="none"/>
-                </svg>
-              </a>
-              <a href="https://www.facebook.com/90focus" target="_blank" rel="noopener noreferrer">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff">
-                  <path d="M13.5 21v-7.5h2.5l.4-3h-2.9V8.6c0-.87.24-1.46 1.5-1.46h1.6V4.46C16.3 4.32 15.4 4.24 14.35 4.24c-2.4 0-4.05 1.46-4.05 4.15v2.31H7.8v3h2.5V21h3.2z"/>
                 </svg>
               </a>
               <a href="mailto:info@sport-shot.ch">
