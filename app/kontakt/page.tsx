@@ -101,7 +101,6 @@ export default function KontaktPage() {
                   {loading ? t.sending : t.senden}
                 </button>
               </div>
-
               {error && <p style={{ color: '#ff4444', marginTop: 16, fontSize: 14 }}>{error}</p>}
             </div>
 
@@ -131,6 +130,7 @@ export default function KontaktPage() {
 
           </div>
         )}
-      </div>
+</div>
 </div>
   )
+}
