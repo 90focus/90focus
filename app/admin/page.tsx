@@ -12,7 +12,8 @@ export default function AdminPage() {
   const [awayTeam, setAwayTeam] = useState('')
   const [date, setDate] = useState('')
   const [liga, setLiga] = useState('')
-  const [ort, setOrt] = useState('')
+const [ort, setOrt] = useState('')
+  const [preis, setPreis] = useState('19.90')
   const [eventBild, setEventBild] = useState<File | null>(null)
   const [eventBildPreview, setEventBildPreview] = useState<string | null>(null)
   const [eventBildName, setEventBildName] = useState('')
@@ -34,7 +35,8 @@ export default function AdminPage() {
     homeTeam: lang === 'de' ? 'Heimteam *' : 'Home Team *',
     awayTeam: lang === 'de' ? 'Gastteam *' : 'Away Team *',
     eventName: lang === 'de' ? 'Eventname *' : 'Event Name *',
-    location: lang === 'de' ? 'Ort (optional)' : 'Location (optional)',
+location: lang === 'de' ? 'Ort (optional)' : 'Location (optional)',
+    price: lang === 'de' ? 'Preis pro Foto-Paket (EUR)' : 'Price per Photo Package (EUR)',
     eventImage: lang === 'de' ? '🖼️ Event Bild (optional)' : '🖼️ Event Image (optional)',
     recommendedSize: lang === 'de' ? 'Empfohlene Grösse: 1200 × 900 Pixel (4:3)' : 'Recommended size: 1200 × 900 pixels (4:3)',
     selectImage: lang === 'de' ? '📁 Bild auswählen' : '📁 Choose Image',
@@ -101,9 +103,9 @@ const createEvent = async () => {
     try {
       let bildUrl = null
       if (eventBild) { setMessage(t.uploadingImage); bildUrl = await uploadEventBild(eventBild) }
-      const { data, error } = await supabase.from('events').insert({
+const { data, error } = await supabase.from('events').insert({
         home_team: finalName, away_team: '', date, liga, ort,
-        bild_url: bildUrl, user_id: user.id,
+        bild_url: bildUrl, user_id: user.id, preis: parseFloat(preis) || 19.90,
       }).select().single()
       if (error) {
         setMessage(t.errorPrefix + error.message)
@@ -111,7 +113,7 @@ const createEvent = async () => {
         setCreatedEventId(data.id)
         setCreatedEventName(finalName)
         setMessage(t.eventCreated)
-        setEventName(''); setHomeTeam(''); setAwayTeam(''); setDate(''); setLiga(''); setOrt('')
+        setEventName(''); setHomeTeam(''); setAwayTeam(''); setDate(''); setLiga(''); setOrt(''); setPreis('19.90')
         setEventBild(null); setEventBildPreview(null); setEventBildName('')
       }
     } catch (e) {
@@ -205,7 +207,10 @@ const createEvent = async () => {
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
 
-          <input type="text" placeholder={t.location} value={ort} onChange={(e) => setOrt(e.target.value)}
+<input type="text" placeholder={t.location} value={ort} onChange={(e) => setOrt(e.target.value)}
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+
+          <input type="number" step="0.10" placeholder={t.price} value={preis} onChange={(e) => setPreis(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
 
           <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>

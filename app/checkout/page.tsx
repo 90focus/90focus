@@ -53,10 +53,10 @@ function CheckoutContent() {
     setLoading(true)
     setError('')
     try {
-      const res = await fetch('/api/create-checkout-session', {
+const res = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filenames, eventId }),
+        body: JSON.stringify({ filenames, eventId, userId: user?.id }),
       })
       const data = await res.json()
       if (data.url) {

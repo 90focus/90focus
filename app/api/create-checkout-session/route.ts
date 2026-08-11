@@ -1,11 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { createClient } from '@supabase/supabase-js'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 export async function POST(req: NextRequest) {
   try {
-    const { filenames, eventId } = await req.json()
+    const { filenames, eventId, userId } = await req.json()
+
+    let preis = 19.90
+    if (eventId) {
+      const { data: eventData } = await supabase.from('events').select('preis').eq('id', eventId).single()
+      if (eventData?.preis) preis = eventData.preis
+    }
+    const unitAmount = Math.round(preis * 100)
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -17,7 +29,7 @@ export async function POST(req: NextRequest) {
               name: 'SportShot Foto-Paket',
               description: `${filenames.length} Foto(s)`,
             },
-            unit_amount: 1990,
+            unit_amount: unitAmount,
           },
           quantity: 1,
         },
@@ -28,6 +40,7 @@ export async function POST(req: NextRequest) {
       metadata: {
         filenames: filenames.join(','),
         eventId: eventId || '',
+        userId: userId || '',
       },
     })
 
