@@ -60,29 +60,35 @@ useEffect(() => {
     return () => clearTimeout(failsafe)
   }, [])
 
-  const handleLogin = async () => {
+const handleLogin = async () => {
     setLoading(true)
     setError('')
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) {
+        setError(t.wrongCreds)
+        setLoading(false)
+        return
+      }
+      if (redirectTo) {
+        router.push(decodeURIComponent(redirectTo))
+        setLoading(false)
+        return
+      }
+      const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).single()
+      if (profile?.role === 'photographer') {
+        router.push('/meine-events')
+      } else if (profile?.role === 'customer') {
+        router.push('/kunden-dashboard')
+      } else {
+        router.push('/meine-events')
+      }
+    } catch (e) {
+      console.error('handleLogin error:', e)
       setError(t.wrongCreds)
+    } finally {
       setLoading(false)
-      return
     }
-    if (redirectTo) {
-      router.push(decodeURIComponent(redirectTo))
-      setLoading(false)
-      return
-    }
-    const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).single()
-    if (profile?.role === 'photographer') {
-      router.push('/meine-events')
-    } else if (profile?.role === 'customer') {
-      router.push('/kunden-dashboard')
-    } else {
-      router.push('/meine-events')
-    }
-    setLoading(false)
   }
 
   const handleForgot = async () => {
