@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { supabase } from '@/app/supabase'
+import { useLanguage } from '@/app/context/LanguageContext'
 
 function CheckoutContent() {
   const searchParams = useSearchParams()
@@ -14,6 +15,20 @@ function CheckoutContent() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const { lang } = useLanguage()
+
+  const t = {
+    yourPhotos: lang === 'de' ? 'Deine Fotos' : 'Your Photos',
+    payment: lang === 'de' ? 'Bezahlung' : 'Payment',
+    photoPackage: lang === 'de' ? 'Foto(s) — Paket' : 'Photo(s) — Package',
+    total: lang === 'de' ? 'Total' : 'Total',
+    redirectNote: lang === 'de' ? 'Du wirst zur sicheren Bezahlseite von Stripe weitergeleitet, um deinen Kauf abzuschliessen.' : 'You will be redirected to Stripe\'s secure payment page to complete your purchase.',
+    buyNow: lang === 'de' ? 'Jetzt kaufen' : 'Buy Now',
+    oneMoment: lang === 'de' ? 'Einen Moment...' : 'One moment...',
+    securePayment: lang === 'de' ? '🔒 Sichere Bezahlung via Stripe' : '🔒 Secure payment via Stripe',
+    errorMsg: lang === 'de' ? 'Fehler beim Erstellen der Zahlung. Bitte erneut versuchen.' : 'Error creating payment. Please try again.',
+    loading: lang === 'de' ? 'Lade...' : 'Loading...',
+  }
 
   useEffect(() => {
     const init = async () => {
@@ -46,27 +61,27 @@ function CheckoutContent() {
   const getImageUrl = (filename: string) =>
     `https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`
 
-  const paketPreis = 19.90
+  const paketPreis = event?.preis || 19.90
   const total = paketPreis.toFixed(2)
 
   const handleCheckout = async () => {
     setLoading(true)
     setError('')
     try {
-const res = await fetch('/api/create-checkout-session', {
+      const res = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filenames, eventId, userId: user?.id }),
+        body: JSON.stringify({ filenames, eventId, userId: user?.id, lang }),
       })
       const data = await res.json()
       if (data.url) {
         window.location.href = data.url
       } else {
-        setError('Fehler beim Erstellen der Zahlung. Bitte erneut versuchen.')
+        setError(t.errorMsg)
       }
     } catch (e) {
       console.error('Checkout error:', e)
-      setError('Fehler beim Erstellen der Zahlung. Bitte erneut versuchen.')
+      setError(t.errorMsg)
     } finally {
       setLoading(false)
     }
@@ -123,7 +138,7 @@ const res = await fetch('/api/create-checkout-session', {
 
         <div>
           <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>
-            Deine Fotos ({filenames.length})
+            {t.yourPhotos} ({filenames.length})
           </div>
 
           {event && (
@@ -146,23 +161,23 @@ const res = await fetch('/api/create-checkout-session', {
 
         <div>
           <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>
-            Bezahlung
+            {t.payment}
           </div>
 
           <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '16px 20px', marginBottom: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-              <span style={{ color: '#667788' }}>{filenames.length} Foto(s) — Paket</span>
+              <span style={{ color: '#667788' }}>{filenames.length} {t.photoPackage}</span>
               <span style={{ fontWeight: 700 }}>€ {total}</span>
             </div>
             <div style={{ borderTop: '1px solid #1c2a38', paddingTop: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontWeight: 900, fontSize: 16 }}>Total</span>
+              <span style={{ fontWeight: 900, fontSize: 16 }}>{t.total}</span>
               <span style={{ fontWeight: 900, fontSize: 22, color: '#e8ff00' }}>€ {total}</span>
             </div>
           </div>
 
           <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
             <p style={{ color: '#8899aa', fontSize: 13, marginBottom: 20, lineHeight: 1.5 }}>
-              Du wirst zur sicheren Bezahlseite von Stripe weitergeleitet, um deinen Kauf abzuschliessen.
+              {t.redirectNote}
             </p>
 
             <button onClick={handleCheckout} disabled={loading} style={{
@@ -171,11 +186,11 @@ const res = await fetch('/api/create-checkout-session', {
               fontWeight: 900, fontSize: 15, cursor: loading ? 'wait' : 'pointer',
               letterSpacing: 1.5, textTransform: 'uppercase', opacity: loading ? 0.7 : 1
             }}>
-              {loading ? 'Einen Moment...' : 'Jetzt kaufen'}
+              {loading ? t.oneMoment : t.buyNow}
             </button>
             {error && <p style={{ color: '#ff4444', fontSize: 13, textAlign: 'center', marginTop: 12 }}>{error}</p>}
             <p style={{ color: '#445566', fontSize: 12, textAlign: 'center', marginTop: 12 }}>
-              🔒 Sichere Bezahlung via Stripe
+              {t.securePayment}
             </p>
           </div>
         </div>
@@ -186,7 +201,7 @@ const res = await fetch('/api/create-checkout-session', {
 
 export default function CheckoutPage() {
   return (
-    <Suspense fallback={<p style={{ padding: '40px', color: '#e8eef4' }}>Lade...</p>}>
+    <Suspense fallback={<p style={{ padding: '40px', color: '#e8eef4' }}>Loading...</p>}>
       <CheckoutContent />
     </Suspense>
   )

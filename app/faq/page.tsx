@@ -6,7 +6,7 @@ import { useLanguage } from '../context/LanguageContext'
 
 const faqsDe = [
 { frage: 'Wie finde ich meine Fotos?', antwort: 'Geh auf das Event, lade dein Bild hoch und unsere Plattform findet automatisch alle Fotos von dir.' },
-{ frage: 'Was kostet ein Foto?', antwort: '€ 19.90 für dein Foto-Paket – alle Bilder, auf denen du zu sehen bist.' },
+{ frage: 'Was kostet ein Foto?', antwort: 'Der Preis ist abhängig vom jeweiligen Event, ab € 19.90 für dein Foto-Paket – alle Bilder, auf denen du zu sehen bist.' },
   { frage: 'Wie bezahle ich?', antwort: 'Per Kreditkarte via Stripe. Sicher und einfach.' },
   { frage: 'Wann sind die Fotos verfügbar?', antwort: 'In der Regel innerhalb von 24 Stunden nach dem Event.' },
   { frage: 'Bekomme ich die Fotos ohne Wasserzeichen?', antwort: 'Ja, nach dem Kauf erhältst du sofort die Originalfotos ohne Wasserzeichen.' },
@@ -19,7 +19,7 @@ const faqsDe = [
 
 const faqsEn = [
 { frage: 'How do I find my photos?', antwort: 'Go to the event, upload your photo, and our platform automatically finds all your photos.' },
-{ frage: 'How much does a photo cost?', antwort: '€ 19.90 for your photo package – all photos you appear in.' },
+{ frage: 'How much does a photo cost?', antwort: 'The price depends on the specific event, starting from € 19.90 for your photo package – all photos you appear in.' },
   { frage: 'How do I pay?', antwort: 'By credit card via Stripe. Secure and simple.' },
   { frage: 'When are the photos available?', antwort: 'Usually within 24 hours after the event.' },
   { frage: 'Do I get the photos without a watermark?', antwort: 'Yes, after purchase you immediately receive the original photos without a watermark.' },

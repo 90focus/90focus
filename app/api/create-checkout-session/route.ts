@@ -10,7 +10,7 @@ const supabase = createClient(
 
 export async function POST(req: NextRequest) {
   try {
-    const { filenames, eventId, userId } = await req.json()
+const { filenames, eventId, userId, lang } = await req.json()
 
     let preis = 19.90
     if (eventId) {
@@ -19,8 +19,9 @@ export async function POST(req: NextRequest) {
     }
     const unitAmount = Math.round(preis * 100)
 
-    const session = await stripe.checkout.sessions.create({
+const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
+      locale: lang === 'de' ? 'de' : 'en',
       line_items: [
         {
           price_data: {
