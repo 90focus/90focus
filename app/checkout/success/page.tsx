@@ -28,35 +28,23 @@ function SuccessContent() {
     loading: lang === 'de' ? 'Lade...' : 'Loading...',
   }
 
-  useEffect(() => {
-    const savePurchase = async () => {
-      if (!sessionId || filenames.length === 0) {
+useEffect(() => {
+    const checkSession = async () => {
+      if (!sessionId) {
         setStatus('error')
         return
       }
       try {
         const { data: { session } } = await supabase.auth.getSession()
         if (!session) { router.push('/login'); return }
-
-        const rows = filenames.map((filename) => ({
-          user_id: session.user.id,
-          foto_filename: filename,
-          event_id: eventId || null,
-          preis: 19.90 / filenames.length,
-          stripe_session_id: sessionId,
-        }))
-
-        const { error } = await supabase.from('purchases').insert(rows)
-        if (error) throw error
-
         setStatus('success')
       } catch (e) {
-        console.error('savePurchase error:', e)
+        console.error('checkSession error:', e)
         setStatus('error')
       }
     }
-    savePurchase()
-  }, [sessionId, eventId, router])
+    checkSession()
+  }, [sessionId, router])
 
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
