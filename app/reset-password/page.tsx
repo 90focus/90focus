@@ -21,7 +21,7 @@ export default function ResetPasswordPage() {
     return () => subscription.unsubscribe()
   }, [])
 
-  const handleReset = async () => {
+const handleReset = async () => {
     if (!password) {
       setMessage('Bitte Passwort eingeben!')
       return
@@ -35,14 +35,20 @@ export default function ResetPasswordPage() {
       return
     }
     setLoading(true)
-    const { error } = await supabase.auth.updateUser({ password })
-    if (error) {
-      setMessage('Fehler: ' + error.message)
-    } else {
-      setMessage('✅ Passwort erfolgreich geändert!')
-      setTimeout(() => router.push('/dashboard'), 2000)
+    try {
+      const { error } = await supabase.auth.updateUser({ password })
+      if (error) {
+        setMessage('Fehler: ' + error.message)
+      } else {
+        setMessage('✅ Passwort erfolgreich geändert!')
+        setTimeout(() => router.push('/login'), 2000)
+      }
+    } catch (e) {
+      console.error('handleReset error:', e)
+      setMessage('Fehler: Verbindungsfehler, bitte erneut versuchen.')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   return (
@@ -54,11 +60,10 @@ export default function ResetPasswordPage() {
         background: '#0d1219', border: '1px solid #1c2a38',
         borderRadius: '12px', padding: '40px', width: '100%', maxWidth: '400px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
-          <div style={{ width: 40, height: 40, background: '#e8ff00', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 16 }}>90</span>
-          </div>
-          <span style={{ color: '#e8eef4', fontWeight: 900, fontSize: 22, letterSpacing: 2 }}>FOCUS</span>
+<div style={{ marginBottom: 32 }}>
+          <span style={{ fontWeight: 900, fontSize: 22, letterSpacing: 1, fontStyle: 'italic' }}>
+            <span style={{ color: '#e8eef4' }}>SPORT</span><span style={{ color: '#e8ff00' }}>SHOT</span>
+          </span>
         </div>
 
         <h1 style={{ color: '#e8eef4', fontSize: 24, fontWeight: 900, marginBottom: 8, textTransform: 'uppercase' }}>

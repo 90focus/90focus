@@ -47,7 +47,7 @@ export default function RegisterPage() {
     errorPrefix: lang === 'de' ? 'Fehler: ' : 'Error: ',
   }
 
-  const handleRegister = async () => {
+const handleRegister = async () => {
     if (!vorname || !nachname || !email || !password || !geburtsdatum) {
       setError(t.requiredFields)
       return
@@ -57,26 +57,31 @@ export default function RegisterPage() {
     setLoading(true)
     setError('')
 
-const { data, error: signUpError } = await supabase.auth.signUp({
-      email, password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/login`,
-        data: { role: 'customer', vorname, nachname, geburtsdatum, lang, agb_datenschutz_akzeptiert_am: new Date().toISOString() }
-      }
-    })
+    try {
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email, password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/login`,
+          data: { role: 'customer', vorname, nachname, geburtsdatum, lang, agb_datenschutz_akzeptiert_am: new Date().toISOString() }
+        }
+      })
 
-    if (signUpError) {
-      if (signUpError.message.includes('already registered')) {
-        setError(t.alreadyRegistered)
-      } else {
-        setError(t.errorPrefix + signUpError.message)
+      if (signUpError) {
+        if (signUpError.message.includes('already registered')) {
+          setError(t.alreadyRegistered)
+        } else {
+          setError(t.errorPrefix + signUpError.message)
+        }
+        return
       }
+
+      setSent(true)
+    } catch (e) {
+      console.error('handleRegister error:', e)
+      setError(t.errorPrefix + 'Verbindungsfehler, bitte erneut versuchen.')
+    } finally {
       setLoading(false)
-      return
     }
-
-    setSent(true)
-    setLoading(false)
   }
 
   return (
