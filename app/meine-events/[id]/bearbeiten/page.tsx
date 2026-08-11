@@ -12,7 +12,8 @@ export default function EventBearbeitenPage() {
   const [awayTeam, setAwayTeam] = useState('')
   const [date, setDate] = useState('')
   const [liga, setLiga] = useState('')
-  const [ort, setOrt] = useState('')
+const [ort, setOrt] = useState('')
+  const [preis, setPreis] = useState('19.90')
   const [sponsorName, setSponsorName] = useState('')
   const [sponsorLogo, setSponsorLogo] = useState<File | null>(null)
   const [sponsorLogoPreview, setSponsorLogoPreview] = useState<string | null>(null)
@@ -38,7 +39,8 @@ export default function EventBearbeitenPage() {
     homeTeam: lang === 'de' ? 'Heimteam *' : 'Home Team *',
     awayTeam: lang === 'de' ? 'Gastteam *' : 'Away Team *',
     eventName: lang === 'de' ? 'Eventname *' : 'Event Name *',
-    location: lang === 'de' ? 'Ort (optional)' : 'Location (optional)',
+location: lang === 'de' ? 'Ort (optional)' : 'Location (optional)',
+    price: lang === 'de' ? 'Preis pro Foto-Paket (EUR)' : 'Price per Photo Package (EUR)',
     eventImage: lang === 'de' ? '🖼️ Event Bild' : '🖼️ Event Image',
     recommendedSize: lang === 'de' ? 'Empfohlene Grösse: 1200 × 900 Pixel (4:3)' : 'Recommended size: 1200 × 900 pixels (4:3)',
     currentImage: lang === 'de' ? 'Aktuelles Bild:' : 'Current image:',
@@ -83,7 +85,8 @@ export default function EventBearbeitenPage() {
     }
     setDate(data.date || '')
     setLiga(liga)
-    setOrt(data.ort || '')
+setOrt(data.ort || '')
+    setPreis(data.preis ? String(data.preis) : '19.90')
     setSponsorName(data.sponsor_name || '')
     setCurrentLogoUrl(data.sponsor_logo_url || null)
     setCurrentBildUrl(data.bild_url || null)
@@ -115,9 +118,10 @@ export default function EventBearbeitenPage() {
     if (sponsorLogo) { setMessage(t.uploadingLogo); sponsorLogoUrl = await uploadFile(sponsorLogo) }
     if (eventBild) { setMessage(t.uploadingImage); bildUrl = await uploadFile(eventBild) }
 
-    const { error } = await supabase.from('events').update({
+const { error } = await supabase.from('events').update({
       home_team: finalName, away_team: '', date, liga, ort,
       sponsor_name: sponsorName, sponsor_logo_url: sponsorLogoUrl, bild_url: bildUrl,
+      preis: parseFloat(preis) || 19.90,
     }).eq('id', eventId)
 
     if (error) {
@@ -175,7 +179,10 @@ export default function EventBearbeitenPage() {
 
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
-          <input type="text" placeholder={t.location} value={ort} onChange={(e) => setOrt(e.target.value)}
+<input type="text" placeholder={t.location} value={ort} onChange={(e) => setOrt(e.target.value)}
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+
+          <input type="number" step="0.10" placeholder={t.price} value={preis} onChange={(e) => setPreis(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
 
           <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>
