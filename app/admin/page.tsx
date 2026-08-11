@@ -210,8 +210,11 @@ const { data, error } = await supabase.from('events').insert({
 <input type="text" placeholder={t.location} value={ort} onChange={(e) => setOrt(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
 
-          <input type="number" step="0.10" placeholder={t.price} value={preis} onChange={(e) => setPreis(e.target.value)}
-            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+<div style={{ position: 'relative', margin: '8px 0' }}>
+            <input type="number" step="0.10" placeholder={t.price} value={preis} onChange={(e) => setPreis(e.target.value)}
+              style={{ width: '100%', padding: '12px', paddingRight: '52px', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+            <span style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: '#667788', fontSize: 14, fontWeight: 700, pointerEvents: 'none' }}>EUR</span>
+          </div>
 
           <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>
             <h3 style={{ margin: '0 0 4px 0', color: '#e8eef4' }}>{t.eventImage}</h3>
