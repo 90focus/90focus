@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/app/supabase'
 import { useRouter, useParams } from 'next/navigation'
+import { useLanguage } from '@/app/context/LanguageContext'
 
 export default function EventBearbeitenPage() {
   const [user, setUser] = useState<any>(null)
+  const [eventName, setEventName] = useState('')
   const [homeTeam, setHomeTeam] = useState('')
   const [awayTeam, setAwayTeam] = useState('')
   const [date, setDate] = useState('')
-  const [time, setTime] = useState('')
   const [liga, setLiga] = useState('')
   const [ort, setOrt] = useState('')
   const [sponsorName, setSponsorName] = useState('')
@@ -26,6 +27,36 @@ export default function EventBearbeitenPage() {
   const router = useRouter()
   const params = useParams()
   const eventId = params.id as string
+  const { lang } = useLanguage()
+
+  const isTeamSport = liga === 'Fussball' || liga === 'Handball'
+
+  const t = {
+    event: 'Event',
+    edit: lang === 'de' ? 'Bearbeiten' : 'Edit',
+    selectSport: lang === 'de' ? 'Sportart auswählen...' : 'Select sport...',
+    homeTeam: lang === 'de' ? 'Heimteam *' : 'Home Team *',
+    awayTeam: lang === 'de' ? 'Gastteam *' : 'Away Team *',
+    eventName: lang === 'de' ? 'Eventname *' : 'Event Name *',
+    location: lang === 'de' ? 'Ort (optional)' : 'Location (optional)',
+    eventImage: lang === 'de' ? '🖼️ Event Bild' : '🖼️ Event Image',
+    recommendedSize: lang === 'de' ? 'Empfohlene Grösse: 1200 × 900 Pixel (4:3)' : 'Recommended size: 1200 × 900 pixels (4:3)',
+    currentImage: lang === 'de' ? 'Aktuelles Bild:' : 'Current image:',
+    selectImage: lang === 'de' ? '📁 Bild auswählen' : '📁 Choose Image',
+    sponsor: lang === 'de' ? '🏢 Sponsor' : '🏢 Sponsor',
+    sponsorName: lang === 'de' ? 'Sponsor Name' : 'Sponsor Name',
+    currentLogo: lang === 'de' ? 'Aktuelles Logo:' : 'Current logo:',
+    selectLogo: lang === 'de' ? '📁 Logo auswählen' : '📁 Choose Logo',
+    save: lang === 'de' ? 'Speichern' : 'Save',
+    cancel: lang === 'de' ? 'Abbrechen' : 'Cancel',
+    loading: lang === 'de' ? 'Lade...' : 'Loading...',
+    requiredTeams: lang === 'de' ? 'Heimteam, Gastteam und Datum sind Pflichtfelder!' : 'Home team, away team and date are required!',
+    requiredName: lang === 'de' ? 'Eventname und Datum sind Pflichtfelder!' : 'Event name and date are required!',
+    uploadingLogo: lang === 'de' ? 'Logo wird hochgeladen...' : 'Uploading logo...',
+    uploadingImage: lang === 'de' ? 'Bild wird hochgeladen...' : 'Uploading image...',
+    errorPrefix: lang === 'de' ? 'Fehler: ' : 'Error: ',
+    eventSaved: lang === 'de' ? '✅ Event gespeichert!' : '✅ Event saved!',
+  }
 
   useEffect(() => {
     const init = async () => {
@@ -41,11 +72,17 @@ export default function EventBearbeitenPage() {
   const loadEvent = async (userId: string) => {
     const { data } = await supabase.from('events').select('*').eq('id', eventId).eq('user_id', userId).single()
     if (!data) { router.push('/meine-events'); return }
-    setHomeTeam(data.home_team || '')
-    setAwayTeam(data.away_team || '')
+    const liga = data.liga || ''
+    const teamSport = liga === 'Fussball' || liga === 'Handball'
+    if (teamSport && data.home_team?.includes(' vs ')) {
+      const [h, a] = data.home_team.split(' vs ')
+      setHomeTeam(h || '')
+      setAwayTeam(a || '')
+    } else {
+      setEventName(data.home_team || '')
+    }
     setDate(data.date || '')
-    setTime(data.time || '')
-    setLiga(data.liga || '')
+    setLiga(liga)
     setOrt(data.ort || '')
     setSponsorName(data.sponsor_name || '')
     setCurrentLogoUrl(data.sponsor_logo_url || null)
@@ -71,134 +108,133 @@ export default function EventBearbeitenPage() {
   }
 
   const saveEvent = async () => {
-    if (!homeTeam || !awayTeam || !date) { setMessage('Heimteam, Gastteam und Datum sind Pflichtfelder!'); return }
+    const finalName = isTeamSport && homeTeam && awayTeam ? `${homeTeam} vs ${awayTeam}` : eventName
+    if (!finalName || !date) { setMessage(isTeamSport ? t.requiredTeams : t.requiredName); return }
     let sponsorLogoUrl = currentLogoUrl
     let bildUrl = currentBildUrl
-    if (sponsorLogo) { setMessage('Logo wird hochgeladen...'); sponsorLogoUrl = await uploadFile(sponsorLogo) }
-    if (eventBild) { setMessage('Bild wird hochgeladen...'); bildUrl = await uploadFile(eventBild) }
+    if (sponsorLogo) { setMessage(t.uploadingLogo); sponsorLogoUrl = await uploadFile(sponsorLogo) }
+    if (eventBild) { setMessage(t.uploadingImage); bildUrl = await uploadFile(eventBild) }
 
     const { error } = await supabase.from('events').update({
-      home_team: homeTeam, away_team: awayTeam, date, time, liga, ort,
+      home_team: finalName, away_team: '', date, liga, ort,
       sponsor_name: sponsorName, sponsor_logo_url: sponsorLogoUrl, bild_url: bildUrl,
     }).eq('id', eventId)
 
     if (error) {
-      setMessage('Fehler: ' + error.message)
+      setMessage(t.errorPrefix + error.message)
     } else {
-      setMessage('✅ Event gespeichert!')
+      setMessage(t.eventSaved)
       setTimeout(() => router.push('/meine-events'), 1500)
     }
   }
 
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ color: '#e8eef4' }}>Lade...</p>
+      <p style={{ color: '#e8eef4' }}>{t.loading}</p>
     </div>
   )
 
   return (
-    <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
-      <nav style={{ background: 'rgba(7,11,15,0.97)', borderBottom: '1px solid #131e2a', height: 60, padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => router.push('/dashboard')}>
-          <div style={{ width: 34, height: 34, background: '#e8ff00', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 14 }}>90</span>
-          </div>
-          <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: 2 }}>FOCUS</span>
-        </div>
-        <button onClick={() => router.push(`/meine-events/${eventId}`)}
-          style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>
-          ← Zurück
-        </button>
-      </nav>
+    <div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
+      <div style={{ padding: '24px 16px', maxWidth: '700px', margin: '60px auto 0' }}>
+        <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>{t.event}</div>
+        <h1 style={{ fontSize: 26, fontWeight: 900, textTransform: 'uppercase', marginBottom: 24 }}>{t.edit}</h1>
 
-      <div style={{ padding: '40px', maxWidth: '700px', margin: '0 auto' }}>
-        <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 8 }}>Event</div>
-        <h1 style={{ fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>✏️ Bearbeiten</h1>
-
-        <div style={{ background: '#0d1219', border: '1px solid #1c2a38', padding: '24px', borderRadius: '8px', marginBottom: '24px' }}>
-          <input type="text" placeholder="Heimteam" value={homeTeam} onChange={(e) => setHomeTeam(e.target.value)}
-            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
-          <input type="text" placeholder="Gastteam" value={awayTeam} onChange={(e) => setAwayTeam(e.target.value)}
-            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
-          <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
-            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+        <div style={{ background: '#0d1219', border: '1px solid #1c2a38', padding: '20px', borderRadius: '8px', marginBottom: '24px' }}>
           <select value={liga} onChange={(e) => setLiga(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }}>
-            <option value="">Liga auswählen...</option>
-            <option value="Super League">Super League</option>
-            <option value="Challenge League">Challenge League</option>
-            <option value="Promotion League">Promotion League</option>
-            <option value="1. Liga">1. Liga</option>
-            <option value="2. Liga interregional">2. Liga interregional</option>
-            <option value="2. Liga regional">2. Liga regional</option>
-            <option value="3. Liga">3. Liga</option>
-            <option value="4. Liga">4. Liga</option>
-            <option value="5. Liga">5. Liga</option>
-            <option value="6. Liga">6. Liga</option>
+            <option value="">{t.selectSport}</option>
+            <option value="Fussball">Fussball</option>
+            <option value="Handball">Handball</option>
+            <option value="Basketball">Basketball</option>
+            <option value="Volleyball">Volleyball</option>
+            <option value="Hybrid Sport">Hybrid Sport</option>
+            <option value="Laufsport">Laufsport</option>
+            <option value="Triathlon">Triathlon</option>
+            <option value="Radsport">Radsport</option>
+            <option value="Schwimmen">Schwimmen</option>
+            <option value="Tennis">Tennis</option>
+            <option value="Kampfsport">Kampfsport</option>
+            <option value="Wintersport">Wintersport</option>
+            <option value="Turnen">Turnen</option>
+            <option value="Golf">Golf</option>
+            <option value="Sonstige">Sonstige</option>
           </select>
-          <input type="text" placeholder="Ort (optional)" value={ort} onChange={(e) => setOrt(e.target.value)}
+
+          {isTeamSport ? (
+            <>
+              <input type="text" placeholder={t.homeTeam} value={homeTeam} onChange={(e) => setHomeTeam(e.target.value)}
+                style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+              <input type="text" placeholder={t.awayTeam} value={awayTeam} onChange={(e) => setAwayTeam(e.target.value)}
+                style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+            </>
+          ) : (
+            <input type="text" placeholder={t.eventName} value={eventName} onChange={(e) => setEventName(e.target.value)}
+              style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+          )}
+
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
+            style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+          <input type="text" placeholder={t.location} value={ort} onChange={(e) => setOrt(e.target.value)}
             style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
 
-          {/* EVENT BILD */}
           <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>
-            <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4' }}>🖼️ Event Bild</h3>
+            <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4', fontSize: 16 }}>{t.eventImage}</h3>
+            <p style={{ margin: '0 0 12px 0', color: '#667788', fontSize: 12 }}>{t.recommendedSize}</p>
             {currentBildUrl && !eventBildPreview && (
               <div style={{ marginBottom: 12 }}>
-                <p style={{ color: '#667788', fontSize: 13, margin: '4px 0' }}>Aktuelles Bild:</p>
-                <img src={currentBildUrl} alt="Bild" style={{ width: '100%', maxHeight: 150, objectFit: 'cover', borderRadius: 6 }} />
+                <p style={{ color: '#667788', fontSize: 13, margin: '4px 0' }}>{t.currentImage}</p>
+                <img src={currentBildUrl} alt="Image" style={{ width: '100%', maxHeight: 150, objectFit: 'cover', borderRadius: 6 }} />
               </div>
             )}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8 }}>
-              <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 14, border: '1px solid #2a3a4a', fontWeight: 600 }}>
-                📁 Bild auswählen
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8, flexWrap: 'wrap' }}>
+              <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 13, border: '1px solid #2a3a4a', fontWeight: 600 }}>
+                {t.selectImage}
                 <input type="file" accept="image/*" onChange={handleEventBild} style={{ display: 'none' }} />
               </label>
-              {eventBildName && <span style={{ color: '#667788', fontSize: 13 }}>✓ {eventBildName}</span>}
+              {eventBildName && <span style={{ color: '#667788', fontSize: 12 }}>✓ {eventBildName}</span>}
             </div>
             {eventBildPreview && (
-              <img src={eventBildPreview} alt="Vorschau" style={{ width: '100%', maxHeight: 150, objectFit: 'cover', marginTop: 8, borderRadius: 6 }} />
+              <img src={eventBildPreview} alt="Preview" style={{ width: '100%', maxHeight: 150, objectFit: 'cover', marginTop: 8, borderRadius: 6 }} />
             )}
           </div>
 
-          {/* SPONSOR */}
           <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>
-            <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4' }}>🏢 Sponsor</h3>
-            <input type="text" placeholder="Sponsor Name" value={sponsorName} onChange={(e) => setSponsorName(e.target.value)}
+            <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4', fontSize: 16 }}>{t.sponsor}</h3>
+            <input type="text" placeholder={t.sponsorName} value={sponsorName} onChange={(e) => setSponsorName(e.target.value)}
               style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
             {currentLogoUrl && !sponsorLogoPreview && (
               <div style={{ marginBottom: 8 }}>
-                <p style={{ color: '#667788', fontSize: 13, margin: '4px 0' }}>Aktuelles Logo:</p>
+                <p style={{ color: '#667788', fontSize: 13, margin: '4px 0' }}>{t.currentLogo}</p>
                 <img src={currentLogoUrl} alt="Logo" style={{ height: 50, objectFit: 'contain', background: '#131e2a', padding: 4, borderRadius: 4 }} />
               </div>
             )}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8 }}>
-              <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 14, border: '1px solid #2a3a4a', fontWeight: 600 }}>
-                📁 Logo auswählen
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8, flexWrap: 'wrap' }}>
+              <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1c2a38', color: '#e8eef4', borderRadius: 6, cursor: 'pointer', fontSize: 13, border: '1px solid #2a3a4a', fontWeight: 600 }}>
+                {t.selectLogo}
                 <input type="file" accept="image/*" onChange={handleSponsorLogo} style={{ display: 'none' }} />
               </label>
-              {sponsorLogoName && <span style={{ color: '#667788', fontSize: 13 }}>✓ {sponsorLogoName}</span>}
+              {sponsorLogoName && <span style={{ color: '#667788', fontSize: 12 }}>✓ {sponsorLogoName}</span>}
             </div>
             {sponsorLogoPreview && (
-              <img src={sponsorLogoPreview} alt="Vorschau" style={{ height: 50, marginTop: 8, objectFit: 'contain', background: '#131e2a', padding: 4, borderRadius: 4 }} />
+              <img src={sponsorLogoPreview} alt="Preview" style={{ height: 50, marginTop: 8, objectFit: 'contain', background: '#131e2a', padding: 4, borderRadius: 4 }} />
             )}
           </div>
 
-          <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
+          <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
             <button onClick={saveEvent}
-              style={{ padding: '12px 32px', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '16px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>
-              Speichern
+              style={{ flex: 1, padding: '12px 24px', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '15px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>
+              {t.save}
             </button>
             <button onClick={() => router.push('/meine-events')}
-              style={{ padding: '12px 32px', background: 'transparent', color: '#667788', border: '1px solid #1c2a38', borderRadius: '6px', cursor: 'pointer', fontSize: '16px' }}>
-              Abbrechen
+              style={{ flex: 1, padding: '12px 24px', background: 'transparent', color: '#667788', border: '1px solid #1c2a38', borderRadius: '6px', cursor: 'pointer', fontSize: '15px' }}>
+              {t.cancel}
             </button>
           </div>
         </div>
 
         {message && (
-          <div style={{ padding: '16px', background: message.startsWith('Fehler') ? 'rgba(255,68,68,0.1)' : 'rgba(68,255,136,0.1)', border: `1px solid ${message.startsWith('Fehler') ? '#ff4444' : '#44ff88'}`, borderRadius: '8px', color: message.startsWith('Fehler') ? '#ff4444' : '#44ff88', fontWeight: 'bold' }}>
+          <div style={{ padding: '16px', background: message.startsWith('Fehler') || message.startsWith('Error') ? 'rgba(255,68,68,0.1)' : 'rgba(68,255,136,0.1)', border: `1px solid ${message.startsWith('Fehler') || message.startsWith('Error') ? '#ff4444' : '#44ff88'}`, borderRadius: '8px', color: message.startsWith('Fehler') || message.startsWith('Error') ? '#ff4444' : '#44ff88', fontWeight: 'bold', fontSize: 13 }}>
             {message}
           </div>
         )}

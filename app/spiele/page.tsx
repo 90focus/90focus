@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/app/supabase'
 import { useRouter } from 'next/navigation'
+import { useLanguage } from '@/app/context/LanguageContext'
 
 export default function SpielePage() {
   const [events, setEvents] = useState<any[]>([])
@@ -11,13 +12,34 @@ export default function SpielePage() {
 
 const [nameFilter, setNameFilter] = useState('')
   const [nameInput, setNameInput] = useState('')
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null)
+const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const router = useRouter()
+const { lang } = useLanguage()
+  const [notFinishedModal, setNotFinishedModal] = useState(false)
+  const today = new Date().toISOString().split('T')[0]
 
-  useEffect(() => {
+  const handleEventClick = (ev: any) => {
+    if (ev.date > today) {
+      setNotFinishedModal(true)
+    } else {
+      router.push(`/suche?eventId=${ev.id}`)
+    }
+  }
+
+useEffect(() => {
     const fetchEvents = async () => {
-      const { data } = await supabase.from('events').select('*').order('date', { ascending: false })
-      if (data) { setEvents(data); setFiltered(data) }
+      try {
+        const today = new Date().toISOString().split('T')[0]
+        const { data: past } = await supabase.from('events').select('*')
+          .lte('date', today).order('date', { ascending: false })
+        const { data: upcoming } = await supabase.from('events').select('*')
+          .gt('date', today).order('date', { ascending: true })
+        const data = [...(past || []), ...(upcoming || [])]
+        setEvents(data)
+        setFiltered(data)
+      } catch (e) {
+        console.error('fetchEvents error:', e)
+      }
     }
     fetchEvents()
   }, [])
@@ -30,14 +52,14 @@ if (nameFilter) result = result.filter((ev) => ev.home_team.toLowerCase().includ
 
   return (
     <main style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
-<section style={{ padding: '32px 48px 40px', maxWidth: 1200, margin: '60px auto 0' }}>
-<h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 40 }}>Alle Events</h1>
+<section className="events-section" style={{ padding: '32px 48px 40px', maxWidth: 1200, margin: '60px auto 0' }}>
+<h1 style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: -2, marginBottom: 40 }}>{lang === 'de' ? 'Alle Events' : 'All Events'}</h1>
 
 <div style={{ marginBottom: 24, maxWidth: 500, position: 'relative' }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8899aa" strokeWidth="2" style={{ position: 'absolute', left: 18, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
             <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
-<input type="text" placeholder="Finde dein Event" value={nameInput}
+<input type="text" placeholder={lang === 'de' ? 'Finde dein Event' : 'Find your Event'} value={nameInput}
             className="search-input-white"
             onChange={(e) => {
               setNameInput(e.target.value)
@@ -50,9 +72,9 @@ if (nameFilter) result = result.filter((ev) => ev.home_team.toLowerCase().includ
 
 
         {filtered.length === 0 ? (
-          <div style={{ color: '#445566', fontSize: 16, padding: '40px 0' }}>Keine Events gefunden. 🎯</div>
+<div style={{ color: '#445566', fontSize: 16, padding: '40px 0' }}>{lang === 'de' ? 'Keine Events gefunden.' : 'No events found.'}</div>
         ) : (
-<div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+<div className="events-grid">
 {filtered.map((ev) => (
               <div key={ev.id}
                 onMouseEnter={() => setHoveredCard(ev.id)}
@@ -64,7 +86,7 @@ if (nameFilter) result = result.filter((ev) => ev.home_team.toLowerCase().includ
                   transform: hoveredCard === ev.id ? 'translateY(-4px)' : 'translateY(0)',
                   transition: 'all 0.2s ease'
                 }}
-                onClick={() => router.push(`/suche?eventId=${ev.id}`)}>
+onClick={() => handleEventClick(ev)}>
 <div style={{ aspectRatio: '4 / 3', background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
                   {ev.bild_url ? (
 <img src={ev.bild_url} alt={ev.home_team}
@@ -95,22 +117,40 @@ if (nameFilter) result = result.filter((ev) => ev.home_team.toLowerCase().includ
                       <span style={{ fontSize: 11, color: '#e8eef4', fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
                     </div>
                   )}
-<button style={{
+<button className="card-btn" style={{
                     width: '100%',
-                    background: hoveredCard === ev.id ? '#d4e800' : '#e8ff00',
-                    color: '#070b0f', border: 'none', borderRadius: 2, padding: '10px',
+                    background: ev.date > today ? '#1c2a38' : (hoveredCard === ev.id ? '#d4e800' : '#e8ff00'),
+                    color: ev.date > today ? '#8899aa' : '#070b0f', border: 'none', borderRadius: 2, padding: '10px',
                     fontWeight: 900, fontSize: 12, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1,
                     transform: hoveredCard === ev.id ? 'scale(1.02)' : 'scale(1)',
                     transition: 'all 0.15s ease'
                   }}>
-                    Zu den Fotos
+{ev.date > today ? (lang === 'de' ? 'Demnächst' : 'Coming Soon') : (lang === 'de' ? 'Zu den Fotos' : 'Show Photos')}
                   </button>
                 </div>
               </div>
             ))}
           </div>
         )}
-      </section>
+</section>
+
+      {notFinishedModal && (
+        <div onClick={() => setNotFinishedModal(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 12, padding: '32px 28px', maxWidth: 380, textAlign: 'center' }}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>⏳</div>
+            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 8 }}>
+              {lang === 'de' ? 'Event noch nicht abgeschlossen' : 'Event not finished yet'}
+            </div>
+            <p style={{ color: '#8899aa', fontSize: 14, marginBottom: 20, lineHeight: 1.5 }}>
+              {lang === 'de' ? 'Die Fotos sind erst nach dem Event verfügbar. Schau später nochmal vorbei!' : 'Photos will be available after the event. Please check back later!'}
+            </p>
+            <button onClick={() => setNotFinishedModal(false)}
+              style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px 28px', fontWeight: 900, fontSize: 13, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1 }}>
+              {lang === 'de' ? 'Verstanden' : 'Got it'}
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   )
 }

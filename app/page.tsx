@@ -3,41 +3,93 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './supabase'
 import { useRouter } from 'next/navigation'
+import { useLanguage } from './context/LanguageContext'
 
 export default function Home() {
   const [events, setEvents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [slideIndex, setSlideIndex] = useState(0)
-const [heroBilder] = useState<string[]>(['/hero/hero-1.jpg', '/hero/hero-2.jpg', '/hero/hero-3.jpg', '/hero/hero-4.jpg', '/hero/hero-5.jpg', '/hero/hero-6.jpg', '/hero/hero-7.jpg'])
+const [isMobile, setIsMobile] = useState(false)
+  const heroBilderDesktop = ['/hero/hero-1.jpg', '/hero/hero-2.jpg', '/hero/hero-3.jpg', '/hero/hero-4.jpg', '/hero/hero-5.jpg', '/hero/hero-6.jpg', '/hero/hero-7.jpg']
+const heroBilderMobile = ['/hero/hero-1-mobile.png', '/hero/hero-2-mobile.png', '/hero/hero-3-mobile.png', '/hero/hero-5-mobile.png', '/hero/hero-6-mobile.png', '/hero/hero-7-mobile.png']
+  const heroBilder = isMobile ? heroBilderMobile : heroBilderDesktop
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const [hoveredBtn, setHoveredBtn] = useState<string | null>(null)
   const [hoveredHeroBtn, setHoveredHeroBtn] = useState(false)
   const [hoveredAlleSpiele1, setHoveredAlleSpiele1] = useState(false)
-  const [hoveredAlleSpiele2, setHoveredAlleSpiele2] = useState(false)
+const [hoveredAlleSpiele2, setHoveredAlleSpiele2] = useState(false)
+  const [notFinishedModal, setNotFinishedModal] = useState(false)
   const router = useRouter()
+  const { lang } = useLanguage()
+
+  const today = new Date().toISOString().split('T')[0]
+
+  const handleEventClick = (ev: any) => {
+    if (ev.date > today) {
+      setNotFinishedModal(true)
+    } else {
+      router.push(`/suche?eventId=${ev.id}`)
+    }
+  }
 
   useEffect(() => {
-const fetchEvents = async () => {
-      const today = new Date().toISOString().split('T')[0]
-      const { data } = await supabase.from('events').select('*')
-        .gte('date', today).order('date', { ascending: true }).limit(6)
-      if (data) {
-        setEvents(data)
+const fetchEvents = async (retry = true) => {
+      try {
+const today = new Date().toISOString().split('T')[0]
+        const { data: past } = await supabase.from('events').select('*')
+          .lte('date', today).order('date', { ascending: false }).limit(8)
+        const remaining = 8 - (past?.length || 0)
+        let combined = past || []
+        if (remaining > 0) {
+          const { data: upcoming } = await supabase.from('events').select('*')
+            .gt('date', today).order('date', { ascending: true }).limit(remaining)
+          combined = [...combined, ...(upcoming || [])]
+        }
+        const data = combined
+        const error = null
+        if (error) throw error
+        if (data) {
+          setEvents(data)
+        }
+      } catch (e) {
+        console.error('fetchEvents error:', e)
+        if (retry) {
+          setTimeout(() => fetchEvents(false), 2000)
+        }
       }
     }
     fetchEvents()
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session?.user) {
-        const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
-        if (profile?.role === 'photographer') {
-          router.push('/meine-events')
+const checkUser = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.user) {
+          const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
+          if (profile?.role === 'photographer') {
+            router.push('/meine-events')
+            return
+          }
         }
+      } catch (e) {
+        console.error('checkUser error:', e)
       }
       setLoading(false)
     }
     checkUser()
+
+    const failsafe = setTimeout(() => setLoading(false), 5000)
+    return () => clearTimeout(failsafe)
   }, [])
+
+useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 700)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  useEffect(() => {
+    setSlideIndex(0)
+  }, [isMobile])
 
   useEffect(() => {
     if (heroBilder.length <= 1) return
@@ -55,7 +107,7 @@ const fetchEvents = async () => {
 
   return (
     <main style={{ minHeight: "100vh", background: "#070b0f", color: "#e8eef4", fontFamily: "sans-serif", padding: "0" }}>
-<section style={{ position: "relative", aspectRatio: "3.2 / 1", overflow: "hidden", marginTop: 60, maxWidth: 1450, margin: "60px auto 0" }}>
+<section className="hero-section" style={{ position: "relative", aspectRatio: "3.2 / 1", overflow: "hidden", maxWidth: 1450, margin: "0 auto" }}>
         {heroBilder.length > 0 ? (
           heroBilder.map((bild, i) => (
             <div key={i} style={{
@@ -71,18 +123,18 @@ const fetchEvents = async () => {
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, #0d1219 0%, #131e2a 100%)" }} />
         )}
 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(7,11,15,0.65) 45%, rgba(7,11,15,0.15) 100%)" }} />
-<div style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 48px" }}>
-          <div style={{ color: "#e8ff00", fontSize: 16, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>
-            PROFESSIONELLE SPORTFOTOGRAFIE
+<div className="hero-content" style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 48px" }}>
+<div className="hero-label hide-mobile" style={{ color: "#e8ff00", fontSize: 16, fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>
+            {lang === 'de' ? 'PROFESSIONELLE SPORTFOTOGRAFIE' : 'PROFESSIONAL SPORTS PHOTOGRAPHY'}
           </div>
-          <h1 style={{ fontSize: "clamp(36px, 6vw, 72px)", fontWeight: 900, lineHeight: 0.95, letterSpacing: -2, textTransform: "uppercase", marginBottom: 18 }}>
+          <h1 className="hero-title" style={{ fontSize: "clamp(36px, 6vw, 72px)", fontWeight: 900, lineHeight: 0.95, letterSpacing: -2, textTransform: "uppercase", marginBottom: 18 }}>
             WHERE PERFORMANCE<br />
             <span style={{ color: "#e8ff00" }}>BECOMES MEMORY</span>
           </h1>
-          <p style={{ color: "#e8eef4", fontSize: 14, fontWeight: 800, maxWidth: 400, lineHeight: 1.6, marginBottom: 24, letterSpacing: 0.5 }}>
-Jeder Augenblick zählt, wir halten ihn fest
+<p className="hide-mobile" style={{ color: "#e8eef4", fontSize: 14, fontWeight: 800, maxWidth: 400, lineHeight: 1.6, marginBottom: 24, letterSpacing: 0.5 }}>
+{lang === 'de' ? 'Jeder Augenblick zählt, wir halten ihn fest' : 'Every moment matters, we capture it'}
           </p>
-          <div>
+<div>
             <button
               onMouseEnter={() => setHoveredHeroBtn(true)}
               onMouseLeave={() => setHoveredHeroBtn(false)}
@@ -94,13 +146,13 @@ Jeder Augenblick zählt, wir halten ihn fest
                 transform: hoveredHeroBtn ? "scale(1.03)" : "scale(1)",
                 transition: "all 0.15s ease"
               }}
-              onClick={() => router.push('/spiele')}>
-              Finde dein Event
+onClick={() => router.push('/spiele')}>
+              {lang === 'de' ? 'Finde dein Event' : 'Find your Event'}
             </button>
           </div>
         </div>
-        {heroBilder.length > 1 && (
-          <div style={{ position: "absolute", bottom: 16, left: 48, zIndex: 3, display: "flex", gap: 8 }}>
+{heroBilder.length > 1 && (
+          <div className="hide-mobile" style={{ position: "absolute", bottom: 16, left: 48, zIndex: 3, display: "flex", gap: 8 }}>
             {heroBilder.map((_, i) => (
               <div key={i} onClick={() => setSlideIndex(i)} style={{
                 width: i === slideIndex ? 24 : 8, height: 8,
@@ -112,25 +164,12 @@ Jeder Augenblick zählt, wir halten ihn fest
         )}
       </section>
 
-<section style={{ padding: "32px 48px 40px" }}>
+<section className="events-section" style={{ padding: "16px 48px 40px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 20 }}>
-            <button
-              onMouseEnter={() => setHoveredAlleSpiele1(true)}
-              onMouseLeave={() => setHoveredAlleSpiele1(false)}
-              style={{
-                background: hoveredAlleSpiele1 ? "#d4e800" : "#e8ff00",
-                color: "#070b0f", border: "none", borderRadius: 2,
-                padding: "10px 20px", fontWeight: 900, fontSize: 12,
-                letterSpacing: 1.5, textTransform: "uppercase", cursor: "pointer",
-                transform: hoveredAlleSpiele1 ? "scale(1.03)" : "scale(1)",
-                transition: "all 0.15s ease"
-              }}
-              onClick={() => router.push('/spiele')}>Alle Events</button>
-          </div>
+
 
           {events.length === 0 ? (
-            <div style={{ color: "#445566", fontSize: 16, padding: "40px 0" }}>Keine kommenden Events. 🎯</div>
+<div style={{ color: "#445566", fontSize: 16, padding: "40px 0" }}>{lang === 'de' ? 'Keine kommenden Events.' : 'No upcoming events.'}</div>
           ) : (
 <div className="events-grid">
               {events.map((ev) => (
@@ -143,7 +182,7 @@ background: "#0d1219", border: hoveredCard === ev.id ? "1px solid #e8ff00" : "1p
                     transform: hoveredCard === ev.id ? "translateY(-4px)" : "translateY(0)",
                     transition: "all 0.2s ease"
                   }}
-                  onClick={() => router.push(`/suche?eventId=${ev.id}`)}>
+onClick={() => handleEventClick(ev)}>
 <div style={{ aspectRatio: "4 / 3", background: "#131e2a", position: "relative", overflow: "hidden" }}>
                     {ev.bild_url ? (
                       <img src={ev.bild_url} alt={`${ev.home_team} vs ${ev.away_team}`}
@@ -174,17 +213,18 @@ background: "#0d1219", border: hoveredCard === ev.id ? "1px solid #e8ff00" : "1p
                         <span style={{ fontSize: 11, color: "#e8eef4", fontWeight: 700 }}>⭐ {ev.sponsor_name}</span>
                       </div>
                     )}
-                    <button
+<button
+className="card-btn"
                       onMouseEnter={() => setHoveredBtn(ev.id)}
                       onMouseLeave={() => setHoveredBtn(null)}
                       style={{
-                        width: "100%", background: hoveredBtn === ev.id ? "#d4e800" : "#e8ff00",
-                        color: "#070b0f", border: "none", borderRadius: 2, padding: "10px",
+                        width: "100%", background: ev.date > today ? "#1c2a38" : (hoveredBtn === ev.id ? "#d4e800" : "#e8ff00"),
+                        color: ev.date > today ? "#8899aa" : "#070b0f", border: "none", borderRadius: 2, padding: "10px",
                         fontWeight: 900, fontSize: 12, cursor: "pointer", textTransform: "uppercase",
                         letterSpacing: 1, transform: hoveredBtn === ev.id ? "scale(1.02)" : "scale(1)",
                         transition: "all 0.15s ease"
                       }}>
-                      Zu den Fotos
+{ev.date > today ? (lang === 'de' ? 'Demnächst' : 'Coming Soon') : (lang === 'de' ? 'Zu den Fotos' : 'Show Photos')}
                     </button>
                   </div>
                 </div>
@@ -204,10 +244,28 @@ background: "#0d1219", border: hoveredCard === ev.id ? "1px solid #e8ff00" : "1p
                 transform: hoveredAlleSpiele2 ? "scale(1.03)" : "scale(1)",
                 transition: "all 0.15s ease"
               }}
-              onClick={() => router.push('/spiele')}>Alle Events</button>
+onClick={() => router.push('/spiele')}>{lang === 'de' ? 'Alle Events' : 'All Events'}</button>
           </div>
         </div>
-      </section>
+</section>
+
+      {notFinishedModal && (
+        <div onClick={() => setNotFinishedModal(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 12, padding: '32px 28px', maxWidth: 380, textAlign: 'center' }}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>⏳</div>
+            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 8 }}>
+              {lang === 'de' ? 'Event noch nicht abgeschlossen' : 'Event not finished yet'}
+            </div>
+            <p style={{ color: '#8899aa', fontSize: 14, marginBottom: 20, lineHeight: 1.5 }}>
+              {lang === 'de' ? 'Die Fotos sind erst nach dem Event verfügbar. Schau später nochmal vorbei!' : 'Photos will be available after the event. Please check back later!'}
+            </p>
+            <button onClick={() => setNotFinishedModal(false)}
+              style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px 28px', fontWeight: 900, fontSize: 13, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1 }}>
+              {lang === 'de' ? 'Verstanden' : 'Got it'}
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   )
 }

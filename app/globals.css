@@ -65,15 +65,78 @@ input[type="date"] {
   .hamburger-btn {
     display: flex !important;
   }
-}@media (max-width: 700px) {
+}
+
+@media (max-width: 700px) {
   .footer-col {
     width: 45% !important;
   }
-}@media (max-width: 700px) {
+}
+
+@media (max-width: 700px) {
   .kontakt-grid {
     grid-template-columns: 1fr !important;
   }
   .kontakt-info {
     margin-top: 32px !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .hero-section {
+    aspect-ratio: 16 / 9 !important;
+    margin-top: 0 !important;
+  }
+  .hero-content {
+    padding: 0 24px !important;
+  }
+  .hero-label {
+    font-size: 11px !important;
+    margin-bottom: 8px !important;
+  }
+.hero-title {
+    font-size: 24px !important;
+    line-height: 1.1 !important;
+  }
+.hide-mobile {
+    display: none !important;
+  }
+  .hero-content button {
+    padding: 9px 20px !important;
+    font-size: 11px !important;
+    letter-spacing: 1px !important;
+  }
+.hero-content {
+    justify-content: flex-end !important;
+    padding-bottom: 20px !important;
+  }
+  .events-section {
+    padding: 12px 16px 32px !important;
+  }
+.card-btn {
+    font-size: 11px !important;
+    padding: 9px !important;
+    white-space: nowrap !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .fotos-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (min-width: 701px) {
+  .hero-nav {
+    position: fixed !important;
+    background: rgba(7,11,15,0.97) !important;
+    border-bottom: 1px solid #131e2a !important;
+  }
+.hero-title {
+    font-size: clamp(32px, 4.2vw, 52px) !important;
+    margin-top: 8px !important;
+  }
+  .hero-content {
+    padding-top: 24px !important;
   }
 }

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
+export const maxDuration = 60
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -18,12 +20,17 @@ export async function POST(req: NextRequest) {
         })
 
         try {
-          await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/rekognition`, {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/rekognition`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ filename: key }),
           })
-        } catch {}
+          if (!res.ok) {
+            console.error(`Rekognition indexing failed for ${key}:`, await res.text())
+          }
+        } catch (e) {
+          console.error(`Rekognition indexing error for ${key}:`, e)
+        }
       }
     }
 
