@@ -3,7 +3,6 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { supabase } from '@/app/supabase'
-import { useLanguage } from '@/app/context/LanguageContext'
 
 function CheckoutContent() {
   const searchParams = useSearchParams()
@@ -13,25 +12,10 @@ function CheckoutContent() {
   const [event, setEvent] = useState<any>(null)
   const [user, setUser] = useState<any>(null)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
-  const [kartenNummer, setKartenNummer] = useState('')
-  const [kartenName, setKartenName] = useState('')
-  const [ablaufdatum, setAblaufdatum] = useState('')
-  const [cvv, setCvv] = useState('')
-  const { lang } = useLanguage()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const t = {
-    creditCard: lang === 'de' ? 'Kreditkarte' : 'Credit Card',
-    cardholder: lang === 'de' ? 'Karteninhaber' : 'Cardholder',
-    cardNumber: lang === 'de' ? 'Kartennummer' : 'Card Number',
-    expiry: lang === 'de' ? 'Ablaufdatum' : 'Expiry Date',
-    cvv: lang === 'de' ? 'Prüfziffer (CVV)' : 'Security Code (CVV)',
-    buyNow: lang === 'de' ? 'Jetzt kaufen' : 'Buy Now',
-    stripeHint: lang === 'de' ? '🔒 Bezahlung via Stripe – kommt bald' : '🔒 Payment via Stripe – coming soon',
-    photo: lang === 'de' ? 'Foto' : 'Photo',
-    loading: lang === 'de' ? 'Lade...' : 'Loading...',
-  }
-
-useEffect(() => {
+  useEffect(() => {
     const init = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession()
@@ -62,17 +46,30 @@ useEffect(() => {
   const getImageUrl = (filename: string) =>
     `https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`
 
-const paketPreis = 19.90
+  const paketPreis = 19.90
   const total = paketPreis.toFixed(2)
 
-  const formatKartenNummer = (val: string) => {
-    return val.replace(/\D/g, '').slice(0, 16).replace(/(.{4})/g, '$1 ').trim()
-  }
-
-  const formatAblaufdatum = (val: string) => {
-    const clean = val.replace(/\D/g, '').slice(0, 4)
-    if (clean.length > 2) return clean.slice(0, 2) + '/' + clean.slice(2)
-    return clean
+  const handleCheckout = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filenames, eventId }),
+      })
+      const data = await res.json()
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        setError('Fehler beim Erstellen der Zahlung. Bitte erneut versuchen.')
+      }
+    } catch (e) {
+      console.error('Checkout error:', e)
+      setError('Fehler beim Erstellen der Zahlung. Bitte erneut versuchen.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const Watermark = () => (
@@ -101,13 +98,6 @@ const paketPreis = 19.90
     )
   )
 
-  const inputStyle = {
-    width: '100%', padding: '12px', fontSize: '15px',
-    background: '#131e2a', border: '1px solid #1c2a38',
-    borderRadius: '6px', color: '#e8eef4',
-    boxSizing: 'border-box' as any, outline: 'none'
-  }
-
   return (
     <div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
 
@@ -118,7 +108,7 @@ const paketPreis = 19.90
             <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1) }} style={{ position: 'absolute', left: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 28, width: 50, height: 50, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
           )}
           <div onClick={(e) => e.stopPropagation()} style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}>
-            <img src={getImageUrl(filenames[lightboxIndex])} alt={`${t.photo} ${lightboxIndex + 1}`} style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 8 }} />
+            <img src={getImageUrl(filenames[lightboxIndex])} alt={`Foto ${lightboxIndex + 1}`} style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 8 }} />
             <Watermark />
             <Logo />
           </div>
@@ -129,74 +119,65 @@ const paketPreis = 19.90
         </div>
       )}
 
-      <div style={{ maxWidth: 700, margin: '60px auto 0', padding: '40px 24px' }}>
+      <div style={{ maxWidth: 1100, margin: '60px auto 0', padding: '40px 24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'start' }}>
 
-        {event && (
-          <div style={{ textAlign: 'center', marginBottom: 16, color: '#8899aa', fontSize: 13 }}>
-            {event.home_team} · {new Date(event.date).toLocaleDateString(lang === 'de' ? 'de-CH' : 'en-GB')}
+        <div>
+          <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>
+            Deine Fotos ({filenames.length})
           </div>
-        )}
 
-        <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #e8ff00', borderRadius: 12, padding: '24px', marginBottom: 20, textAlign: 'center' }}>
-          <div style={{ fontSize: 12, color: '#e8eef4', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 700, marginBottom: 4 }}>
-            {filenames.length} {t.photo}{filenames.length > 1 ? 's' : ''}
-          </div>
-          <div style={{ fontSize: 28, fontWeight: 900, color: '#e8ff00' }}>
-€ {total}
+          {event && (
+            <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '12px 16px', marginBottom: 16 }}>
+              <div style={{ fontSize: 14, fontWeight: 800 }}>{event.home_team}</div>
+              <div style={{ color: '#445566', fontSize: 12, marginTop: 2 }}>📅 {event.date} {event.ort && `— 📍 ${event.ort}`}</div>
+            </div>
+          )}
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+            {filenames.map((filename, i) => (
+              <div key={i} onClick={() => setLightboxIndex(i)} style={{ position: 'relative', borderRadius: 4, overflow: 'hidden', aspectRatio: '1', cursor: 'zoom-in' }}>
+                <img src={getImageUrl(filename)} alt={`Foto ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <Watermark />
+                <Logo />
+              </div>
+            ))}
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 32 }}>
-          {filenames.map((filename, i) => (
-            <div key={i} onClick={() => setLightboxIndex(i)} style={{ position: 'relative', borderRadius: 4, overflow: 'hidden', aspectRatio: '1', cursor: 'zoom-in' }}>
-              <img src={getImageUrl(filename)} alt={`${t.photo} ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              <Watermark />
-              <Logo />
+        <div>
+          <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>
+            Bezahlung
+          </div>
+
+          <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '16px 20px', marginBottom: 24 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span style={{ color: '#667788' }}>{filenames.length} Foto(s) — Paket</span>
+              <span style={{ fontWeight: 700 }}>€ {total}</span>
             </div>
-          ))}
-        </div>
-
-        <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#667788', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 20 }}>
-            {t.creditCard}
-          </div>
-
-          <div style={{ marginBottom: 16 }}>
-            <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>{t.cardholder}</div>
-            <input type="text" placeholder="Max Mustermann" value={kartenName}
-              onChange={(e) => setKartenName(e.target.value)} style={inputStyle} />
-          </div>
-
-          <div style={{ marginBottom: 16 }}>
-            <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>{t.cardNumber}</div>
-            <input type="text" placeholder="1234 5678 9012 3456" value={kartenNummer}
-              onChange={(e) => setKartenNummer(formatKartenNummer(e.target.value))} style={inputStyle} />
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
-            <div>
-              <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>{t.expiry}</div>
-              <input type="text" placeholder="MM/YY" value={ablaufdatum}
-                onChange={(e) => setAblaufdatum(formatAblaufdatum(e.target.value))} style={inputStyle} />
-            </div>
-            <div>
-              <div style={{ fontSize: 12, color: '#667788', marginBottom: 6 }}>{t.cvv}</div>
-              <input type="text" placeholder="123" value={cvv}
-                onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))} style={inputStyle} />
+            <div style={{ borderTop: '1px solid #1c2a38', paddingTop: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontWeight: 900, fontSize: 16 }}>Total</span>
+              <span style={{ fontWeight: 900, fontSize: 22, color: '#e8ff00' }}>€ {total}</span>
             </div>
           </div>
 
-          <button disabled style={{
-            width: '100%', background: '#e8ff00', color: '#070b0f',
-            border: 'none', borderRadius: 4, padding: '14px',
-            fontWeight: 900, fontSize: 15, cursor: 'not-allowed',
-            letterSpacing: 1.5, textTransform: 'uppercase', opacity: 0.5
-          }}>
-            {t.buyNow}
-          </button>
-          <p style={{ color: '#445566', fontSize: 12, textAlign: 'center', marginTop: 12 }}>
-            {t.stripeHint}
-          </p>
+          <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px' }}>
+            <p style={{ color: '#8899aa', fontSize: 13, marginBottom: 20, lineHeight: 1.5 }}>
+              Du wirst zur sicheren Bezahlseite von Stripe weitergeleitet, um deinen Kauf abzuschliessen.
+            </p>
+
+            <button onClick={handleCheckout} disabled={loading} style={{
+              width: '100%', background: '#e8ff00', color: '#070b0f',
+              border: 'none', borderRadius: 4, padding: '14px',
+              fontWeight: 900, fontSize: 15, cursor: loading ? 'wait' : 'pointer',
+              letterSpacing: 1.5, textTransform: 'uppercase', opacity: loading ? 0.7 : 1
+            }}>
+              {loading ? 'Einen Moment...' : 'Jetzt kaufen'}
+            </button>
+            {error && <p style={{ color: '#ff4444', fontSize: 13, textAlign: 'center', marginTop: 12 }}>{error}</p>}
+            <p style={{ color: '#445566', fontSize: 12, textAlign: 'center', marginTop: 12 }}>
+              🔒 Sichere Bezahlung via Stripe
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -205,7 +186,7 @@ const paketPreis = 19.90
 
 export default function CheckoutPage() {
   return (
-    <Suspense fallback={<p style={{ padding: '40px', color: '#e8eef4' }}>Loading...</p>}>
+    <Suspense fallback={<p style={{ padding: '40px', color: '#e8eef4' }}>Lade...</p>}>
       <CheckoutContent />
     </Suspense>
   )
