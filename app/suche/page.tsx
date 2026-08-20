@@ -22,7 +22,7 @@ function SucheContent() {
   const router = useRouter()
   const { lang } = useLanguage()
 
-const PAKET_PREIS = 19.90
+
 
   const t = {
     uploadPrompt: lang === 'de' ? 'Lade ein Selfie hoch und finde deine Fotos' : 'Upload a selfie and find your photos',
@@ -111,7 +111,7 @@ useEffect(() => {
   const getImageUrl = (filename: string) =>
     `https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`
 
-const total = PAKET_PREIS.toFixed(2)
+const total = (event?.preis || 19.90).toFixed(2)
 
   const Watermark = () => (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-around', pointerEvents: 'none', overflow: 'hidden' }}>
