@@ -26,7 +26,11 @@ export default function KundenKaeufePage() {
         const { data: { session } } = await supabase.auth.getSession()
         if (!session) { router.push('/login'); return }
         setUser(session.user)
-        const { data } = await supabase.from('purchases').select('*, events(home_team, away_team, date)').eq('user_id', session.user.id).order('created_at', { ascending: false })
+        const { data, error } = await supabase.from('purchases').select('*, events(home_team, away_team, date)').eq('user_id', session.user.id).order('created_at', { ascending: false })
+        if (error) {
+          console.error('Purchases fetch error:', error)
+        }
+        console.log('Purchases data:', data)
         setPurchases(data || [])
       } catch (e) {
         console.error('init error:', e)
