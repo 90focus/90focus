@@ -11,6 +11,7 @@ export default function KundenProfilPage() {
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [loading, setLoading] = useState(true)
+  const [purchaseCount, setPurchaseCount] = useState(0)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const router = useRouter()
@@ -46,6 +47,13 @@ useEffect(() => {
         setUser(session.user)
         const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
         setProfile(prof)
+
+        const { data: purchaseRows, error: purchaseError } = await supabase.from('purchases').select('photo_ids').eq('user_id', session.user.id)
+        if (purchaseError) {
+          console.error('Purchases fetch error:', purchaseError)
+        }
+        const totalPhotos = (purchaseRows || []).reduce((sum, row) => sum + ((row.photo_ids || []).length), 0)
+        setPurchaseCount(totalPhotos)
       } catch (e) {
         console.error('init error:', e)
       }
@@ -103,13 +111,23 @@ useEffect(() => {
 
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px', marginBottom: 24 }}>
           <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>{t.myPurchases}</div>
-          <div style={{ color: '#e8eef4', fontSize: 14, padding: '20px 0', textAlign: 'center' }}>
-            {t.noPurchases}<br />
-            <button onClick={() => router.push('/spiele')}
-              style={{ background: 'transparent', color: '#e8ff00', border: 'none', cursor: 'pointer', fontSize: 14, marginTop: 8, textDecoration: 'underline' }}>
-              {t.buyNow}
-            </button>
-          </div>
+          {purchaseCount === 0 ? (
+            <div style={{ color: '#e8eef4', fontSize: 14, padding: '20px 0', textAlign: 'center' }}>
+              {t.noPurchases}<br />
+              <button onClick={() => router.push('/spiele')}
+                style={{ background: 'transparent', color: '#e8ff00', border: 'none', cursor: 'pointer', fontSize: 14, marginTop: 8, textDecoration: 'underline' }}>
+                {t.buyNow}
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0' }}>
+              <span style={{ color: '#e8eef4', fontSize: 14 }}>{purchaseCount} {lang === 'de' ? 'Foto(s)' : 'Photo(s)'}</span>
+              <button onClick={() => router.push('/kunden-kaeufe')}
+                style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '8px 20px', fontWeight: 900, fontSize: 13, cursor: 'pointer', textTransform: 'uppercase' }}>
+                {lang === 'de' ? 'Anzeigen' : 'View'}
+              </button>
+            </div>
+          )}
         </div>
 
         <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '24px', marginBottom: 24 }}>
