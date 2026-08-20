@@ -51,18 +51,6 @@ export default function KundenKaeufePage() {
     return () => clearTimeout(failsafe)
   }, [router])
 
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (lightboxIndex === null) return
-      const photos = selectedEvent?.photos || []
-      if (e.key === 'Escape') setLightboxIndex(null)
-      if (e.key === 'ArrowRight') setLightboxIndex(i => i !== null ? Math.min(i + 1, photos.length - 1) : null)
-      if (e.key === 'ArrowLeft') setLightboxIndex(i => i !== null ? Math.max(i - 1, 0) : null)
-    }
-    window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
-  })
-
   const getImageUrl = (filename: string) =>
     `https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`
 
@@ -83,6 +71,18 @@ export default function KundenKaeufePage() {
   })
   const eventList = Object.values(eventGroups)
   const selectedEvent: any = eventList.find((e: any) => e.eventId === selectedEventId)
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (lightboxIndex === null) return
+      const photos = selectedEvent?.photos || []
+      if (e.key === 'Escape') setLightboxIndex(null)
+      if (e.key === 'ArrowRight') setLightboxIndex(i => i !== null ? Math.min(i + 1, photos.length - 1) : null)
+      if (e.key === 'ArrowLeft') setLightboxIndex(i => i !== null ? Math.max(i - 1, 0) : null)
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  })
 
   const downloadOneFile = async (filename: string) => {
     const a = document.createElement('a')
