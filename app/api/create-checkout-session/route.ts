@@ -5,12 +5,12 @@ import { createClient } from '@supabase/supabase-js'
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
 export async function POST(req: NextRequest) {
   try {
-const { filenames, eventId, userId, lang } = await req.json()
+    const { filenames, eventId, userId, lang } = await req.json()
 
     let preis = 19.90
     if (eventId) {
@@ -19,7 +19,24 @@ const { filenames, eventId, userId, lang } = await req.json()
     }
     const unitAmount = Math.round(preis * 100)
 
-const session = await stripe.checkout.sessions.create({
+    const { data: pendingCheckout, error: insertError } = await supabase
+      .from('pending_checkouts')
+      .insert({
+        filenames: filenames.join(','),
+        event_id: eventId || null,
+        user_id: userId || null,
+      })
+      .select()
+      .single()
+
+    if (insertError || !pendingCheckout) {
+      console.error('Pending checkout insert error:', insertError)
+      return NextResponse.json({ error: 'Failed to prepare checkout' }, { status: 500 })
+    }
+
+    const checkoutId = pendingCheckout.id
+
+    const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       locale: lang === 'de' ? 'de' : 'en',
       line_items: [
@@ -36,12 +53,10 @@ const session = await stripe.checkout.sessions.create({
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}&filenames=${encodeURIComponent(filenames.join(','))}&eventId=${eventId}`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}&checkoutId=${checkoutId}`,
       cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout?filenames=${encodeURIComponent(filenames.join(','))}&eventId=${eventId}`,
       metadata: {
-        filenames: filenames.join(','),
-        eventId: eventId || '',
-        userId: userId || '',
+        checkoutId: checkoutId,
       },
     })
 

@@ -31,36 +31,51 @@ export async function POST(req: NextRequest) {
     const session = event.data.object as Stripe.Checkout.Session
 
     try {
-      const filenames = (session.metadata?.filenames || '').split(',').filter(Boolean)
-      const eventId = session.metadata?.eventId || null
-      const userId = session.metadata?.userId || null
+      const checkoutId = session.metadata?.checkoutId
 
-      if (filenames.length > 0 && userId) {
-        const preisProFoto = (session.amount_total || 1990) / 100 / filenames.length
+      if (checkoutId) {
+        const { data: pendingCheckout, error: fetchError } = await supabase
+          .from('pending_checkouts')
+          .select('*')
+          .eq('id', checkoutId)
+          .single()
 
-        const { data: existing } = await supabase
-          .from('purchases')
-          .select('id')
-          .eq('stripe_session_id', session.id)
-          .limit(1)
+        if (fetchError || !pendingCheckout) {
+          console.error('Webhook: pending_checkout nicht gefunden:', fetchError)
+          return NextResponse.json({ received: true })
+        }
 
-        if (!existing || existing.length === 0) {
-          const rows = filenames.map((filename) => ({
-            user_id: userId,
-            foto_filename: filename,
-            event_id: eventId,
-            preis: preisProFoto,
-            stripe_session_id: session.id,
-          }))
+        const filenames = (pendingCheckout.filenames || '').split(',').filter(Boolean)
+        const eventId = pendingCheckout.event_id || null
+        const userId = pendingCheckout.user_id
 
-          const { error } = await supabase.from('purchases').insert(rows)
-          if (error) {
-            console.error('Webhook: Fehler beim Speichern des Kaufs:', error)
+        if (filenames.length > 0 && userId) {
+          const preisProFoto = (session.amount_total || 1990) / 100 / filenames.length
+
+          const { data: existing } = await supabase
+            .from('purchases')
+            .select('id')
+            .eq('stripe_session_id', session.id)
+            .limit(1)
+
+          if (!existing || existing.length === 0) {
+            const rows = filenames.map((filename) => ({
+              user_id: userId,
+              foto_filename: filename,
+              event_id: eventId,
+              preis: preisProFoto,
+              stripe_session_id: session.id,
+            }))
+
+            const { error } = await supabase.from('purchases').insert(rows)
+            if (error) {
+              console.error('Webhook: Fehler beim Speichern des Kaufs:', error)
+            } else {
+              console.log(`Webhook: ${rows.length} Foto(s) gespeichert fuer Session ${session.id}`)
+            }
           } else {
-            console.log(`Webhook: ${rows.length} Foto(s) gespeichert fuer Session ${session.id}`)
+            console.log(`Webhook: Kauf fuer Session ${session.id} bereits gespeichert, ueberspringe`)
           }
-        } else {
-          console.log(`Webhook: Kauf fuer Session ${session.id} bereits gespeichert, ueberspringe`)
         }
       }
     } catch (e) {
