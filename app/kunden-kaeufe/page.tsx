@@ -9,6 +9,7 @@ export default function KundenKaeufePage() {
   const [user, setUser] = useState<any>(null)
   const [purchases, setPurchases] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [downloading, setDownloading] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const router = useRouter()
   const { lang } = useLanguage()
@@ -20,6 +21,7 @@ export default function KundenKaeufePage() {
     buyNow: lang === 'de' ? 'Jetzt Fotos kaufen' : 'Buy photos now',
     loading: lang === 'de' ? 'Lade...' : 'Loading...',
     downloadAll: lang === 'de' ? 'Alle Fotos herunterladen' : 'Download All Photos',
+    downloading: lang === 'de' ? 'Wird heruntergeladen...' : 'Downloading...',
   }
 
   useEffect(() => {
@@ -60,17 +62,30 @@ export default function KundenKaeufePage() {
 
   const allPhotos: string[] = purchases.flatMap((p) => p.photo_ids || [])
 
+  const downloadOneFile = async (filename: string) => {
+    const response = await fetch(getImageUrl(filename))
+    const blob = await response.blob()
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename.split('/').pop() || filename
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    window.URL.revokeObjectURL(url)
+  }
+
   const handleDownloadAll = async () => {
+    setDownloading(true)
     for (let i = 0; i < allPhotos.length; i++) {
-      const filename = allPhotos[i]
-      const a = document.createElement('a')
-      a.href = getImageUrl(filename)
-      a.download = filename.split('/').pop() || filename
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      await new Promise((resolve) => setTimeout(resolve, 400))
+      try {
+        await downloadOneFile(allPhotos[i])
+      } catch (e) {
+        console.error('Download error for', allPhotos[i], e)
+      }
+      await new Promise((resolve) => setTimeout(resolve, 300))
     }
+    setDownloading(false)
   }
 
   if (loading) return (
@@ -95,10 +110,6 @@ export default function KundenKaeufePage() {
             <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1) }} style={{ position: 'absolute', right: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 28, width: 50, height: 50, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
           )}
           <div style={{ position: 'absolute', bottom: 20, color: '#667788', fontSize: 14 }}>{lightboxIndex + 1} / {allPhotos.length}</div>
-          <a href={getImageUrl(allPhotos[lightboxIndex])} download onClick={(e) => e.stopPropagation()}
-            style={{ position: 'absolute', bottom: 60, background: '#e8ff00', color: '#070b0f', padding: '10px 20px', borderRadius: 4, fontWeight: 900, fontSize: 13, textDecoration: 'none', textTransform: 'uppercase' }}>
-            ⬇ Download
-          </a>
         </div>
       )}
 
@@ -107,9 +118,9 @@ export default function KundenKaeufePage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 32 }}>
           <h1 style={{ fontSize: 36, fontWeight: 900, textTransform: 'uppercase', margin: 0 }}>{t.purchasedPhotos}</h1>
           {allPhotos.length > 0 && (
-            <button onClick={handleDownloadAll}
-              style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px 20px', fontWeight: 900, fontSize: 13, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1 }}>
-              ⬇ {t.downloadAll}
+            <button onClick={handleDownloadAll} disabled={downloading}
+              style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px 20px', fontWeight: 900, fontSize: 13, cursor: downloading ? 'wait' : 'pointer', textTransform: 'uppercase', letterSpacing: 1, opacity: downloading ? 0.7 : 1 }}>
+              ⬇ {downloading ? t.downloading : t.downloadAll}
             </button>
           )}
         </div>
