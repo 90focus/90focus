@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
             .limit(1)
 
           if (!existing || existing.length === 0) {
-            const rows = filenames.map((filename) => ({
+            const rows = filenames.map((filename: string) => ({
               user_id: userId,
               foto_filename: filename,
               event_id: eventId,
