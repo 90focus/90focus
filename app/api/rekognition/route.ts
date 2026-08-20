@@ -75,17 +75,16 @@ export async function PUT(req: NextRequest) {
         .select('filename')
         .eq('event_id', eventId)
 
-      const eventFilenames = eventFotos?.map(f =>
-        f.filename.replace(/[^a-zA-Z0-9_\-:]/g, '_')
-      ) || []
-
-      const filtered = allMatches.filter(f => eventFilenames.includes(f))
-      const originalFilenames = filtered.map(f => {
-        const match = eventFotos?.find(ef =>
-          ef.filename.replace(/[^a-zA-Z0-9_\-:]/g, '_') === f
-        )
-        return match?.filename || f
+      const filenameMap = new Map<string, string>()
+      eventFotos?.forEach(f => {
+        const sanitized = f.filename.replace(/[^a-zA-Z0-9_\-:]/g, '_')
+        filenameMap.set(sanitized, f.filename)
       })
+
+      const originalFilenames = allMatches
+        .filter(f => filenameMap.has(f))
+        .map(f => filenameMap.get(f)!)
+
       return NextResponse.json({ matches: originalFilenames })
     }
 
