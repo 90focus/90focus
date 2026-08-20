@@ -34,8 +34,12 @@ useEffect(() => {
         setUser(session.user)
         const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
         setProfile(prof)
-        const { count } = await supabase.from('purchases').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id)
-        setPurchases(count || 0)
+        const { data: purchaseRows, error: purchaseError } = await supabase.from('purchases').select('photo_ids').eq('user_id', session.user.id)
+        if (purchaseError) {
+          console.error('Purchases count error:', purchaseError)
+        }
+        const totalPhotos = (purchaseRows || []).reduce((sum, row) => sum + ((row.photo_ids || []).length), 0)
+        setPurchases(totalPhotos)
       } catch (e) {
         console.error('init error:', e)
       }
