@@ -6,6 +6,27 @@ import { useRouter } from 'next/navigation'
 import { useLanguage } from '@/app/context/LanguageContext'
 
 export default function KundenKaeufePage() {
+  const cardFooterStyles = `
+    .purchase-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .purchase-card-btn {
+      width: auto;
+    }
+    @media (max-width: 480px) {
+      .purchase-card-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+      .purchase-card-btn {
+        width: 100%;
+      }
+    }
+  `
   const [user, setUser] = useState<any>(null)
   const [purchases, setPurchases] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -114,6 +135,7 @@ export default function KundenKaeufePage() {
 
   return (
     <div style={{ background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif' }}>
+      <style jsx>{cardFooterStyles}</style>
 
       {lightboxIndex !== null && selectedEvent && (
         <div onClick={() => setLightboxIndex(null)} style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.95)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -168,9 +190,10 @@ export default function KundenKaeufePage() {
                     <div style={{ padding: '16px' }}>
                       <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6, color: '#fff' }}>{group.event?.home_team}</div>
                       <div style={{ fontSize: 12, color: '#e8eef4', marginBottom: 12 }}>{group.event?.date}</div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                      <div className="purchase-card-footer">
                         <div style={{ color: '#e8ff00', fontWeight: 700, fontSize: 13 }}>{t.photosCount(group.photos.length)}</div>
                         <button onClick={() => setSelectedEventId(group.eventId)}
+                          className="purchase-card-btn"
                           style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '8px 16px', fontWeight: 900, fontSize: 12, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 0.5, whiteSpace: 'nowrap' }}>
                           {t.toPhotos}
                         </button>
