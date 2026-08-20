@@ -69,7 +69,7 @@ export default function KundenKaeufePage() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             {purchases.map((purchase) => {
-              const photoList = (purchase.photo_ids || '').split(',').filter(Boolean)
+              const photoList = purchase.photo_ids || []
               return (
                 <div key={purchase.id} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden' }}>
                   <div style={{ padding: '16px', borderBottom: '1px solid #1c2a38', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
