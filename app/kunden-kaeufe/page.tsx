@@ -87,7 +87,11 @@ export default function KundenKaeufePage() {
         totalAmount: 0,
       }
     }
-    eventGroups[key].photos.push(...(p.photo_ids || []))
+    (p.photo_ids || []).forEach((filename: string) => {
+      if (!eventGroups[key].photos.includes(filename)) {
+        eventGroups[key].photos.push(filename)
+      }
+    })
     eventGroups[key].totalAmount += p.amount || 0
   })
   const eventList = Object.values(eventGroups)
