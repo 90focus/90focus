@@ -63,16 +63,11 @@ export default function KundenKaeufePage() {
   const allPhotos: string[] = purchases.flatMap((p) => p.photo_ids || [])
 
   const downloadOneFile = async (filename: string) => {
-    const response = await fetch(getImageUrl(filename))
-    const blob = await response.blob()
-    const url = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
-    a.href = url
-    a.download = filename.split('/').pop() || filename
+    a.href = `/api/download-photo?filename=${encodeURIComponent(filename)}`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
-    window.URL.revokeObjectURL(url)
   }
 
   const handleDownloadAll = async () => {
