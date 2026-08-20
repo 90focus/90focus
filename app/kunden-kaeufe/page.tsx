@@ -12,6 +12,7 @@ export default function KundenKaeufePage() {
   const [downloading, setDownloading] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const router = useRouter()
   const { lang } = useLanguage()
 
@@ -147,8 +148,15 @@ export default function KundenKaeufePage() {
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
                 {eventList.map((group: any) => (
-                  <div key={group.eventId} onClick={() => setSelectedEventId(group.eventId)}
-                    style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden', cursor: 'pointer' }}>
+                  <div key={group.eventId}
+                    onMouseEnter={() => setHoveredCard(group.eventId)}
+                    onMouseLeave={() => setHoveredCard(null)}
+                    style={{
+                      background: '#0d1219', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 8, overflow: 'hidden',
+                      transform: hoveredCard === group.eventId ? 'scale(1.02)' : 'scale(1)',
+                      transition: 'all 0.15s ease',
+                      boxShadow: hoveredCard === group.eventId ? '0 0 20px rgba(232,255,0,0.15)' : 'none',
+                    }}>
                     <div style={{ aspectRatio: '4 / 3', background: '#131e2a', position: 'relative', overflow: 'hidden' }}>
                       {group.event?.bild_url ? (
                         <img src={group.event.bild_url} alt={group.event.home_team} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -158,8 +166,14 @@ export default function KundenKaeufePage() {
                     </div>
                     <div style={{ padding: '16px' }}>
                       <div style={{ fontSize: 15, fontWeight: 800, textTransform: 'uppercase', marginBottom: 6, color: '#fff' }}>{group.event?.home_team}</div>
-                      <div style={{ fontSize: 12, color: '#e8eef4', marginBottom: 8 }}>{group.event?.date}</div>
-                      <div style={{ color: '#e8ff00', fontWeight: 700, fontSize: 14 }}>{t.photosCount(group.photos.length)}</div>
+                      <div style={{ fontSize: 12, color: '#e8eef4', marginBottom: 12 }}>{group.event?.date}</div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                        <div style={{ color: '#e8ff00', fontWeight: 700, fontSize: 13 }}>{t.photosCount(group.photos.length)}</div>
+                        <button onClick={() => setSelectedEventId(group.eventId)}
+                          style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '8px 16px', fontWeight: 900, fontSize: 12, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 0.5, whiteSpace: 'nowrap' }}>
+                          {t.toPhotos}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
