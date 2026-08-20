@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ received: true })
         }
 
-        const photoIds = pendingCheckout.filenames || ''
+        const photoIds = (pendingCheckout.filenames || '').split(',').filter(Boolean)
         const eventId = pendingCheckout.event_id || null
         const userId = pendingCheckout.user_id
         const amount = (session.amount_total || 0) / 100
@@ -54,7 +54,6 @@ export async function POST(req: NextRequest) {
           .from('purchases')
           .select('id')
           .eq('user_id', userId)
-          .eq('photo_ids', photoIds)
           .eq('amount', amount)
           .gte('created_at', new Date(Date.now() - 5 * 60 * 1000).toISOString())
           .limit(1)
