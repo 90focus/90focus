@@ -29,22 +29,12 @@ function SuccessContent() {
   }
 
 useEffect(() => {
-    const checkSession = async () => {
-      if (!sessionId) {
-        setStatus('error')
-        return
-      }
-      try {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (!session) { router.push('/login'); return }
-        setStatus('success')
-      } catch (e) {
-        console.error('checkSession error:', e)
-        setStatus('error')
-      }
+    if (!sessionId) {
+      setStatus('error')
+      return
     }
-    checkSession()
-  }, [sessionId, router])
+    setStatus('success')
+  }, [sessionId])
 
   return (
     <div style={{ minHeight: '100vh', background: '#070b0f', color: '#e8eef4', fontFamily: 'sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
