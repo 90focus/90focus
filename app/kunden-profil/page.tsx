@@ -52,8 +52,11 @@ useEffect(() => {
         if (purchaseError) {
           console.error('Purchases fetch error:', purchaseError)
         }
-        const totalPhotos = (purchaseRows || []).reduce((sum, row) => sum + ((row.photo_ids || []).length), 0)
-        setPurchaseCount(totalPhotos)
+        const uniquePhotosProfil = new Set<string>()
+        purchaseRows?.forEach((row) => {
+          (row.photo_ids || []).forEach((filename: string) => uniquePhotosProfil.add(filename))
+        })
+        setPurchaseCount(uniquePhotosProfil.size)
       } catch (e) {
         console.error('init error:', e)
       }

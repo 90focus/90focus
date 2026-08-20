@@ -40,8 +40,11 @@ useEffect(() => {
         if (purchaseError) {
           console.error('Purchases count error:', purchaseError)
         }
-        const totalPhotos = (purchaseRows || []).reduce((sum, row) => sum + ((row.photo_ids || []).length), 0)
-        setPurchases(totalPhotos)
+        const uniquePhotos = new Set<string>()
+        purchaseRows?.forEach((row) => {
+          (row.photo_ids || []).forEach((filename: string) => uniquePhotos.add(filename))
+        })
+        setPurchases(uniquePhotos.size)
       } catch (e) {
         console.error('init error:', e)
       }
