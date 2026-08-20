@@ -115,7 +115,7 @@ export default function KundenKaeufePage() {
           {allPhotos.length > 0 && (
             <button onClick={handleDownloadAll} disabled={downloading}
               style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px 20px', fontWeight: 900, fontSize: 13, cursor: downloading ? 'wait' : 'pointer', textTransform: 'uppercase', letterSpacing: 1, opacity: downloading ? 0.7 : 1 }}>
-              ⬇ {downloading ? t.downloading : t.downloadAll}
+              {downloading ? t.downloading : t.downloadAll}
             </button>
           )}
         </div>
@@ -135,7 +135,7 @@ export default function KundenKaeufePage() {
               return (
                 <div key={purchase.id} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden' }}>
                   <div style={{ padding: '16px', borderBottom: '1px solid #1c2a38', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ fontSize: 12, color: '#445566' }}>
+                    <div style={{ fontSize: 12, color: '#e8eef4' }}>
                       {purchase.events?.home_team} · {purchase.events?.date}
                     </div>
                     <span style={{ color: '#e8ff00', fontWeight: 700 }}>€ {purchase.amount?.toFixed(2)}</span>

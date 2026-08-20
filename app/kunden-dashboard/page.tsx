@@ -11,6 +11,7 @@ export default function KundenDashboardPage() {
   const [loading, setLoading] = useState(true)
   const [purchases, setPurchases] = useState(0)
   const [hoveredSpiele, setHoveredSpiele] = useState(false)
+  const [hoveredFotos, setHoveredFotos] = useState(false)
   const router = useRouter()
   const { lang } = useLanguage()
 
@@ -19,6 +20,7 @@ export default function KundenDashboardPage() {
     boughtPhotos: lang === 'de' ? 'Gekaufte Fotos' : 'Purchased Photos',
     photosInCollection: lang === 'de' ? 'Fotos in deiner Sammlung' : 'Photos in your collection',
     myPurchases: lang === 'de' ? 'Meine Käufe' : 'My Purchases',
+    toMyPhotos: lang === 'de' ? 'Zu meinen Fotos' : 'To My Photos',
     view: lang === 'de' ? 'Anzeigen' : 'View',
     downloadAll: lang === 'de' ? 'Alle Fotos herunterladen' : 'Download all photos',
     findMoment: 'Find your Moment',
@@ -79,11 +81,23 @@ useEffect(() => {
             <div style={{ color: '#e8eef4', fontSize: 12, marginTop: 8 }}>{t.photosInCollection}</div>
           </div>
 
-          <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #1c2a38', borderRadius: 12, padding: '28px 24px', cursor: 'pointer' }}
-            onClick={() => router.push('/kunden-kaeufe')}>
-            <div style={{ color: '#e8eef4', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>{t.myPurchases}</div>
-            <div style={{ fontSize: 28, fontWeight: 900, color: '#e8eef4', lineHeight: 1 }}>{t.view}</div>
-            <div style={{ color: '#e8eef4', fontSize: 12, marginTop: 8 }}>{t.downloadAll}</div>
+          <div style={{ background: 'linear-gradient(135deg, #0d1219 0%, #131e2a 100%)', border: '1px solid #1c2a38', borderRadius: 12, padding: '28px 24px' }}>
+            <div style={{ color: '#e8eef4', fontSize: 11, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 16 }}>{t.myPurchases}</div>
+            <button
+              onClick={() => router.push('/kunden-kaeufe')}
+              onMouseEnter={() => setHoveredFotos(true)}
+              onMouseLeave={() => setHoveredFotos(false)}
+              style={{
+                background: hoveredFotos ? '#d4e800' : '#e8ff00',
+                color: '#070b0f', border: 'none', borderRadius: 4,
+                padding: '10px 28px', fontWeight: 900, fontSize: 12,
+                cursor: 'pointer', letterSpacing: 1.5, textTransform: 'uppercase',
+                transform: hoveredFotos ? 'scale(1.05)' : 'scale(1)',
+                transition: 'all 0.15s ease',
+                boxShadow: hoveredFotos ? '0 0 20px rgba(232,255,0,0.3)' : 'none',
+              }}>
+              {t.toMyPhotos}
+            </button>
           </div>
         </div>
 
