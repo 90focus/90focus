@@ -26,6 +26,7 @@ export default function KundenKaeufePage() {
     downloading: lang === 'de' ? 'Wird heruntergeladen...' : 'Downloading...',
     photosCount: (n: number) => lang === 'de' ? `${n} Foto${n !== 1 ? 's' : ''}` : `${n} Photo${n !== 1 ? 's' : ''}`,
     back: lang === 'de' ? '← Zurück' : '← Back',
+    toPhotos: lang === 'de' ? 'Zu den Fotos' : 'To the Photos',
   }
 
   useEffect(() => {
