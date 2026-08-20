@@ -51,12 +51,12 @@ useEffect(() => {
     setMenuOpen(false)
   }, [pathname])
 
-const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut()
-    } catch (e) {
-      console.error('Logout error:', e)
-    }
+const handleLogout = () => {
+    setUser(null)
+    setRole(null)
+    setMenuOpen(false)
+    router.push('/')
+
     try {
       Object.keys(localStorage).forEach((key) => {
         if (key.startsWith('sb-') && key.endsWith('-auth-token')) {
@@ -66,10 +66,10 @@ const handleLogout = async () => {
     } catch (e) {
       console.error('Local storage cleanup error:', e)
     }
-    setUser(null)
-    setRole(null)
-    setMenuOpen(false)
-    router.push('/')
+
+    supabase.auth.signOut().catch((e) => {
+      console.error('Logout error:', e)
+    })
   }
 
   const isPhotographer = role === 'photographer'
