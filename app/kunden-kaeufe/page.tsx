@@ -47,7 +47,7 @@ export default function KundenKaeufePage() {
     downloading: lang === 'de' ? 'Wird heruntergeladen...' : 'Downloading...',
     photosCount: (n: number) => lang === 'de' ? `${n} Foto${n !== 1 ? 's' : ''}` : `${n} Photo${n !== 1 ? 's' : ''}`,
     back: lang === 'de' ? '← Zurück' : '← Back',
-    toPhotos: lang === 'de' ? 'Zu den Fotos' : 'To the Photos',
+    toPhotos: lang === 'de' ? 'Zu den Fotos' : 'View Photos',
   }
 
   useEffect(() => {
@@ -116,13 +116,24 @@ export default function KundenKaeufePage() {
   const handleDownloadAll = async () => {
     if (!selectedEvent) return
     setDownloading(true)
-    for (let i = 0; i < selectedEvent.photos.length; i++) {
-      try {
-        await downloadOneFile(selectedEvent.photos[i])
-      } catch (e) {
-        console.error('Download error for', selectedEvent.photos[i], e)
-      }
-      await new Promise((resolve) => setTimeout(resolve, 300))
+    try {
+      const response = await fetch('/api/download-event-zip', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filenames: selectedEvent.photos }),
+      })
+      if (!response.ok) throw new Error('ZIP-Erstellung fehlgeschlagen')
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'sportshot-fotos.zip'
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      window.URL.revokeObjectURL(url)
+    } catch (e) {
+      console.error('Download all error:', e)
     }
     setDownloading(false)
   }
