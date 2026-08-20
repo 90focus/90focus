@@ -45,37 +45,45 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ received: true })
         }
 
-        const filenames = (pendingCheckout.filenames || '').split(',').filter(Boolean)
+        const photoIds = pendingCheckout.filenames || ''
         const eventId = pendingCheckout.event_id || null
         const userId = pendingCheckout.user_id
+        const amount = (session.amount_total || 0) / 100
 
-        if (filenames.length > 0 && userId) {
-          const preisProFoto = (session.amount_total || 1990) / 100 / filenames.length
+        const { data: existing } = await supabase
+          .from('purchases')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('photo_ids', photoIds)
+          .eq('amount', amount)
+          .gte('created_at', new Date(Date.now() - 5 * 60 * 1000).toISOString())
+          .limit(1)
 
-          const { data: existing } = await supabase
-            .from('purchases')
-            .select('id')
-            .eq('stripe_session_id', session.id)
-            .limit(1)
-
-          if (!existing || existing.length === 0) {
-            const rows = filenames.map((filename: string) => ({
-              user_id: userId,
-              foto_filename: filename,
-              event_id: eventId,
-              preis: preisProFoto,
-              stripe_session_id: session.id,
-            }))
-
-            const { error } = await supabase.from('purchases').insert(rows)
-            if (error) {
-              console.error('Webhook: Fehler beim Speichern des Kaufs:', error)
-            } else {
-              console.log(`Webhook: ${rows.length} Foto(s) gespeichert fuer Session ${session.id}`)
-            }
-          } else {
-            console.log(`Webhook: Kauf fuer Session ${session.id} bereits gespeichert, ueberspringe`)
+        if (!existing || existing.length === 0) {
+          let email = ''
+          try {
+            const { data: userData } = await supabase.auth.admin.getUserById(userId)
+            email = userData?.user?.email || ''
+          } catch (e) {
+            console.error('Could not fetch user email:', e)
           }
+
+          const { error } = await supabase.from('purchases').insert({
+            event_id: eventId,
+            email: email,
+            photo_ids: photoIds,
+            amount: amount,
+            status: 'completed',
+            user_id: userId,
+          })
+
+          if (error) {
+            console.error('Webhook: Fehler beim Speichern des Kaufs:', error)
+          } else {
+            console.log(`Webhook: Kauf gespeichert fuer User ${userId}`)
+          }
+        } else {
+          console.log(`Webhook: Kauf bereits gespeichert, ueberspringe`)
         }
       }
     } catch (e) {

@@ -20,13 +20,13 @@ export default function KundenKaeufePage() {
     loading: lang === 'de' ? 'Lade...' : 'Loading...',
   }
 
-useEffect(() => {
+  useEffect(() => {
     const init = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession()
         if (!session) { router.push('/login'); return }
         setUser(session.user)
-        const { data } = await supabase.from('purchases').select('*, events(home_team, away_team, date)').eq('user_id', session.user.id).order('datum', { ascending: false })
+        const { data } = await supabase.from('purchases').select('*, events(home_team, away_team, date)').eq('user_id', session.user.id).order('created_at', { ascending: false })
         setPurchases(data || [])
       } catch (e) {
         console.error('init error:', e)
@@ -63,24 +63,31 @@ useEffect(() => {
             </button>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
-            {purchases.map((purchase) => (
-              <div key={purchase.id} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden' }}>
-                <img src={getImageUrl(purchase.foto_filename)} alt="Photo" style={{ width: '100%', display: 'block' }} />
-                <div style={{ padding: '16px' }}>
-                  <div style={{ fontSize: 12, color: '#445566', marginBottom: 4 }}>
-                    {purchase.events?.home_team} · {purchase.events?.date}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            {purchases.map((purchase) => {
+              const photoList = (purchase.photo_ids || '').split(',').filter(Boolean)
+              return (
+                <div key={purchase.id} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, overflow: 'hidden' }}>
+                  <div style={{ padding: '16px', borderBottom: '1px solid #1c2a38', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ fontSize: 12, color: '#445566' }}>
+                      {purchase.events?.home_team} · {purchase.events?.date}
+                    </div>
+                    <span style={{ color: '#e8ff00', fontWeight: 700 }}>€ {purchase.amount?.toFixed(2)}</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-<span style={{ color: '#e8ff00', fontWeight: 700 }}>€ {purchase.preis?.toFixed(2)}</span>
-                    <a href={getImageUrl(purchase.foto_filename)} download
-                      style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '8px 16px', fontWeight: 900, fontSize: 13, cursor: 'pointer', textDecoration: 'none', textTransform: 'uppercase' }}>
-                      ⬇ Download
-                    </a>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 4, padding: 4 }}>
+                    {photoList.map((filename: string, i: number) => (
+                      <a key={i} href={getImageUrl(filename)} download
+                        style={{ position: 'relative', display: 'block', aspectRatio: '1', overflow: 'hidden', borderRadius: 4 }}>
+                        <img src={getImageUrl(filename)} alt="Photo" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                        <div style={{ position: 'absolute', bottom: 4, right: 4, background: '#e8ff00', color: '#070b0f', borderRadius: 4, padding: '4px 8px', fontWeight: 900, fontSize: 11 }}>
+                          ⬇
+                        </div>
+                      </a>
+                    ))}
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
