@@ -14,6 +14,7 @@ export default function EventBearbeitenPage() {
   const [liga, setLiga] = useState('')
 const [ort, setOrt] = useState('')
   const [preis, setPreis] = useState('19.90')
+  const [fotosFreigegeben, setFotosFreigegeben] = useState(false)
   const [sponsorName, setSponsorName] = useState('')
   const [sponsorLogo, setSponsorLogo] = useState<File | null>(null)
   const [sponsorLogoPreview, setSponsorLogoPreview] = useState<string | null>(null)
@@ -87,6 +88,7 @@ location: lang === 'de' ? 'Ort (optional)' : 'Location (optional)',
     setLiga(liga)
 setOrt(data.ort || '')
     setPreis(data.preis ? String(data.preis) : '19.90')
+    setFotosFreigegeben(data.fotos_freigegeben || false)
     setSponsorName(data.sponsor_name || '')
     setCurrentLogoUrl(data.sponsor_logo_url || null)
     setCurrentBildUrl(data.bild_url || null)
@@ -122,6 +124,7 @@ const { error } = await supabase.from('events').update({
       home_team: finalName, away_team: '', date, liga, ort,
       sponsor_name: sponsorName, sponsor_logo_url: sponsorLogoUrl, bild_url: bildUrl,
       preis: parseFloat(preis) || 19.90,
+      fotos_freigegeben: fotosFreigegeben,
     }).eq('id', eventId)
 
     if (error) {
@@ -186,6 +189,14 @@ const { error } = await supabase.from('events').update({
             <input type="number" step="0.10" placeholder={t.price} value={preis} onChange={(e) => setPreis(e.target.value)}
               style={{ width: '100%', padding: '12px', paddingRight: '52px', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
             <span style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: '#667788', fontSize: 14, fontWeight: 700, pointerEvents: 'none' }}>EUR</span>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '16px 0', padding: '12px', background: fotosFreigegeben ? 'rgba(68,255,136,0.1)' : '#131e2a', borderRadius: 6, border: fotosFreigegeben ? '1px solid #44ff88' : '1px solid #1c2a38' }}>
+            <input type="checkbox" checked={fotosFreigegeben} onChange={(e) => setFotosFreigegeben(e.target.checked)}
+              style={{ width: 18, height: 18, cursor: 'pointer' }} id="fotosFreigegebenEdit" />
+            <label htmlFor="fotosFreigegebenEdit" style={{ cursor: 'pointer', fontSize: 14, color: '#e8eef4' }}>
+              {lang === 'de' ? 'Fotos vollständig hochgeladen (Suche freischalten)' : 'Photos fully uploaded (enable search)'}
+            </label>
           </div>
 
           <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>

@@ -14,6 +14,7 @@ export default function AdminPage() {
   const [liga, setLiga] = useState('')
 const [ort, setOrt] = useState('')
   const [preis, setPreis] = useState('19.90')
+  const [fotosFreigegeben, setFotosFreigegeben] = useState(false)
   const [eventBild, setEventBild] = useState<File | null>(null)
   const [eventBildPreview, setEventBildPreview] = useState<string | null>(null)
   const [eventBildName, setEventBildName] = useState('')
@@ -106,6 +107,7 @@ const createEvent = async () => {
 const { data, error } = await supabase.from('events').insert({
         home_team: finalName, away_team: '', date, liga, ort,
         bild_url: bildUrl, user_id: user.id, preis: parseFloat(preis) || 19.90,
+        fotos_freigegeben: fotosFreigegeben,
       }).select().single()
       if (error) {
         setMessage(t.errorPrefix + error.message)
@@ -113,7 +115,7 @@ const { data, error } = await supabase.from('events').insert({
         setCreatedEventId(data.id)
         setCreatedEventName(finalName)
         setMessage(t.eventCreated)
-        setEventName(''); setHomeTeam(''); setAwayTeam(''); setDate(''); setLiga(''); setOrt(''); setPreis('19.90')
+        setEventName(''); setHomeTeam(''); setAwayTeam(''); setDate(''); setLiga(''); setOrt(''); setPreis('19.90'); setFotosFreigegeben(false)
         setEventBild(null); setEventBildPreview(null); setEventBildName('')
       }
     } catch (e) {
@@ -215,6 +217,16 @@ const { data, error } = await supabase.from('events').insert({
               style={{ width: '100%', padding: '12px', paddingRight: '52px', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
             <span style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: '#667788', fontSize: 14, fontWeight: 700, pointerEvents: 'none' }}>EUR</span>
           </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '16px 0', padding: '12px', background: '#131e2a', borderRadius: 6, border: '1px solid #1c2a38' }}>
+            <input type="checkbox" checked={fotosFreigegeben} onChange={(e) => setFotosFreigegeben(e.target.checked)}
+              style={{ width: 18, height: 18, cursor: 'pointer' }} id="fotosFreigegeben" />
+            <label htmlFor="fotosFreigegeben" style={{ cursor: 'pointer', fontSize: 14, color: '#e8eef4' }}>
+              {lang === 'de' ? 'Fotos vollständig hochgeladen (Suche freischalten)' : 'Photos fully uploaded (enable search)'}
+            </label>
+          </div>
+
+
 
           <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>
             <h3 style={{ margin: '0 0 4px 0', color: '#e8eef4' }}>{t.eventImage}</h3>
