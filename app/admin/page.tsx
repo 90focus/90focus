@@ -15,6 +15,7 @@ export default function AdminPage() {
 const [ort, setOrt] = useState('')
   const [preis, setPreis] = useState('19.90')
   const [fotosFreigegeben, setFotosFreigegeben] = useState(false)
+  const [showConfirmComplete, setShowConfirmComplete] = useState(false)
   const [eventBild, setEventBild] = useState<File | null>(null)
   const [eventBildPreview, setEventBildPreview] = useState<string | null>(null)
   const [eventBildName, setEventBildName] = useState('')
@@ -165,11 +166,21 @@ const { data, error } = await supabase.from('events').insert({
       const data = await completeRes.json()
       setMessage(data.message || t.done)
       setFiles(null); setFileNames('')
+      setShowConfirmComplete(true)
     } catch (err) {
       setMessage(t.uploadError)
     } finally {
       setUploading(false)
       setUploadProgress({ current: 0, total: 0 })
+    }
+  }
+
+  const confirmPhotosComplete = async () => {
+    if (!createdEventId) return
+    const { error } = await supabase.from('events').update({ fotos_freigegeben: true }).eq('id', createdEventId)
+    if (!error) {
+      setMessage(lang === 'de' ? '✅ Suche für Nutzer freigeschaltet!' : '✅ Search enabled for users!')
+      setShowConfirmComplete(false)
     }
   }
 
@@ -286,6 +297,24 @@ const { data, error } = await supabase.from('events').insert({
             style={{ padding: '12px 32px', background: createdEventId ? '#e8ff00' : '#1c2a38', color: createdEventId ? '#070b0f' : '#445566', border: 'none', borderRadius: '6px', cursor: createdEventId ? 'pointer' : 'not-allowed', fontSize: '16px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>
             {uploading ? t.uploading : t.uploadBtn}
           </button>
+
+          {showConfirmComplete && (
+            <div style={{ marginTop: 20, padding: '16px', background: 'rgba(232,255,0,0.08)', border: '1px solid #e8ff00', borderRadius: 8 }}>
+              <p style={{ color: '#e8eef4', fontSize: 14, marginBottom: 12, fontWeight: 700 }}>
+                {lang === 'de' ? 'Sind das ALLE Fotos für dieses Event, oder lädst du noch mehr hoch?' : 'Is this ALL the photos for this event, or are you uploading more?'}
+              </p>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button onClick={confirmPhotosComplete}
+                  style={{ flex: 1, padding: '10px', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 6, fontWeight: 900, fontSize: 13, cursor: 'pointer', textTransform: 'uppercase' }}>
+                  {lang === 'de' ? '✓ Ja, alle Fotos - Suche freischalten' : '✓ Yes, all photos - enable search'}
+                </button>
+                <button onClick={() => setShowConfirmComplete(false)}
+                  style={{ flex: 1, padding: '10px', background: 'transparent', color: '#8899aa', border: '1px solid #1c2a38', borderRadius: 6, fontSize: 13, cursor: 'pointer' }}>
+                  {lang === 'de' ? 'Noch nicht, ich lade weiter hoch' : 'Not yet, still uploading'}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {message && (
