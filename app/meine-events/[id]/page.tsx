@@ -19,6 +19,7 @@ export default function EventDetailPage() {
   const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0 })
   const [files, setFiles] = useState<FileList | null>(null)
   const [fileNames, setFileNames] = useState<string>('')
+  const [showConfirmComplete, setShowConfirmComplete] = useState(false)
   const router = useRouter()
   const params = useParams()
   const eventId = params.id as string
@@ -219,11 +220,20 @@ const loadFotos = async () => {
       setFiles(null)
       setFileNames('')
       loadFotos()
+      setShowConfirmComplete(true)
     } catch {
       setMessage(t.uploadError)
     } finally {
       setUploading(false)
       setUploadProgress({ current: 0, total: 0 })
+    }
+  }
+
+  const confirmPhotosComplete = async () => {
+    const { error } = await supabase.from('events').update({ fotos_freigegeben: true }).eq('id', eventId)
+    if (!error) {
+      setMessage(lang === 'de' ? '✅ Suche für Nutzer freigeschaltet!' : '✅ Search enabled for users!')
+      setShowConfirmComplete(false)
     }
   }
 
@@ -311,6 +321,24 @@ const loadFotos = async () => {
           <button onClick={handleUpload} disabled={uploading} style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 6, padding: '10px 24px', cursor: 'pointer', fontSize: 14, fontWeight: 900, marginTop: 12 }}>
             {uploading ? t.uploading : t.uploadBtn}
           </button>
+
+          {showConfirmComplete && (
+            <div style={{ marginTop: 16, padding: '16px', background: 'rgba(232,255,0,0.08)', border: '1px solid #e8ff00', borderRadius: 8 }}>
+              <p style={{ color: '#e8eef4', fontSize: 14, marginBottom: 12, fontWeight: 700 }}>
+                {lang === 'de' ? 'Sind das ALLE Fotos für dieses Event, oder lädst du noch mehr hoch?' : 'Is this ALL the photos for this event, or are you uploading more?'}
+              </p>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                <button onClick={confirmPhotosComplete}
+                  style={{ flex: 1, padding: '10px', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 6, fontWeight: 900, fontSize: 13, cursor: 'pointer', textTransform: 'uppercase' }}>
+                  {lang === 'de' ? '✓ Ja, alle Fotos - Suche freischalten' : '✓ Yes, all photos - enable search'}
+                </button>
+                <button onClick={() => setShowConfirmComplete(false)}
+                  style={{ flex: 1, padding: '10px', background: 'transparent', color: '#8899aa', border: '1px solid #1c2a38', borderRadius: 6, fontSize: 13, cursor: 'pointer' }}>
+                  {lang === 'de' ? 'Noch nicht, ich lade weiter hoch' : 'Not yet, still uploading'}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {message && (
