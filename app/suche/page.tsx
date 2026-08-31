@@ -28,6 +28,8 @@ function SucheContent() {
     uploadPrompt: lang === 'de' ? 'Lade ein Selfie hoch und finde deine Fotos' : 'Upload a selfie and find your photos',
     uploadPhoto: lang === 'de' ? 'Foto hochladen' : 'Upload Photo',
     searching: lang === 'de' ? 'Suche läuft...' : 'Searching...',
+    notReadyTitle: lang === 'de' ? 'Fotos noch nicht verfügbar' : 'Photos not yet available',
+    notReadyText: lang === 'de' ? 'Wir laden gerade alle Fotos hoch. Das dauert in der Regel 24-48 Stunden nach dem Event. Schau bald wieder vorbei!' : 'We are currently uploading all photos. This usually takes 24-48 hours after the event. Check back soon!',
     searchPhotos: lang === 'de' ? 'Fotos suchen' : 'Search Photos',
     noSelfie: lang === 'de' ? 'Bitte zuerst ein Selfie aufnehmen!' : 'Please upload a selfie first!',
     searchError: lang === 'de' ? 'Fehler bei der Suche!' : 'Error during search!',
@@ -199,6 +201,16 @@ const total = (event?.preis || 19.90).toFixed(2)
         <div style={{ padding: '40px 48px', maxWidth: '600px', margin: '60px auto 0', textAlign: 'center' }}>
           <EventCard />
 
+          {event && !event.fotos_freigegeben ? (
+            <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '32px 24px' }}>
+              <div style={{ fontSize: 40, marginBottom: 16 }}>⏳</div>
+              <h1 style={{ fontSize: 18, fontWeight: 900, textTransform: 'uppercase', marginBottom: 12 }}>
+                {t.notReadyTitle}
+              </h1>
+              <p style={{ color: '#8899aa', fontSize: 14, lineHeight: 1.6 }}>{t.notReadyText}</p>
+            </div>
+          ) : (
+            <>
           <h1 style={{ fontSize: 18, fontWeight: 900, textTransform: 'uppercase', marginBottom: 32 }}>
             {t.uploadPrompt}
           </h1>
@@ -230,6 +242,8 @@ const total = (event?.preis || 19.90).toFixed(2)
           )}
 
           {message && !searching && <p style={{ marginTop: '20px', fontWeight: 'bold', color: '#e8ff00' }}>{message}</p>}
+            </>
+          )}
         </div>
       ) : (
         <div style={{ padding: '40px 24px', maxWidth: '700px', margin: '60px auto 0' }}>
