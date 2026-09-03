@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { supabase } from '@/app/supabase'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useLanguage } from '@/app/context/LanguageContext'
 
-export default function RegisterPage() {
+function RegisterContent() {
   const [vorname, setVorname] = useState('')
   const [nachname, setNachname] = useState('')
   const [email, setEmail] = useState('')
@@ -177,5 +177,13 @@ const handleRegister = async () => {
         </div>
       )}
     </div>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#070b0f' }} />}>
+      <RegisterContent />
+    </Suspense>
   )
 }
