@@ -154,7 +154,7 @@ const handleLogin = async () => {
                 </button>
                 <div style={{ borderTop: '1px solid #131e2a', paddingTop: 16 }}>
                   <span style={{ color: '#e8eef4', fontSize: 14 }}>{t.noAccount} </span>
-                  <button onClick={() => router.push('/register')}
+                  <button onClick={() => router.push(redirectTo ? `/register?redirect=${encodeURIComponent(redirectTo)}` : '/register')}
                     style={{ background: 'none', border: 'none', color: '#e8ff00', cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>
                     {t.registerNow}
                   </button>

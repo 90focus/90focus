@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { supabase } from '@/app/supabase'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useLanguage } from '@/app/context/LanguageContext'
 
 export default function RegisterPage() {
@@ -17,6 +17,8 @@ export default function RegisterPage() {
   const [error, setError] = useState('')
   const [modalUrl, setModalUrl] = useState<string | null>(null)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirect = searchParams.get('redirect') || '/login'
   const { lang } = useLanguage()
 
   const t = {
@@ -61,7 +63,7 @@ const handleRegister = async () => {
       const { data, error: signUpError } = await supabase.auth.signUp({
         email, password,
         options: {
-          emailRedirectTo: `${window.location.origin}/login`,
+          emailRedirectTo: `${window.location.origin}${redirect}`,
           data: { role: 'customer', vorname, nachname, geburtsdatum, lang, agb_datenschutz_akzeptiert_am: new Date().toISOString() }
         }
       })
