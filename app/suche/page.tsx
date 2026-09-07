@@ -64,11 +64,43 @@ useEffect(() => {
     return () => window.removeEventListener('keydown', handleKey)
   }, [lightboxIndex, matches.length])
 
-  const handleSelfie = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const compressImage = (file: File): Promise<File> => {
+    return new Promise((resolve) => {
+      const img = new Image()
+      img.onload = () => {
+        const maxSize = 1200
+        let width = img.width
+        let height = img.height
+        if (width > height && width > maxSize) {
+          height = (height * maxSize) / width
+          width = maxSize
+        } else if (height > maxSize) {
+          width = (width * maxSize) / height
+          height = maxSize
+        }
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        ctx?.drawImage(img, 0, 0, width, height)
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(new File([blob], file.name, { type: 'image/jpeg' }))
+          } else {
+            resolve(file)
+          }
+        }, 'image/jpeg', 0.85)
+      }
+      img.src = URL.createObjectURL(file)
+    })
+  }
+
+  const handleSelfie = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      setSelfie(file)
-      setPreview(URL.createObjectURL(file))
+      const compressed = await compressImage(file)
+      setSelfie(compressed)
+      setPreview(URL.createObjectURL(compressed))
       setSelfieName(file.name)
     }
   }
