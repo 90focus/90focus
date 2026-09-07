@@ -21,7 +21,6 @@ export default function EventDetailPage() {
   const [fileNames, setFileNames] = useState<string>('')
   const [showConfirmComplete, setShowConfirmComplete] = useState(false)
   const [displayCount, setDisplayCount] = useState(100)
-  const [displayCount, setDisplayCount] = useState(100)
   const router = useRouter()
   const params = useParams()
   const eventId = params.id as string
