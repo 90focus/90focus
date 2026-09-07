@@ -434,29 +434,25 @@ const loadFotos = async () => {
         {fotos.length === 0 ? (
           <div style={{ color: '#445566', padding: '40px 0', textAlign: 'center' }}>{t.noPhotos}</div>
         ) : (
-          <>
-          <div className="fotos-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
-            {fotos.slice(0, displayCount).map((foto, index) => (
-              <div key={foto.id} onClick={() => handleFotoClick(index, foto.id)} style={{ position: 'relative', borderRadius: 8, overflow: 'hidden', cursor: selectMode ? 'pointer' : 'zoom-in', border: selected.includes(foto.id) ? '3px solid #e8ff00' : '3px solid transparent', transition: 'border 0.1s' }}>
-                <img src={getImageUrl(foto.filename)} alt="Photo" loading="lazy" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }} />
-                {selectMode && selected.includes(foto.id) && (
-                  <div style={{ position: 'absolute', top: 8, right: 8, background: '#e8ff00', borderRadius: '50%', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 14, color: '#070b0f' }}>✓</div>
-                )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxHeight: '600px', overflowY: 'auto', border: '1px solid #1c2a38', borderRadius: 8 }}>
+            {fotos.map((foto, index) => (
+              <div key={foto.id}
+                onClick={() => selectMode ? setSelected(prev => prev.includes(foto.id) ? prev.filter(s => s !== foto.id) : [...prev, foto.id]) : setLightboxIndex(index)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px',
+                  background: selected.includes(foto.id) ? 'rgba(232,255,0,0.1)' : 'transparent',
+                  borderBottom: '1px solid #131e2a', cursor: 'pointer', fontSize: 13,
+                }}>
                 {selectMode && (
-                  <div style={{ position: 'absolute', inset: 0, background: selected.includes(foto.id) ? 'rgba(232,255,0,0.1)' : 'transparent', transition: 'background 0.1s' }} />
+                  <div style={{ width: 18, height: 18, borderRadius: 4, border: '1px solid #445566', background: selected.includes(foto.id) ? '#e8ff00' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    {selected.includes(foto.id) && <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 12 }}>✓</span>}
+                  </div>
                 )}
+                <span style={{ color: '#8899aa' }}>📷</span>
+                <span style={{ color: '#e8eef4', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{foto.filename.split('/').pop()}</span>
               </div>
             ))}
           </div>
-          {displayCount < fotos.length && (
-            <div style={{ textAlign: 'center', marginTop: 20 }}>
-              <button onClick={() => setDisplayCount(c => c + 100)}
-                style={{ background: '#1c2a38', color: '#e8eef4', border: '1px solid #2a3a4a', borderRadius: 6, padding: '10px 24px', cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>
-                {lang === 'de' ? `Mehr laden (${fotos.length - displayCount} übrig)` : `Load more (${fotos.length - displayCount} remaining)`}
-              </button>
-            </div>
-          )}
-          </>
         )}
       </div>
     </div>
