@@ -133,7 +133,8 @@ const { data, error } = await supabase.from('events').insert({
     setMessage(t.loadingPhotos(files.length))
 
     try {
-      const filenames = Array.from(files).map(f => f.name)
+      const allFiles = Array.from(files)
+      const filenames = allFiles.map(f => f.name)
       const presignRes = await fetch('/api/presigned-url', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -142,8 +143,8 @@ const { data, error } = await supabase.from('events').insert({
       const { urls } = await presignRes.json()
 
       const uploadedKeys: string[] = []
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i]
+      for (let i = 0; i < allFiles.length; i++) {
+        const file = allFiles[i]
         const { url, key } = urls[i]
 
         await fetch(url, {
@@ -153,18 +154,26 @@ const { data, error } = await supabase.from('events').insert({
         })
 
         uploadedKeys.push(key)
-        setUploadProgress({ current: i + 1, total: files.length })
-        setMessage(t.uploadingProgress(i + 1, files.length))
+        setUploadProgress({ current: i + 1, total: allFiles.length })
+        setMessage(t.uploadingProgress(i + 1, allFiles.length))
       }
 
-      setMessage(t.processing)
-      const completeRes = await fetch('/api/upload-complete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ eventId: createdEventId, keys: uploadedKeys })
-      })
-      const data = await completeRes.json()
-      setMessage(data.message || t.done)
+      const BATCH_SIZE = 25
+      let processedCount = 0
+      for (let i = 0; i < uploadedKeys.length; i += BATCH_SIZE) {
+        const batch = uploadedKeys.slice(i, i + BATCH_SIZE)
+        setMessage(lang === 'de'
+          ? `Verarbeite Fotos: ${processedCount} / ${uploadedKeys.length}...`
+          : `Processing photos: ${processedCount} / ${uploadedKeys.length}...`)
+        await fetch('/api/upload-complete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ eventId: createdEventId, keys: batch })
+        })
+        processedCount += batch.length
+      }
+
+      setMessage(t.done)
       setFiles(null); setFileNames('')
       setShowConfirmComplete(true)
     } catch (err) {
