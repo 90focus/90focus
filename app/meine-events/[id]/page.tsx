@@ -195,19 +195,37 @@ const loadFotos = async () => {
       const { urls } = await presignRes.json()
 
       const uploadedKeys: string[] = []
+      const failedFiles: string[] = []
       for (let i = 0; i < allFiles.length; i++) {
         const file = allFiles[i]
         const { url, key } = urls[i]
 
-        await fetch(url, {
-          method: 'PUT',
-          headers: { 'Content-Type': file.type },
-          body: file
-        })
+        let success = false
+        for (let attempt = 0; attempt < 3 && !success; attempt++) {
+          try {
+            const putRes = await fetch(url, {
+              method: 'PUT',
+              headers: { 'Content-Type': file.type },
+              body: file
+            })
+            if (putRes.ok) success = true
+          } catch (e) {
+            console.error(`Upload attempt ${attempt + 1} failed for ${file.name}:`, e)
+          }
+        }
 
-        uploadedKeys.push(key)
+        if (success) {
+          uploadedKeys.push(key)
+        } else {
+          failedFiles.push(file.name)
+        }
+
         setUploadProgress({ current: i + 1, total: allFiles.length })
         setMessage(t.uploadingProgress(i + 1, allFiles.length))
+      }
+
+      if (failedFiles.length > 0) {
+        console.error('Failed uploads:', failedFiles)
       }
 
       const BATCH_SIZE = 25
@@ -225,7 +243,9 @@ const loadFotos = async () => {
         processedCount += batch.length
       }
 
-      setMessage(t.done)
+      setMessage(failedFiles.length > 0
+        ? (lang === 'de' ? `⚠️ ${uploadedKeys.length} erfolgreich, ${failedFiles.length} fehlgeschlagen. Bitte nochmal versuchen mit den fehlenden Dateien.` : `⚠️ ${uploadedKeys.length} successful, ${failedFiles.length} failed. Please retry with the missing files.`)
+        : t.done)
       setFiles(null)
       setFileNames('')
       loadFotos()
