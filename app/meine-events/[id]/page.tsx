@@ -434,24 +434,11 @@ const loadFotos = async () => {
         {fotos.length === 0 ? (
           <div style={{ color: '#445566', padding: '40px 0', textAlign: 'center' }}>{t.noPhotos}</div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxHeight: '600px', overflowY: 'auto', border: '1px solid #1c2a38', borderRadius: 8 }}>
-            {fotos.map((foto, index) => (
-              <div key={foto.id}
-                onClick={() => selectMode ? setSelected(prev => prev.includes(foto.id) ? prev.filter(s => s !== foto.id) : [...prev, foto.id]) : setLightboxIndex(index)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px',
-                  background: selected.includes(foto.id) ? 'rgba(232,255,0,0.1)' : 'transparent',
-                  borderBottom: '1px solid #131e2a', cursor: 'pointer', fontSize: 13,
-                }}>
-                {selectMode && (
-                  <div style={{ width: 18, height: 18, borderRadius: 4, border: '1px solid #445566', background: selected.includes(foto.id) ? '#e8ff00' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    {selected.includes(foto.id) && <span style={{ color: '#070b0f', fontWeight: 900, fontSize: 12 }}>✓</span>}
-                  </div>
-                )}
-                <span style={{ color: '#8899aa' }}>📷</span>
-                <span style={{ color: '#e8eef4', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{foto.filename.split('/').pop()}</span>
-              </div>
-            ))}
+          <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '32px', textAlign: 'center' }}>
+            <div style={{ fontSize: 48, fontWeight: 900, color: '#e8ff00', marginBottom: 8 }}>{fotos.length}</div>
+            <div style={{ color: '#8899aa', fontSize: 14 }}>
+              {lang === 'de' ? 'Fotos erfolgreich hochgeladen und gespeichert' : 'Photos successfully uploaded and saved'}
+            </div>
           </div>
         )}
       </div>
