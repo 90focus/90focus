@@ -436,7 +436,7 @@ const loadFotos = async () => {
           <div className="fotos-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
             {fotos.map((foto, index) => (
               <div key={foto.id} onClick={() => handleFotoClick(index, foto.id)} style={{ position: 'relative', borderRadius: 8, overflow: 'hidden', cursor: selectMode ? 'pointer' : 'zoom-in', border: selected.includes(foto.id) ? '3px solid #e8ff00' : '3px solid transparent', transition: 'border 0.1s' }}>
-                <img src={getImageUrl(foto.filename)} alt="Photo" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }} />
+                <img src={getImageUrl(foto.filename)} alt="Photo" loading="lazy" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }} />
                 {selectMode && selected.includes(foto.id) && (
                   <div style={{ position: 'absolute', top: 8, right: 8, background: '#e8ff00', borderRadius: '50%', width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 14, color: '#070b0f' }}>✓</div>
                 )}
