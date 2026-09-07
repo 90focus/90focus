@@ -149,7 +149,9 @@ const loadFotos = async () => {
     setDeleting(true)
     setMessage(t.deletingPhotos)
     const fotosToDelete = fotos.filter(f => selected.includes(f.id))
-    for (const foto of fotosToDelete) {
+    const CONCURRENCY = 10
+
+    const deleteOne = async (foto: any) => {
       try {
         await fetch('/api/delete-foto', {
           method: 'DELETE',
@@ -160,6 +162,13 @@ const loadFotos = async () => {
         console.error('Delete error:', e)
       }
     }
+
+    for (let i = 0; i < fotosToDelete.length; i += CONCURRENCY) {
+      const chunk = fotosToDelete.slice(i, i + CONCURRENCY)
+      await Promise.all(chunk.map(deleteOne))
+      setMessage(`${lang === 'de' ? 'Gelöscht' : 'Deleted'}: ${Math.min(i + CONCURRENCY, fotosToDelete.length)} / ${fotosToDelete.length}`)
+    }
+
     setMessage(t.photosDeleted(selected.length))
     setSelected([])
     setSelectMode(false)
@@ -196,10 +205,10 @@ const loadFotos = async () => {
 
       const uploadedKeys: string[] = []
       const failedFiles: string[] = []
-      for (let i = 0; i < allFiles.length; i++) {
-        const file = allFiles[i]
-        const { url, key } = urls[i]
+      let completedCount = 0
+      const CONCURRENCY = 8
 
+      const uploadOne = async (file: File, url: string, key: string) => {
         let success = false
         for (let attempt = 0; attempt < 3 && !success; attempt++) {
           try {
@@ -213,15 +222,20 @@ const loadFotos = async () => {
             console.error(`Upload attempt ${attempt + 1} failed for ${file.name}:`, e)
           }
         }
-
         if (success) {
           uploadedKeys.push(key)
         } else {
           failedFiles.push(file.name)
         }
+        completedCount++
+        setUploadProgress({ current: completedCount, total: allFiles.length })
+        setMessage(t.uploadingProgress(completedCount, allFiles.length))
+      }
 
-        setUploadProgress({ current: i + 1, total: allFiles.length })
-        setMessage(t.uploadingProgress(i + 1, allFiles.length))
+      for (let i = 0; i < allFiles.length; i += CONCURRENCY) {
+        const chunk = allFiles.slice(i, i + CONCURRENCY)
+        const chunkUrls = urls.slice(i, i + CONCURRENCY)
+        await Promise.all(chunk.map((file: File, idx: number) => uploadOne(file, chunkUrls[idx].url, chunkUrls[idx].key)))
       }
 
       if (failedFiles.length > 0) {
