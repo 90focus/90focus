@@ -102,12 +102,29 @@ const loadEvent = async (userId: string) => {
 
 const loadFotos = async () => {
     try {
-      const { data } = await supabase
-        .from('event_fotos')
-        .select('*')
-        .eq('event_id', eventId)
-        .order('erstellt_am', { ascending: false })
-      setFotos(data || [])
+      let allFotos: any[] = []
+      let from = 0
+      const pageSize = 1000
+      let keepGoing = true
+
+      while (keepGoing) {
+        const { data } = await supabase
+          .from('event_fotos')
+          .select('*')
+          .eq('event_id', eventId)
+          .order('erstellt_am', { ascending: false })
+          .range(from, from + pageSize - 1)
+
+        if (data && data.length > 0) {
+          allFotos = [...allFotos, ...data]
+          from += pageSize
+          keepGoing = data.length === pageSize
+        } else {
+          keepGoing = false
+        }
+      }
+
+      setFotos(allFotos)
     } catch (e) {
       console.error('loadFotos error:', e)
     }
