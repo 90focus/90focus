@@ -183,6 +183,14 @@ function SucheContent() {
     router.push(`/checkout?${params.toString()}`)
   }
 
+  const handleClearCart = () => {
+    const confirmed = confirm(lang === 'de' ? 'Bist du sicher, dass du den Warenkorb leeren willst?' : 'Are you sure you want to clear the cart?')
+    if (confirmed) {
+      setSelectedPhotos([])
+      setShowSelection(false)
+    }
+  }
+
   const Logo = () => (
     !event?.sponsor_logo_url ? (
       <div style={{ position: 'absolute', bottom: 6, right: 6, background: 'rgba(0,0,0,0.6)', borderRadius: 4, padding: '3px 6px' }}>
@@ -315,10 +323,16 @@ function SucheContent() {
       </div>
 
       {selectedPhotos.length > 0 && (
-        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: '#0d1219', borderTop: '1px solid #1c2a38', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 500 }}>
-          <span onClick={() => setShowSelection(true)} style={{ color: '#e8ff00', fontSize: 14, fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>
-            {t.selected(selectedPhotos.length)}
-          </span>
+        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: '#0d1219', borderTop: '1px solid #1c2a38', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 500, gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span onClick={() => setShowSelection(true)} style={{ color: '#e8ff00', fontSize: 14, fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>
+              {t.selected(selectedPhotos.length)}
+            </span>
+            <button onClick={handleClearCart}
+              style={{ background: 'transparent', border: '1px solid #ff4444', color: '#ff4444', borderRadius: 4, padding: '6px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
+              {lang === 'de' ? 'Entfernen' : 'Remove'}
+            </button>
+          </div>
           <button onClick={handleKaufen}
             style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 6, padding: '12px 28px', fontWeight: 900, fontSize: 14, cursor: 'pointer', textTransform: 'uppercase' }}>
             {t.buyNow}
@@ -332,7 +346,7 @@ function SucheContent() {
             <div style={{ padding: '16px 20px', borderBottom: '1px solid #1c2a38', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontWeight: 900, fontSize: 15 }}>{t.selected(selectedPhotos.length)}</span>
               <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                <button onClick={() => { setSelectedPhotos([]); setShowSelection(false) }}
+                <button onClick={handleClearCart}
                   style={{ background: 'transparent', border: '1px solid #ff4444', color: '#ff4444', borderRadius: 4, padding: '6px 12px', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
                   {lang === 'de' ? 'Warenkorb leeren' : 'Clear cart'}
                 </button>

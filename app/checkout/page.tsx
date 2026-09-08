@@ -156,6 +156,13 @@ function CheckoutContent() {
             {t.yourPhotos} ({filenames.length})
           </div>
 
+          {eventId && (
+            <button onClick={() => router.push(`/suche?eventId=${eventId}`)}
+              style={{ marginBottom: 16, background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '10px 16px', fontSize: 13, cursor: 'pointer' }}>
+              {lang === 'de' ? '+ Weitere Fotos auswählen / Warenkorb bearbeiten' : '+ Select more photos / Edit cart'}
+            </button>
+          )}
+
           {event && (
             <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: '12px 16px', marginBottom: 16 }}>
               <div style={{ fontSize: 14, fontWeight: 800 }}>{event.home_team}</div>
