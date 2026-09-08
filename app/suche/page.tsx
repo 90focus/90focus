@@ -13,6 +13,7 @@ function SucheContent() {
   const [selectedPhotos, setSelectedPhotos] = useState<string[]>([])
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [displayCount, setDisplayCount] = useState(60)
+  const [showSelection, setShowSelection] = useState(false)
   const searchParams = useSearchParams()
   const eventId = searchParams.get('eventId')
   const router = useRouter()
@@ -103,6 +104,7 @@ function SucheContent() {
   const folders: { key: string; label: string; fotos: any[] }[] = []
   const hourMap = new Map<number, any[]>()
   const otherFotos: any[] = []
+  const MIN_FOLDER_SIZE = 5
 
   allFotos.forEach((f) => {
     if (f.zeitstempel_fehlt || !f.aufgenommen_am) {
@@ -115,8 +117,13 @@ function SucheContent() {
   })
 
   Array.from(hourMap.keys()).sort((a, b) => a - b).forEach((hour) => {
-    const label = `${String(hour).padStart(2, '0')}:00 - ${String(hour + 1).padStart(2, '0')}:00`
-    folders.push({ key: String(hour), label, fotos: hourMap.get(hour)! })
+    const fotosInHour = hourMap.get(hour)!
+    if (fotosInHour.length < MIN_FOLDER_SIZE) {
+      otherFotos.push(...fotosInHour)
+    } else {
+      const label = `${String(hour).padStart(2, '0')}:00 - ${String(hour + 1).padStart(2, '0')}:00`
+      folders.push({ key: String(hour), label, fotos: fotosInHour })
+    }
   })
 
   if (otherFotos.length > 0) {
@@ -277,11 +284,41 @@ function SucheContent() {
 
       {selectedPhotos.length > 0 && (
         <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: '#0d1219', borderTop: '1px solid #1c2a38', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 500 }}>
-          <span style={{ color: '#e8eef4', fontSize: 14, fontWeight: 700 }}>{t.selected(selectedPhotos.length)}</span>
+          <span onClick={() => setShowSelection(true)} style={{ color: '#e8ff00', fontSize: 14, fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>
+            {t.selected(selectedPhotos.length)}
+          </span>
           <button onClick={handleKaufen}
             style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 6, padding: '12px 28px', fontWeight: 900, fontSize: 14, cursor: 'pointer', textTransform: 'uppercase' }}>
             {t.buyNow}
           </button>
+        </div>
+      )}
+
+      {showSelection && (
+        <div onClick={() => setShowSelection(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 900, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 12, maxWidth: 600, width: '100%', maxHeight: '80vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #1c2a38', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontWeight: 900, fontSize: 15 }}>{t.selected(selectedPhotos.length)}</span>
+              <button onClick={() => setShowSelection(false)} style={{ background: 'transparent', border: 'none', color: '#e8eef4', fontSize: 22, cursor: 'pointer' }}>✕</button>
+            </div>
+            <div style={{ padding: 16, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+              {allFotos.filter(f => selectedPhotos.includes(f.filename)).map((foto) => (
+                <div key={foto.id} style={{ position: 'relative', aspectRatio: '1', borderRadius: 6, overflow: 'hidden' }}>
+                  <img src={getThumbUrl(foto)} alt="Foto" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  <div onClick={() => togglePhoto(foto.filename)}
+                    style={{ position: 'absolute', top: 4, right: 4, width: 22, height: 22, borderRadius: '50%', background: 'rgba(255,68,68,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff', fontWeight: 900, fontSize: 12 }}>
+                    ✕
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{ padding: 16, borderTop: '1px solid #1c2a38' }}>
+              <button onClick={handleKaufen}
+                style={{ width: '100%', background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 6, padding: '14px', fontWeight: 900, fontSize: 14, cursor: 'pointer', textTransform: 'uppercase' }}>
+                {t.buyNow}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
