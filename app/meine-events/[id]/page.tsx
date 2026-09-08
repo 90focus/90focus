@@ -301,6 +301,33 @@ const loadFotos = async () => {
   const getImageUrl = (filename: string) =>
     `https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`
 
+  const handleReindex = async () => {
+    setMessage(lang === 'de' ? 'Starte Neu-Indexierung...' : 'Starting reindex...')
+    let offset = 0
+    let totalProcessed = 0
+    let done = false
+
+    while (!done) {
+      try {
+        const res = await fetch('/api/reindex-event', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ eventId, offset }),
+        })
+        const data = await res.json()
+        totalProcessed += data.processed || 0
+        setMessage(lang === 'de' ? `Neu indexiert: ${totalProcessed} Fotos...` : `Reindexed: ${totalProcessed} photos...`)
+        done = data.done
+        offset = data.nextOffset || offset
+      } catch (e) {
+        console.error('Reindex error:', e)
+        done = true
+      }
+    }
+
+    setMessage(lang === 'de' ? `✅ Fertig! ${totalProcessed} Fotos neu indexiert.` : `✅ Done! ${totalProcessed} photos reindexed.`)
+  }
+
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <p style={{ color: '#e8eef4' }}>{t.loading}</p>
@@ -344,6 +371,10 @@ const loadFotos = async () => {
                 <button onClick={() => router.push(`/meine-events/${eventId}/bearbeiten`)}
                   style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12 }}>
                   {t.edit}
+                </button>
+                <button onClick={handleReindex}
+                  style={{ background: 'transparent', color: '#e8ff00', border: '1px solid #e8ff00', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
+                  🔄 {lang === 'de' ? 'Neu indexieren' : 'Reindex'}
                 </button>
                 <button onClick={deleteEvent}
                   style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
