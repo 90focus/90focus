@@ -80,6 +80,18 @@ function SucheContent() {
     return () => window.removeEventListener('keydown', handleKey)
   })
 
+  const Watermark = () => (
+    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-around', pointerEvents: 'none', overflow: 'hidden' }}>
+      {[...Array(6)].map((_, row) => (
+        <div key={row} style={{ display: 'flex', gap: '40px', transform: 'rotate(-30deg) translateX(-20%)', whiteSpace: 'nowrap', marginLeft: row % 2 === 0 ? '0px' : '60px' }}>
+          {[...Array(5)].map((_, col) => (
+            <span key={col} style={{ fontSize: '13px', fontWeight: 800, color: 'rgba(255,255,255,0.25)', letterSpacing: 1, userSelect: 'none' }}>SPORTSHOT</span>
+          ))}
+        </div>
+      ))}
+    </div>
+  )
+
   const getThumbUrl = (foto: any) => {
     if (foto.thumbnail_key && foto.thumbnail_key !== 'FAILED') {
       return `https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(foto.thumbnail_key)}`
