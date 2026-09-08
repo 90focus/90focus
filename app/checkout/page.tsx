@@ -34,7 +34,11 @@ function CheckoutContent() {
     const init = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession()
-        if (!session) { router.push('/login'); return }
+        if (!session) {
+          const currentUrl = `/checkout?${searchParams.toString()}`
+          router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`)
+          return
+        }
         setUser(session.user)
         if (eventId) {
           const { data } = await supabase.from('events').select('*').eq('id', eventId).single()
