@@ -34,6 +34,17 @@ useEffect(() => {
       return
     }
     setStatus('success')
+
+    // Warenkorb leeren nach erfolgreichem Kauf
+    try {
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith('sportshot_cart_')) {
+          localStorage.removeItem(key)
+        }
+      })
+    } catch (e) {
+      console.error('Cart clear error:', e)
+    }
   }, [sessionId])
 
   return (
