@@ -15,6 +15,12 @@ export default function EventBearbeitenPage() {
 const [ort, setOrt] = useState('')
   const [preis, setPreis] = useState('19.90')
   const [fotosFreigegeben, setFotosFreigegeben] = useState(false)
+  const [tier1Max, setTier1Max] = useState('12')
+  const [tier1Preis, setTier1Preis] = useState('25')
+  const [tier2Max, setTier2Max] = useState('20')
+  const [tier2Preis, setTier2Preis] = useState('35')
+  const [tier3Max, setTier3Max] = useState('30')
+  const [tier3Preis, setTier3Preis] = useState('45')
   const [sponsorName, setSponsorName] = useState('')
   const [sponsorLogo, setSponsorLogo] = useState<File | null>(null)
   const [sponsorLogoPreview, setSponsorLogoPreview] = useState<string | null>(null)
@@ -89,6 +95,12 @@ location: lang === 'de' ? 'Ort (optional)' : 'Location (optional)',
 setOrt(data.ort || '')
     setPreis(data.preis ? String(data.preis) : '19.90')
     setFotosFreigegeben(data.fotos_freigegeben || false)
+    setTier1Max(data.tier1_max ? String(data.tier1_max) : '12')
+    setTier1Preis(data.tier1_preis ? String(data.tier1_preis) : '25')
+    setTier2Max(data.tier2_max ? String(data.tier2_max) : '20')
+    setTier2Preis(data.tier2_preis ? String(data.tier2_preis) : '35')
+    setTier3Max(data.tier3_max ? String(data.tier3_max) : '30')
+    setTier3Preis(data.tier3_preis ? String(data.tier3_preis) : '45')
     setSponsorName(data.sponsor_name || '')
     setCurrentLogoUrl(data.sponsor_logo_url || null)
     setCurrentBildUrl(data.bild_url || null)
@@ -125,6 +137,12 @@ const { error } = await supabase.from('events').update({
       sponsor_name: sponsorName, sponsor_logo_url: sponsorLogoUrl, bild_url: bildUrl,
       preis: parseFloat(preis) || 19.90,
       fotos_freigegeben: fotosFreigegeben,
+      tier1_max: parseInt(tier1Max) || 12,
+      tier1_preis: parseFloat(tier1Preis) || 25,
+      tier2_max: parseInt(tier2Max) || 20,
+      tier2_preis: parseFloat(tier2Preis) || 35,
+      tier3_max: parseInt(tier3Max) || 30,
+      tier3_preis: parseFloat(tier3Preis) || 45,
     }).eq('id', eventId)
 
     if (error) {
@@ -189,6 +207,102 @@ const { error } = await supabase.from('events').update({
             <input type="number" step="0.10" placeholder={t.price} value={preis} onChange={(e) => setPreis(e.target.value)}
               style={{ width: '100%', padding: '12px', paddingRight: '52px', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
             <span style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: '#667788', fontSize: 14, fontWeight: 700, pointerEvents: 'none' }}>EUR</span>
+          </div>
+
+          <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>
+            <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4', fontSize: 16 }}>
+              {lang === 'de' ? 'Preis-Staffel (max. Fotos pro Kauf)' : 'Price Tiers (max photos per purchase)'}
+            </h3>
+            <p style={{ margin: '0 0 12px 0', color: '#667788', fontSize: 12 }}>
+              {lang === 'de' ? `tier3_max ist gleichzeitig das absolute Maximum pro Kauf.` : `tier3_max is also the absolute maximum per purchase.`}
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 8 }}>
+              <div>
+                <label style={{ fontSize: 11, color: '#667788' }}>{lang === 'de' ? 'Bis Foto Nr.' : 'Up to photo #'}</label>
+                <input type="number" value={tier1Max} onChange={(e) => setTier1Max(e.target.value)}
+                  style={{ width: '100%', padding: '10px', fontSize: '14px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+              </div>
+              <div style={{ gridColumn: 'span 2' }}>
+                <label style={{ fontSize: 11, color: '#667788' }}>{lang === 'de' ? 'Preis (EUR)' : 'Price (EUR)'}</label>
+                <input type="number" step="0.10" value={tier1Preis} onChange={(e) => setTier1Preis(e.target.value)}
+                  style={{ width: '100%', padding: '10px', fontSize: '14px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 8 }}>
+              <div>
+                <label style={{ fontSize: 11, color: '#667788' }}>{lang === 'de' ? 'Bis Foto Nr.' : 'Up to photo #'}</label>
+                <input type="number" value={tier2Max} onChange={(e) => setTier2Max(e.target.value)}
+                  style={{ width: '100%', padding: '10px', fontSize: '14px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+              </div>
+              <div style={{ gridColumn: 'span 2' }}>
+                <label style={{ fontSize: 11, color: '#667788' }}>{lang === 'de' ? 'Preis (EUR)' : 'Price (EUR)'}</label>
+                <input type="number" step="0.10" value={tier2Preis} onChange={(e) => setTier2Preis(e.target.value)}
+                  style={{ width: '100%', padding: '10px', fontSize: '14px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+              <div>
+                <label style={{ fontSize: 11, color: '#667788' }}>{lang === 'de' ? 'Bis Foto Nr. (=Max)' : 'Up to photo # (=Max)'}</label>
+                <input type="number" value={tier3Max} onChange={(e) => setTier3Max(e.target.value)}
+                  style={{ width: '100%', padding: '10px', fontSize: '14px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+              </div>
+              <div style={{ gridColumn: 'span 2' }}>
+                <label style={{ fontSize: 11, color: '#667788' }}>{lang === 'de' ? 'Preis (EUR)' : 'Price (EUR)'}</label>
+                <input type="number" step="0.10" value={tier3Preis} onChange={(e) => setTier3Preis(e.target.value)}
+                  style={{ width: '100%', padding: '10px', fontSize: '14px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+              </div>
+            </div>
+          </div>
+
+          <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>
+            <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4', fontSize: 16 }}>
+              {lang === 'de' ? 'Preis-Staffel (max. Fotos pro Kauf)' : 'Price Tiers (max photos per purchase)'}
+            </h3>
+            <p style={{ margin: '0 0 12px 0', color: '#667788', fontSize: 12 }}>
+              {lang === 'de' ? `tier3_max ist gleichzeitig das absolute Maximum pro Kauf.` : `tier3_max is also the absolute maximum per purchase.`}
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 8 }}>
+              <div>
+                <label style={{ fontSize: 11, color: '#667788' }}>{lang === 'de' ? 'Bis Foto Nr.' : 'Up to photo #'}</label>
+                <input type="number" value={tier1Max} onChange={(e) => setTier1Max(e.target.value)}
+                  style={{ width: '100%', padding: '10px', fontSize: '14px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+              </div>
+              <div style={{ gridColumn: 'span 2' }}>
+                <label style={{ fontSize: 11, color: '#667788' }}>{lang === 'de' ? 'Preis (EUR)' : 'Price (EUR)'}</label>
+                <input type="number" step="0.10" value={tier1Preis} onChange={(e) => setTier1Preis(e.target.value)}
+                  style={{ width: '100%', padding: '10px', fontSize: '14px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 8 }}>
+              <div>
+                <label style={{ fontSize: 11, color: '#667788' }}>{lang === 'de' ? 'Bis Foto Nr.' : 'Up to photo #'}</label>
+                <input type="number" value={tier2Max} onChange={(e) => setTier2Max(e.target.value)}
+                  style={{ width: '100%', padding: '10px', fontSize: '14px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+              </div>
+              <div style={{ gridColumn: 'span 2' }}>
+                <label style={{ fontSize: 11, color: '#667788' }}>{lang === 'de' ? 'Preis (EUR)' : 'Price (EUR)'}</label>
+                <input type="number" step="0.10" value={tier2Preis} onChange={(e) => setTier2Preis(e.target.value)}
+                  style={{ width: '100%', padding: '10px', fontSize: '14px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+              <div>
+                <label style={{ fontSize: 11, color: '#667788' }}>{lang === 'de' ? 'Bis Foto Nr. (=Max)' : 'Up to photo # (=Max)'}</label>
+                <input type="number" value={tier3Max} onChange={(e) => setTier3Max(e.target.value)}
+                  style={{ width: '100%', padding: '10px', fontSize: '14px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+              </div>
+              <div style={{ gridColumn: 'span 2' }}>
+                <label style={{ fontSize: 11, color: '#667788' }}>{lang === 'de' ? 'Preis (EUR)' : 'Price (EUR)'}</label>
+                <input type="number" step="0.10" value={tier3Preis} onChange={(e) => setTier3Preis(e.target.value)}
+                  style={{ width: '100%', padding: '10px', fontSize: '14px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+              </div>
+            </div>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '16px 0', padding: '12px', background: fotosFreigegeben ? 'rgba(68,255,136,0.1)' : '#131e2a', borderRadius: 6, border: fotosFreigegeben ? '1px solid #44ff88' : '1px solid #1c2a38' }}>
