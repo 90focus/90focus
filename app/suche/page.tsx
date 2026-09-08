@@ -305,6 +305,8 @@ function SucheContent() {
               {allFotos.filter(f => selectedPhotos.includes(f.filename)).map((foto) => (
                 <div key={foto.id} style={{ position: 'relative', aspectRatio: '1', borderRadius: 6, overflow: 'hidden' }}>
                   <img src={getThumbUrl(foto)} alt="Foto" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  <Watermark />
+                  <Logo />
                   <div onClick={() => togglePhoto(foto.filename)}
                     style={{ position: 'absolute', top: 4, right: 4, width: 22, height: 22, borderRadius: '50%', background: 'rgba(255,68,68,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff', fontWeight: 900, fontSize: 12 }}>
                     ✕
