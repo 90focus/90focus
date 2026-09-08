@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
       .select('id, filename')
       .eq('event_id', eventId)
       .is('aufgenommen_am', null)
-      .is('zeitstempel_fehlt', null)
+      .eq('zeitstempel_fehlt', false)
       .range(0, BATCH_SIZE - 1)
 
     if (error) {
