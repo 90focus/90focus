@@ -11,6 +11,13 @@ function SucheContent() {
   const [loading, setLoading] = useState(true)
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
   const [selectedPhotos, setSelectedPhotos] = useState<string[]>([])
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+  const [displayCount, setDisplayCount] = useState(60)
+  const [showSelection, setShowSelection] = useState(false)
+  const searchParams = useSearchParams()
+  const eventId = searchParams.get('eventId')
+  const router = useRouter()
+  const { lang } = useLanguage()
 
   useEffect(() => {
     if (!eventId) return
@@ -30,13 +37,6 @@ function SucheContent() {
       console.error('Cart save error:', e)
     }
   }, [selectedPhotos, eventId])
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
-  const [displayCount, setDisplayCount] = useState(60)
-  const [showSelection, setShowSelection] = useState(false)
-  const searchParams = useSearchParams()
-  const eventId = searchParams.get('eventId')
-  const router = useRouter()
-  const { lang } = useLanguage()
 
   const t = {
     choosePeriod: lang === 'de' ? 'Wähle deinen Zeitraum' : 'Choose your time period',
