@@ -157,17 +157,11 @@ function SucheContent() {
     })
   }
 
-  const handleKaufen = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
+  const handleKaufen = () => {
     const params = new URLSearchParams()
     params.set('filenames', selectedPhotos.join(','))
     if (eventId) params.set('eventId', eventId)
-    const checkoutUrl = `/checkout?${params.toString()}`
-    if (!session) {
-      router.push(`/login?redirect=${encodeURIComponent(checkoutUrl)}`)
-      return
-    }
-    window.location.href = checkoutUrl
+    router.push(`/checkout?${params.toString()}`)
   }
 
   const Logo = () => (
