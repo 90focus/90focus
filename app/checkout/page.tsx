@@ -61,7 +61,18 @@ function CheckoutContent() {
   const getImageUrl = (filename: string) =>
     `https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`
 
-  const paketPreis = event?.preis || 19.90
+  const getTierPrice = (count: number): number => {
+    const tier1Max = event?.tier1_max || 12
+    const tier1Preis = event?.tier1_preis || 25
+    const tier2Max = event?.tier2_max || 20
+    const tier2Preis = event?.tier2_preis || 35
+    const tier3Preis = event?.tier3_preis || 45
+    if (count <= tier1Max) return tier1Preis
+    if (count <= tier2Max) return tier2Preis
+    return tier3Preis
+  }
+
+  const paketPreis = getTierPrice(filenames.length)
   const total = paketPreis.toFixed(2)
 
   const handleCheckout = async () => {
@@ -77,7 +88,7 @@ function CheckoutContent() {
       if (data.url) {
         window.location.href = data.url
       } else {
-        setError(t.errorMsg)
+        setError(data.error || t.errorMsg)
       }
     } catch (e) {
       console.error('Checkout error:', e)
