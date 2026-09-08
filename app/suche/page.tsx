@@ -11,6 +11,25 @@ function SucheContent() {
   const [loading, setLoading] = useState(true)
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
   const [selectedPhotos, setSelectedPhotos] = useState<string[]>([])
+
+  useEffect(() => {
+    if (!eventId) return
+    try {
+      const saved = localStorage.getItem(`sportshot_cart_${eventId}`)
+      if (saved) setSelectedPhotos(JSON.parse(saved))
+    } catch (e) {
+      console.error('Cart load error:', e)
+    }
+  }, [eventId])
+
+  useEffect(() => {
+    if (!eventId) return
+    try {
+      localStorage.setItem(`sportshot_cart_${eventId}`, JSON.stringify(selectedPhotos))
+    } catch (e) {
+      console.error('Cart save error:', e)
+    }
+  }, [selectedPhotos, eventId])
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [displayCount, setDisplayCount] = useState(60)
   const [showSelection, setShowSelection] = useState(false)
