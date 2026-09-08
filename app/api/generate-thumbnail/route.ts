@@ -18,35 +18,9 @@ const s3 = new S3Client({
   },
 })
 
-function buildWatermarkSvg(width: number, height: number, sponsorText: string | null): string {
-  const rows = Math.ceil(height / 80)
-  const cols = Math.ceil(width / 140)
-  let diagonalText = ''
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const x = c * 140 + (r % 2 === 0 ? 0 : 70)
-      const y = r * 80
-      diagonalText += `<text x="${x}" y="${y}" font-family="Arial" font-weight="800" font-size="11" fill="rgba(255,255,255,0.25)" transform="rotate(-20 ${x} ${y})">SPORTSHOT</text>`
-    }
-  }
-
-  const label = sponsorText || 'SPORTSHOT'
-  const boxWidth = Math.min(width * 0.35, 150)
-  const boxX = width - boxWidth - 10
-  const boxY = height - 34
-
-  return `
-    <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-      ${diagonalText}
-      <rect x="${boxX}" y="${boxY}" width="${boxWidth}" height="24" rx="4" fill="rgba(0,0,0,0.6)" />
-      <text x="${boxX + boxWidth / 2}" y="${boxY + 16}" font-family="Arial" font-weight="900" font-size="11" fill="#e8ff00" text-anchor="middle">${label}</text>
-    </svg>
-  `
-}
-
 export async function POST(req: NextRequest) {
   try {
-    const { filename, sponsorName } = await req.json()
+    const { filename } = await req.json()
 
     if (!filename) {
       return NextResponse.json({ error: 'Kein Dateiname' }, { status: 400 })
@@ -59,19 +33,16 @@ export async function POST(req: NextRequest) {
     }
     const buffer = Buffer.from(await res.arrayBuffer())
 
-    const resizedBuffer = await sharp(buffer)
+    const metadata = await sharp(buffer).metadata()
+
+    let processedImage = sharp(buffer)
+    if (metadata.orientation && metadata.orientation !== 1) {
+      processedImage = processedImage.rotate()
+    }
+
+    const thumbnailBuffer = await processedImage
       .resize(500, 500, { fit: 'inside', withoutEnlargement: true })
-      .toBuffer()
-
-    const metadata = await sharp(resizedBuffer).metadata()
-    const width = metadata.width || 500
-    const height = metadata.height || 500
-
-    const watermarkSvg = buildWatermarkSvg(width, height, sponsorName)
-    const watermarkBuffer = await sharp(Buffer.from(watermarkSvg)).resize(width, height).png().toBuffer()
-
-    const thumbnailBuffer = await sharp(resizedBuffer)
-      .composite([{ input: watermarkBuffer, top: 0, left: 0 }])
+      .withMetadata({ orientation: undefined })
       .jpeg({ quality: 80 })
       .toBuffer()
 
