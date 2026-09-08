@@ -28,13 +28,36 @@ export async function POST(req: NextRequest) {
       await rekognition.send(new CreateCollectionCommand({ CollectionId: COLLECTION_ID }))
     } catch {}
 
-const indexResult = await rekognition.send(new IndexFacesCommand({
-      CollectionId: COLLECTION_ID,
-      Image: { S3Object: { Bucket: '90focus-fotos-ireland', Name: filename } },
-      ExternalImageId: externalImageId,
-      DetectionAttributes: [],
-      QualityFilter: 'NONE',
-    }))
+    let indexResult
+    try {
+      indexResult = await rekognition.send(new IndexFacesCommand({
+        CollectionId: COLLECTION_ID,
+        Image: { S3Object: { Bucket: '90focus-fotos-ireland', Name: filename } },
+        ExternalImageId: externalImageId,
+        DetectionAttributes: [],
+        QualityFilter: 'NONE',
+      }))
+    } catch (imgError: any) {
+      if (imgError.name === 'ImageTooLargeException') {
+        const s3Res = await fetch(`https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`)
+        const buffer = Buffer.from(await s3Res.arrayBuffer())
+        const sharp = require('sharp')
+        const resizedBuffer = await sharp(buffer)
+          .resize(2000, 2000, { fit: 'inside', withoutEnlargement: true })
+          .jpeg({ quality: 85 })
+          .toBuffer()
+
+        indexResult = await rekognition.send(new IndexFacesCommand({
+          CollectionId: COLLECTION_ID,
+          Image: { Bytes: resizedBuffer },
+          ExternalImageId: externalImageId,
+          DetectionAttributes: [],
+          QualityFilter: 'NONE',
+        }))
+      } else {
+        throw imgError
+      }
+    }
 
     const indexedCount = indexResult.FaceRecords?.length || 0
     const unindexedCount = indexResult.UnindexedFaces?.length || 0
