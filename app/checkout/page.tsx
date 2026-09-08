@@ -6,6 +6,15 @@ import { supabase } from '@/app/supabase'
 import { useLanguage } from '@/app/context/LanguageContext'
 
 function CheckoutContent() {
+  const mobileStyles = `
+    @media (max-width: 700px) {
+      .checkout-grid {
+        grid-template-columns: 1fr !important;
+        gap: 24px !important;
+        padding: 24px 16px !important;
+      }
+    }
+  `
   const searchParams = useSearchParams()
   const router = useRouter()
   const filenames = (searchParams.get('filenames') || searchParams.get('filename') || '').split(',').filter(Boolean)
@@ -149,7 +158,8 @@ function CheckoutContent() {
         </div>
       )}
 
-      <div style={{ maxWidth: 1100, margin: '60px auto 0', padding: '40px 24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'start' }}>
+      <style jsx>{mobileStyles}</style>
+      <div className="checkout-grid" style={{ maxWidth: 1100, margin: '60px auto 0', padding: '40px 24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'start' }}>
 
         <div>
           <div style={{ color: '#e8ff00', fontSize: 11, fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>
