@@ -301,6 +301,31 @@ const loadFotos = async () => {
   const getImageUrl = (filename: string) =>
     `https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`
 
+  const handleExtractTimestamps = async () => {
+    setMessage(lang === 'de' ? 'Starte Zeitstempel-Auslesung...' : 'Starting timestamp extraction...')
+    let totalProcessed = 0
+    let done = false
+
+    while (!done) {
+      try {
+        const res = await fetch('/api/extract-timestamps', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ eventId }),
+        })
+        const data = await res.json()
+        totalProcessed += data.processed || 0
+        setMessage(lang === 'de' ? `Zeitstempel ausgelesen: ${totalProcessed} Fotos...` : `Timestamps extracted: ${totalProcessed} photos...`)
+        done = data.done
+      } catch (e) {
+        console.error('Extract timestamps error:', e)
+        done = true
+      }
+    }
+
+    setMessage(lang === 'de' ? `✅ Fertig! ${totalProcessed} Fotos verarbeitet.` : `✅ Done! ${totalProcessed} photos processed.`)
+  }
+
   const handleReindex = async () => {
     setMessage(lang === 'de' ? 'Starte Neu-Indexierung...' : 'Starting reindex...')
     let offset = 0
@@ -375,6 +400,10 @@ const loadFotos = async () => {
                 <button onClick={handleReindex}
                   style={{ background: 'transparent', color: '#e8ff00', border: '1px solid #e8ff00', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
                   🔄 {lang === 'de' ? 'Neu indexieren' : 'Reindex'}
+                </button>
+                <button onClick={handleExtractTimestamps}
+                  style={{ background: 'transparent', color: '#44aaff', border: '1px solid #44aaff', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
+                  🕐 {lang === 'de' ? 'Zeitstempel auslesen' : 'Extract Timestamps'}
                 </button>
                 <button onClick={deleteEvent}
                   style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
