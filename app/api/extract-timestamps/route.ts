@@ -27,9 +27,20 @@ async function extractOne(foto: { id: string; filename: string }) {
         .eq('id', foto.id)
       return true
     }
+
+    await supabase
+      .from('event_fotos')
+      .update({ aufgenommen_am: null, zeitstempel_fehlt: true })
+      .eq('id', foto.id)
     return false
   } catch (e) {
     console.error(`Timestamp extraction error for ${foto.filename}:`, e)
+    try {
+      await supabase
+        .from('event_fotos')
+        .update({ aufgenommen_am: null, zeitstempel_fehlt: true })
+        .eq('id', foto.id)
+    } catch {}
     return false
   }
 }
@@ -50,6 +61,7 @@ export async function POST(req: NextRequest) {
       .select('id, filename')
       .eq('event_id', eventId)
       .is('aufgenommen_am', null)
+      .is('zeitstempel_fehlt', null)
       .range(0, BATCH_SIZE - 1)
 
     if (error) {
