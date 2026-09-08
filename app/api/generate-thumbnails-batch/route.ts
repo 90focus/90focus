@@ -40,13 +40,21 @@ export async function POST(req: NextRequest) {
     }
 
     const results = await Promise.allSettled(
-      fotos.map((f) =>
-        fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/generate-thumbnail`, {
+      fotos.map(async (f) => {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/generate-thumbnail`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ filename: f.filename, sponsorName: event?.sponsor_name || null }),
         })
-      )
+        if (!res.ok) {
+          // Markiere als fehlgeschlagen, damit es nicht endlos erneut versucht wird
+          await supabase
+            .from('event_fotos')
+            .update({ thumbnail_key: 'FAILED' })
+            .eq('filename', f.filename)
+        }
+        return res
+      })
     )
 
     const successCount = results.filter((r) => r.status === 'fulfilled').length

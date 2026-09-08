@@ -59,15 +59,19 @@ export async function POST(req: NextRequest) {
     }
     const buffer = Buffer.from(await res.arrayBuffer())
 
-    const resized = sharp(buffer).resize(500, 500, { fit: 'inside', withoutEnlargement: true })
-    const metadata = await resized.metadata()
+    const resizedBuffer = await sharp(buffer)
+      .resize(500, 500, { fit: 'inside', withoutEnlargement: true })
+      .toBuffer()
+
+    const metadata = await sharp(resizedBuffer).metadata()
     const width = metadata.width || 500
     const height = metadata.height || 500
 
     const watermarkSvg = buildWatermarkSvg(width, height, sponsorName)
+    const watermarkBuffer = await sharp(Buffer.from(watermarkSvg)).resize(width, height).png().toBuffer()
 
-    const thumbnailBuffer = await resized
-      .composite([{ input: Buffer.from(watermarkSvg), top: 0, left: 0 }])
+    const thumbnailBuffer = await sharp(resizedBuffer)
+      .composite([{ input: watermarkBuffer, top: 0, left: 0 }])
       .jpeg({ quality: 80 })
       .toBuffer()
 
