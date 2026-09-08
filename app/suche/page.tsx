@@ -174,7 +174,11 @@ function SucheContent() {
             <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1) }} style={{ position: 'absolute', left: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 28, width: 50, height: 50, borderRadius: '50%', cursor: 'pointer' }}>‹</button>
           )}
           <div onClick={(e) => e.stopPropagation()} style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}>
-            <img src={getThumbUrl(folderPhotos[lightboxIndex])} alt="Foto" style={{ maxWidth: '90vw', maxHeight: '80vh', objectFit: 'contain', borderRadius: 8 }} />
+            <div style={{ position: 'relative', display: 'inline-block' }}>
+              <img src={getThumbUrl(folderPhotos[lightboxIndex])} alt="Foto" style={{ maxWidth: '90vw', maxHeight: '80vh', objectFit: 'contain', borderRadius: 8, display: 'block' }} />
+              <Watermark />
+              <Logo />
+            </div>
             <button
               onClick={(e) => { e.stopPropagation(); togglePhoto(folderPhotos[lightboxIndex].filename) }}
               style={{
