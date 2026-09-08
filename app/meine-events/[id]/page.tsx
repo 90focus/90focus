@@ -351,6 +351,33 @@ const loadFotos = async () => {
     setMessage(lang === 'de' ? `✅ Fertig! ${totalProcessed} Fotos verarbeitet.` : `✅ Done! ${totalProcessed} photos processed.`)
   }
 
+  const handleDeleteHSA = async () => {
+    if (!confirm(lang === 'de' ? 'Wirklich ALLE HSA-Fotos löschen?' : 'Really delete ALL HSA photos?')) return
+    setMessage(lang === 'de' ? 'Lösche HSA-Fotos...' : 'Deleting HSA photos...')
+    let totalDeleted = 0
+    let done = false
+
+    while (!done) {
+      try {
+        const res = await fetch('/api/delete-by-pattern', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ eventId, pattern: 'HSA' }),
+        })
+        const data = await res.json()
+        totalDeleted += data.processed || 0
+        setMessage(lang === 'de' ? `Gelöscht: ${totalDeleted} Fotos...` : `Deleted: ${totalDeleted} photos...`)
+        done = data.done
+      } catch (e) {
+        console.error('Delete HSA error:', e)
+        done = true
+      }
+    }
+
+    setMessage(lang === 'de' ? `✅ Fertig! ${totalDeleted} HSA-Fotos gelöscht.` : `✅ Done! ${totalDeleted} HSA photos deleted.`)
+    loadFotos()
+  }
+
   const handleReindex = async () => {
     setMessage(lang === 'de' ? 'Starte Neu-Indexierung...' : 'Starting reindex...')
     let offset = 0
@@ -433,6 +460,10 @@ const loadFotos = async () => {
                 <button onClick={handleGenerateThumbnails}
                   style={{ background: 'transparent', color: '#ff88ff', border: '1px solid #ff88ff', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
                   🖼️ {lang === 'de' ? 'Thumbnails erstellen' : 'Generate Thumbnails'}
+                </button>
+                <button onClick={handleDeleteHSA}
+                  style={{ background: 'transparent', color: '#ff8800', border: '1px solid #ff8800', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
+                  🗑 {lang === 'de' ? 'Alte HSA-Fotos löschen' : 'Delete old HSA photos'}
                 </button>
                 <button onClick={deleteEvent}
                   style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
