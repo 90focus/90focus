@@ -233,6 +233,7 @@ function SucheContent() {
                     border: selectedPhotos.includes(foto.filename) ? '3px solid #e8ff00' : '3px solid transparent',
                   }}>
                   <img src={getThumbUrl(foto)} alt="Foto" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  <Watermark />
                   <Logo />
                   <div onClick={(e) => { e.stopPropagation(); togglePhoto(foto.filename) }}
                     style={{
