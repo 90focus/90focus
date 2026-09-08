@@ -14,8 +14,30 @@ export async function POST(req: NextRequest) {
 
     let preis = 19.90
     if (eventId) {
-      const { data: eventData } = await supabase.from('events').select('preis').eq('id', eventId).single()
-      if (eventData?.preis) preis = eventData.preis
+      const { data: eventData } = await supabase
+        .from('events')
+        .select('preis, tier1_max, tier1_preis, tier2_max, tier2_preis, tier3_max, tier3_preis')
+        .eq('id', eventId)
+        .single()
+
+      if (eventData) {
+        const tier1Max = eventData.tier1_max || 12
+        const tier1Preis = eventData.tier1_preis || 25
+        const tier2Max = eventData.tier2_max || 20
+        const tier2Preis = eventData.tier2_preis || 35
+        const tier3Max = eventData.tier3_max || 30
+        const tier3Preis = eventData.tier3_preis || 45
+
+        const count = filenames.length
+
+        if (count > tier3Max) {
+          return NextResponse.json({ error: `Maximal ${tier3Max} Fotos pro Kauf erlaubt.` }, { status: 400 })
+        }
+
+        if (count <= tier1Max) preis = tier1Preis
+        else if (count <= tier2Max) preis = tier2Preis
+        else preis = tier3Preis
+      }
     }
     const unitAmount = Math.round(preis * 100)
 

@@ -132,10 +132,29 @@ function SucheContent() {
 
   const folderPhotos = folders.find(f => f.key === selectedFolder)?.fotos || []
 
+  const tier1Max = event?.tier1_max || 12
+  const tier1Preis = event?.tier1_preis || 25
+  const tier2Max = event?.tier2_max || 20
+  const tier2Preis = event?.tier2_preis || 35
+  const tier3Max = event?.tier3_max || 30
+  const tier3Preis = event?.tier3_preis || 45
+  const MAX_SELECTION = tier3Max
+
+  const getTierPrice = (count: number): number => {
+    if (count <= tier1Max) return tier1Preis
+    if (count <= tier2Max) return tier2Preis
+    return tier3Preis
+  }
+
   const togglePhoto = (filename: string) => {
-    setSelectedPhotos(prev =>
-      prev.includes(filename) ? prev.filter(f => f !== filename) : [...prev, filename]
-    )
+    setSelectedPhotos(prev => {
+      if (prev.includes(filename)) return prev.filter(f => f !== filename)
+      if (prev.length >= MAX_SELECTION) {
+        alert(lang === 'de' ? `Maximal ${MAX_SELECTION} Fotos pro Kauf möglich.` : `Maximum ${MAX_SELECTION} photos per purchase.`)
+        return prev
+      }
+      return [...prev, filename]
+    })
   }
 
   const handleKaufen = async () => {
