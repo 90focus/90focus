@@ -331,7 +331,13 @@ function SucheContent() {
           <div onClick={(e) => e.stopPropagation()} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 12, maxWidth: 600, width: '100%', maxHeight: '80vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             <div style={{ padding: '16px 20px', borderBottom: '1px solid #1c2a38', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontWeight: 900, fontSize: 15 }}>{t.selected(selectedPhotos.length)}</span>
-              <button onClick={() => setShowSelection(false)} style={{ background: 'transparent', border: 'none', color: '#e8eef4', fontSize: 22, cursor: 'pointer' }}>✕</button>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                <button onClick={() => { setSelectedPhotos([]); setShowSelection(false) }}
+                  style={{ background: 'transparent', border: '1px solid #ff4444', color: '#ff4444', borderRadius: 4, padding: '6px 12px', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+                  {lang === 'de' ? 'Warenkorb leeren' : 'Clear cart'}
+                </button>
+                <button onClick={() => setShowSelection(false)} style={{ background: 'transparent', border: 'none', color: '#e8eef4', fontSize: 22, cursor: 'pointer' }}>✕</button>
+              </div>
             </div>
             <div style={{ padding: 16, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
               {allFotos.filter(f => selectedPhotos.includes(f.filename)).map((foto) => (
