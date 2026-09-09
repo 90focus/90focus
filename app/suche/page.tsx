@@ -145,7 +145,7 @@ function SucheContent() {
     }
   })
 
-  if (otherFotos.length > 0) {
+  if (otherFotos.length >= MIN_FOLDER_SIZE) {
     folders.push({ key: 'other', label: t.otherPhotos, fotos: otherFotos })
   }
 
