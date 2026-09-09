@@ -281,7 +281,7 @@ function SucheContent() {
         ) : (
           <>
             <button onClick={() => setSelectedFolder(null)}
-              style={{ background: 'transparent', color: '#e8eef4', border: 'none', cursor: 'pointer', fontSize: 14, marginBottom: 16, padding: 0 }}>
+              style={{ background: '#1c2a38', color: '#e8eef4', border: '1px solid #2a3a4a', borderRadius: 6, cursor: 'pointer', fontSize: 13, fontWeight: 700, marginBottom: 16, padding: '10px 16px' }}>
               {t.back}
             </button>
             <h2 style={{ fontSize: 16, fontWeight: 900, textTransform: 'uppercase', marginBottom: 16 }}>
