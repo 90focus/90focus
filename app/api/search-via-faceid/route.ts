@@ -39,6 +39,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Kein Gesicht im Selfie indexiert' }, { status: 400 })
     }
 
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
     const searchResult = await rekognition.send(new SearchFacesCommand({
       CollectionId: COLLECTION_ID,
       FaceId: faceId,
