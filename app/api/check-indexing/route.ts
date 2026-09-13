@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
         NextToken: nextToken,
       }))
 
-      result.Faces?.forEach(f => {
+      result.Faces?.forEach((f: any) => {
         if (f.ExternalImageId) indexedIds.add(f.ExternalImageId)
       })
 
