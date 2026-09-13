@@ -11,31 +11,52 @@ export default function TestSelfiePage() {
 
   const EVENT_ID = 'd97b2ad4-97a9-4df2-b670-f0596e560c23'
 
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = new Image()
+      img.onload = () => {
+        const maxSize = 1200
+        let width = img.width
+        let height = img.height
+        if (width > height && width > maxSize) {
+          height = (height * maxSize) / width
+          width = maxSize
+        } else if (height > maxSize) {
+          width = (width * maxSize) / height
+          height = maxSize
+        }
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        ctx?.drawImage(img, 0, 0, width, height)
+        resolve(canvas.toDataURL('image/jpeg', 0.85))
+      }
+      img.src = URL.createObjectURL(file)
+    })
+  }
+
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    const reader = new FileReader()
-    reader.onload = async () => {
-      const base64 = reader.result as string
-      setPreview(base64)
-      setLoading(true)
-      setMatches([])
+    const base64 = await compressImage(file)
+    setPreview(base64)
+    setLoading(true)
+    setMatches([])
 
-      try {
-        const res = await fetch('/api/aws-compare-test', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ eventId: EVENT_ID, selfieBase64: base64, threshold }),
-        })
-        const data = await res.json()
-        setMatches(data.matches || [])
-      } catch (err) {
-        console.error(err)
-      }
-      setLoading(false)
+    try {
+      const res = await fetch('/api/aws-compare-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId: EVENT_ID, selfieBase64: base64, threshold }),
+      })
+      const data = await res.json()
+      setMatches(data.matches || [])
+    } catch (err) {
+      console.error(err)
     }
-    reader.readAsDataURL(file)
+    setLoading(false)
   }
 
   const getImageUrl = (foto: any) => {
