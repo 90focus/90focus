@@ -10,6 +10,7 @@ export async function POST(req: NextRequest) {
 
     const formData = new FormData()
     formData.append('photo', imageUrl)
+    formData.append('collections', 'samobor_test')
 
     const response = await fetch('https://api.luxand.cloud/photo/search/v2', {
       method: 'POST',
