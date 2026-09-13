@@ -405,6 +405,36 @@ const loadFotos = async () => {
     setMessage(lang === 'de' ? `✅ Fertig! ${totalProcessed} Fotos neu indexiert.` : `✅ Done! ${totalProcessed} photos reindexed.`)
   }
 
+  const handleLuxandCompare = async () => {
+    setMessage(lang === 'de' ? 'Starte Luxand-Vergleich...' : 'Starting Luxand comparison...')
+    let offset = 0
+    let totalProcessed = 0
+    let allMatches: any[] = []
+    let done = false
+
+    while (!done) {
+      try {
+        const res = await fetch('/api/luxand-compare', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ eventId, offset }),
+        })
+        const data = await res.json()
+        totalProcessed += data.processed || 0
+        allMatches = [...allMatches, ...(data.matches || [])]
+        setMessage(lang === 'de' ? `Geprüft: ${totalProcessed} Fotos, ${allMatches.length} Treffer...` : `Checked: ${totalProcessed} photos, ${allMatches.length} matches...`)
+        done = data.done
+        offset = totalProcessed
+      } catch (e) {
+        console.error('Luxand compare error:', e)
+        done = true
+      }
+    }
+
+    console.log('Luxand Treffer:', allMatches)
+    setMessage(lang === 'de' ? `✅ Fertig! ${totalProcessed} geprüft, ${allMatches.length} Treffer gefunden. Details in der Konsole (F12).` : `✅ Done! ${totalProcessed} checked, ${allMatches.length} matches found. Details in console (F12).`)
+  }
+
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <p style={{ color: '#e8eef4' }}>{t.loading}</p>
@@ -464,6 +494,10 @@ const loadFotos = async () => {
                 <button onClick={handleDeleteHSA}
                   style={{ background: 'transparent', color: '#ff8800', border: '1px solid #ff8800', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
                   🗑 {lang === 'de' ? 'Alte HSA-Fotos löschen' : 'Delete old HSA photos'}
+                </button>
+                <button onClick={handleLuxandCompare}
+                  style={{ background: 'transparent', color: '#00ffcc', border: '1px solid #00ffcc', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
+                  🔬 {lang === 'de' ? 'Luxand Vergleich' : 'Luxand Compare'}
                 </button>
                 <button onClick={deleteEvent}
                   style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
