@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     const result = await rekognition.send(new SearchFacesByImageCommand({
       CollectionId: COLLECTION_ID,
       Image: { Bytes: buffer },
-      MaxFaces: 200,
+      MaxFaces: 4096,
       FaceMatchThreshold: threshold || 50,
     }))
 
