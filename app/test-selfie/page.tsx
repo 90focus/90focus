@@ -7,6 +7,7 @@ export default function TestSelfiePage() {
   const [matches, setMatches] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [threshold, setThreshold] = useState(50)
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
   const EVENT_ID = 'd97b2ad4-97a9-4df2-b670-f0596e560c23'
 
@@ -71,13 +72,31 @@ export default function TestSelfiePage() {
           <h2 style={{ fontSize: 16, marginBottom: 12 }}>{matches.length} Treffer gefunden:</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 10 }}>
             {matches.map((m, i) => (
-              <div key={i}>
+              <div key={i} onClick={() => setLightboxIndex(i)} style={{ cursor: 'zoom-in' }}>
                 <img src={getImageUrl(m)} alt="" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 6 }} />
                 <div style={{ fontSize: 11, color: '#8899aa', marginTop: 4 }}>{m.similarity?.toFixed(1)}%</div>
               </div>
             ))}
           </div>
         </>
+      )}
+
+      {lightboxIndex !== null && matches[lightboxIndex] && (
+        <div onClick={() => setLightboxIndex(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button onClick={() => setLightboxIndex(null)} style={{ position: 'absolute', top: 20, right: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 28, width: 44, height: 44, borderRadius: '50%', cursor: 'pointer' }}>✕</button>
+          {lightboxIndex > 0 && (
+            <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1) }} style={{ position: 'absolute', left: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 28, width: 50, height: 50, borderRadius: '50%', cursor: 'pointer' }}>‹</button>
+          )}
+          <div onClick={(e) => e.stopPropagation()}>
+            <img src={getImageUrl(matches[lightboxIndex])} alt="" style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 8 }} />
+            <div style={{ textAlign: 'center', color: '#e8ff00', marginTop: 12, fontSize: 14 }}>
+              {matches[lightboxIndex].similarity?.toFixed(1)}% Übereinstimmung
+            </div>
+          </div>
+          {lightboxIndex < matches.length - 1 && (
+            <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1) }} style={{ position: 'absolute', right: 20, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 28, width: 50, height: 50, borderRadius: '50%', cursor: 'pointer' }}>›</button>
+          )}
+        </div>
       )}
     </div>
   )
