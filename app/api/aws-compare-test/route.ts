@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       CollectionId: COLLECTION_ID,
       Image: { Bytes: buffer },
       MaxFaces: 200,
-      FaceMatchThreshold: 70,
+      FaceMatchThreshold: 50,
     }))
 
     const allMatches = result.FaceMatches?.map(m => ({
