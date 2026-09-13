@@ -21,13 +21,29 @@ export async function POST(req: NextRequest) {
   try {
     const { eventId } = await req.json()
 
-    const { data: eventFotos } = await supabase
-      .from('event_fotos')
-      .select('filename')
-      .eq('event_id', eventId)
+    let allEventFotos: any[] = []
+    let from = 0
+    const pageSize = 1000
+    let keepGoing = true
+
+    while (keepGoing) {
+      const { data } = await supabase
+        .from('event_fotos')
+        .select('filename')
+        .eq('event_id', eventId)
+        .range(from, from + pageSize - 1)
+
+      if (data && data.length > 0) {
+        allEventFotos = [...allEventFotos, ...data]
+        from += pageSize
+        keepGoing = data.length === pageSize
+      } else {
+        keepGoing = false
+      }
+    }
 
     const expectedSanitized = new Set(
-      eventFotos?.map(f => f.filename.replace(/[^a-zA-Z0-9_\-:]/g, '_')) || []
+      allEventFotos.map(f => f.filename.replace(/[^a-zA-Z0-9_\-:]/g, '_'))
     )
 
     let indexedIds = new Set<string>()
