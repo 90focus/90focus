@@ -8,18 +8,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'imageUrl und name erforderlich' }, { status: 400 })
     }
 
-    const response = await fetch('https://api.luxand.cloud/photo/add', {
+    const formData = new FormData()
+    formData.append('name', name)
+    formData.append('photos', imageUrl)
+    formData.append('store', '1')
+    formData.append('collections', 'samobor_test')
+
+    const response = await fetch('https://api.luxand.cloud/v2/person', {
       method: 'POST',
       headers: {
         'token': process.env.LUXAND_API_TOKEN!,
       },
-      body: (() => {
-        const formData = new FormData()
-        formData.append('name', name)
-        formData.append('store', '1')
-        formData.append('photos', imageUrl)
-        return formData
-      })(),
+      body: formData,
     })
 
     const data = await response.json()
