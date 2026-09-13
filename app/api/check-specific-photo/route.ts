@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { RekognitionClient, DetectFacesCommand, ListFacesCommand } from '@aws-sdk/client-rekognition'
+import { RekognitionClient, DetectFacesCommand, ListFacesCommand, CompareFacesCommand } from '@aws-sdk/client-rekognition'
 
 const rekognition = new RekognitionClient({
   region: 'eu-west-1',
@@ -13,7 +13,7 @@ const COLLECTION_ID = '90focus-gesichter'
 
 export async function POST(req: NextRequest) {
   try {
-    const { filename } = await req.json()
+    const { filename, selfieUrl } = await req.json()
 
     const sanitized = filename.replace(/[^a-zA-Z0-9_\-:]/g, '_')
 
@@ -44,6 +44,23 @@ export async function POST(req: NextRequest) {
       nextToken = result.NextToken
     } while (nextToken)
 
+    let directSimilarity: any = null
+    if (selfieUrl) {
+      try {
+        const selfieRes = await fetch(selfieUrl)
+        const selfieBuffer = Buffer.from(await selfieRes.arrayBuffer())
+        const compareResult = await rekognition.send(new CompareFacesCommand({
+          SourceImage: { Bytes: selfieBuffer },
+          TargetImage: { Bytes: buffer },
+          SimilarityThreshold: 0,
+        }))
+        directSimilarity = compareResult.FaceMatches?.map(m => m.Similarity) || []
+      } catch (e: any) {
+        console.error('Compare error:', e)
+        directSimilarity = { error: e.message }
+      }
+    }
+
     return NextResponse.json({
       filename,
       sanitized,
@@ -53,6 +70,7 @@ export async function POST(req: NextRequest) {
         confidence: f.Confidence,
         boundingBox: f.BoundingBox,
       })),
+      directSimilarity,
     })
   } catch (error: any) {
     console.error('Check specific photo error:', error)
