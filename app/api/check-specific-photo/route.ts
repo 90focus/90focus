@@ -61,10 +61,29 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    const matchingFaceRecords = result.Faces?.filter((f: any) => f.ExternalImageId === sanitized) || []
+    let indexedFacesCount = 0
+    // Re-list all to count how many faces share this exact ExternalImageId
+    let allFacesWithThisId: any[] = []
+    let nt2: string | undefined = undefined
+    let r2: any
+    do {
+      r2 = await rekognition.send(new ListFacesCommand({
+        CollectionId: COLLECTION_ID,
+        MaxResults: 4096,
+        NextToken: nt2,
+      }))
+      r2.Faces?.forEach((f: any) => {
+        if (f.ExternalImageId === sanitized) allFacesWithThisId.push(f)
+      })
+      nt2 = r2.NextToken
+    } while (nt2)
+
     return NextResponse.json({
       filename,
       sanitized,
       isIndexed: indexedIds.has(sanitized),
+      indexedFaceCount: allFacesWithThisId.length,
       facesDetectedNow: detectResult.FaceDetails?.length || 0,
       faceDetails: detectResult.FaceDetails?.map(f => ({
         confidence: f.Confidence,
