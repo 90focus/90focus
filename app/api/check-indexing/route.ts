@@ -32,9 +32,10 @@ export async function POST(req: NextRequest) {
 
     let indexedIds = new Set<string>()
     let nextToken: string | undefined = undefined
+    let result: any
 
     do {
-      const result = await rekognition.send(new ListFacesCommand({
+      result = await rekognition.send(new ListFacesCommand({
         CollectionId: COLLECTION_ID,
         MaxResults: 4096,
         NextToken: nextToken,
