@@ -31,8 +31,10 @@ useEffect(() => {
       try {
         const today = new Date().toISOString().split('T')[0]
         const { data: past } = await supabase.from('events').select('*')
+          .eq('ist_test', false)
           .lte('date', today).order('date', { ascending: false })
         const { data: upcoming } = await supabase.from('events').select('*')
+          .eq('ist_test', false)
           .gt('date', today).order('date', { ascending: true })
         const data = [...(past || []), ...(upcoming || [])]
         setEvents(data)
