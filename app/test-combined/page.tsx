@@ -9,6 +9,7 @@ export default function TestCombinedPage() {
   const [dominantColor, setDominantColor] = useState('')
   const [loading, setLoading] = useState(false)
   const [threshold, setThreshold] = useState(50)
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null)
 
   const EVENT_ID = 'd97b2ad4-97a9-4df2-b670-f0596e560c23'
 
@@ -80,10 +81,10 @@ export default function TestCombinedPage() {
       <h1 style={{ fontSize: 22, fontWeight: 900, marginBottom: 20 }}>🔬 Kombinierte Suche: Gesicht + Farbe</h1>
 
       <div style={{ marginBottom: 20 }}>
-        <label style={{ display: 'block', marginBottom: 8, fontSize: 13, color: '#8899aa' }}>
-          Gesichts-Schwelle: {threshold}%
-        </label>
         <input type="range" min="30" max="99" value={threshold} onChange={(e) => handleThresholdChange(Number(e.target.value))} style={{ width: 200 }} />
+        <div style={{ marginTop: 6, fontSize: 14, color: '#e8ff00', fontWeight: 700 }}>
+          Schwelle: {threshold}%
+        </div>
       </div>
 
       <label style={{ display: 'inline-block', padding: '12px 24px', background: '#e8ff00', color: '#070b0f', borderRadius: 6, cursor: 'pointer', fontWeight: 900, marginBottom: 24 }}>
@@ -109,8 +110,8 @@ export default function TestCombinedPage() {
         <>
           <h2 style={{ fontSize: 16, marginBottom: 12, color: '#e8ff00' }}>👤 Per Gesicht gefunden: {faceMatches.length}</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 8, marginBottom: 32 }}>
-            {faceMatches.map((m, i) => (
-              <div key={i}>
+             {faceMatches.map((m, i) => (
+              <div key={i} onClick={() => setLightboxUrl(getImageUrl(m))} style={{ cursor: 'zoom-in' }}>
                 <img src={getImageUrl(m)} alt="" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 6, border: '2px solid #e8ff00' }} />
               </div>
             ))}
@@ -123,7 +124,7 @@ export default function TestCombinedPage() {
           <h2 style={{ fontSize: 16, marginBottom: 12, color: '#ff88ff' }}>🎽 Zusätzlich per Farbe gefunden: {colorMatches.length}</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 8 }}>
             {colorMatches.map((m, i) => (
-              <div key={i}>
+              <div key={i} onClick={() => setLightboxUrl(getImageUrl(m))} style={{ cursor: 'zoom-in' }}>
                 <img src={getImageUrl(m)} alt="" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 6, border: '2px solid #ff88ff' }} />
               </div>
             ))}
@@ -133,6 +134,12 @@ export default function TestCombinedPage() {
 
       {!loading && preview && faceMatches.length === 0 && colorMatches.length === 0 && (
         <p style={{ color: '#667788' }}>Keine Treffer gefunden.</p>
+      )}
+
+      {lightboxUrl && (
+        <div onClick={() => setLightboxUrl(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' }}>
+          <img src={lightboxUrl} alt="" style={{ maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain', borderRadius: 8 }} />
+        </div>
       )}
     </div>
   )
