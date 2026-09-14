@@ -5,8 +5,8 @@ import { useState } from 'react'
 export default function TestCombinedPage() {
   const [preview, setPreview] = useState<string | null>(null)
   const [faceMatches, setFaceMatches] = useState<any[]>([])
-  const [colorMatches, setColorMatches] = useState<any[]>([])
-  const [dominantColor, setDominantColor] = useState('')
+  const [profileMatches, setProfileMatches] = useState<any[]>([])
+  const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [threshold, setThreshold] = useState(50)
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null)
@@ -41,7 +41,7 @@ export default function TestCombinedPage() {
   const runSearch = async (base64: string, th: number) => {
     setLoading(true)
     setFaceMatches([])
-    setColorMatches([])
+    setProfileMatches([])
     try {
       const res = await fetch('/api/combined-search', {
         method: 'POST',
@@ -50,8 +50,8 @@ export default function TestCombinedPage() {
       })
       const data = await res.json()
       setFaceMatches(data.faceMatches || [])
-      setColorMatches(data.colorMatches || [])
-      setDominantColor(data.dominantColor || '')
+      setProfileMatches(data.profileMatches || [])
+      setProfile(data.profile || null)
     } catch (err) {
       console.error(err)
     }
@@ -93,12 +93,30 @@ export default function TestCombinedPage() {
       </label>
 
       {preview && (
-        <div style={{ marginBottom: 24, display: 'flex', alignItems: 'center', gap: 16 }}>
-          <img src={preview} alt="Selfie" style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: 8 }} />
-          {dominantColor && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ width: 24, height: 24, borderRadius: 4, background: dominantColor, border: '1px solid #445566' }} />
-              <span style={{ fontSize: 12, color: '#8899aa' }}>Erkannte Farbe: {dominantColor}</span>
+        <div style={{ marginBottom: 24 }}>
+          <img src={preview} alt="Selfie" style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: 8, marginBottom: 12 }} />
+          {profile && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, fontSize: 12, color: '#8899aa' }}>
+              {profile.shirtColor && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ width: 18, height: 18, borderRadius: 4, background: profile.shirtColor, border: '1px solid #445566' }} />
+                  Shirt: {profile.shirtColor}
+                </div>
+              )}
+              {profile.shortsColor && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ width: 18, height: 18, borderRadius: 4, background: profile.shortsColor, border: '1px solid #445566' }} />
+                  Shorts: {profile.shortsColor}
+                </div>
+              )}
+              {profile.shoeColor && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ width: 18, height: 18, borderRadius: 4, background: profile.shoeColor, border: '1px solid #445566' }} />
+                  Schuhe: {profile.shoeColor}
+                </div>
+              )}
+              {profile.hasSunglasses && <div>🕶️ Sonnenbrille</div>}
+              {profile.hasEyeglasses && <div>👓 Brille</div>}
             </div>
           )}
         </div>
@@ -119,20 +137,23 @@ export default function TestCombinedPage() {
         </>
       )}
 
-      {!loading && colorMatches.length > 0 && (
+      {!loading && profileMatches.length > 0 && (
         <>
-          <h2 style={{ fontSize: 16, marginBottom: 12, color: '#ff88ff' }}>🎽 Zusätzlich per Farbe gefunden: {colorMatches.length}</h2>
+          <h2 style={{ fontSize: 16, marginBottom: 12, color: '#ff88ff' }}>🎽 Zusätzlich per Profil gefunden: {profileMatches.length}</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 8 }}>
-            {colorMatches.map((m, i) => (
-              <div key={i} onClick={() => setLightboxUrl(getImageUrl(m))} style={{ cursor: 'zoom-in' }}>
+            {profileMatches.map((m, i) => (
+              <div key={i} onClick={() => setLightboxUrl(getImageUrl(m))} style={{ cursor: 'zoom-in', position: 'relative' }}>
                 <img src={getImageUrl(m)} alt="" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 6, border: '2px solid #ff88ff' }} />
+                <div style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(0,0,0,0.7)', color: '#ff88ff', fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 700 }}>
+                  {m.score}/5
+                </div>
               </div>
             ))}
           </div>
         </>
       )}
 
-      {!loading && preview && faceMatches.length === 0 && colorMatches.length === 0 && (
+      {!loading && preview && faceMatches.length === 0 && profileMatches.length === 0 && (
         <p style={{ color: '#667788' }}>Keine Treffer gefunden.</p>
       )}
 
