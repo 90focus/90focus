@@ -435,6 +435,31 @@ const loadFotos = async () => {
     setMessage(lang === 'de' ? `✅ Fertig! ${totalProcessed} geprüft, ${allMatches.length} Treffer gefunden. Details in der Konsole (F12).` : `✅ Done! ${totalProcessed} checked, ${allMatches.length} matches found. Details in console (F12).`)
   }
 
+  const handleDetectBibColor = async () => {
+    setMessage(lang === 'de' ? 'Starte Startnummer/Farb-Erkennung...' : 'Starting bib/color detection...')
+    let totalProcessed = 0
+    let done = false
+
+    while (!done) {
+      try {
+        const res = await fetch('/api/detect-bib-color-batch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ eventId }),
+        })
+        const data = await res.json()
+        totalProcessed += data.processed || 0
+        setMessage(lang === 'de' ? `Verarbeitet: ${totalProcessed} Fotos...` : `Processed: ${totalProcessed} photos...`)
+        done = data.done
+      } catch (e) {
+        console.error('Detect bib/color error:', e)
+        done = true
+      }
+    }
+
+    setMessage(lang === 'de' ? `✅ Fertig! ${totalProcessed} Fotos verarbeitet.` : `✅ Done! ${totalProcessed} photos processed.`)
+  }
+
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#070b0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <p style={{ color: '#e8eef4' }}>{t.loading}</p>
@@ -498,6 +523,10 @@ const loadFotos = async () => {
                 <button onClick={handleLuxandCompare}
                   style={{ background: 'transparent', color: '#00ffcc', border: '1px solid #00ffcc', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
                   🔬 {lang === 'de' ? 'Luxand Vergleich' : 'Luxand Compare'}
+                </button>
+                <button onClick={handleDetectBibColor}
+                  style={{ background: 'transparent', color: '#ff66cc', border: '1px solid #ff66cc', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
+                  🎽 {lang === 'de' ? 'Startnummer/Farbe erkennen' : 'Detect Bib/Color'}
                 </button>
                 <button onClick={deleteEvent}
                   style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '8px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
