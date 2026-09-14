@@ -19,6 +19,7 @@ export default function FotografenPage() {
   const [specialization, setSpecialization] = useState('')
   const [workAreas, setWorkAreas] = useState('')
   const [saving, setSaving] = useState(false)
+  const [successMsg, setSuccessMsg] = useState(false)
 
   const load = async () => {
     const { data } = await supabase.from('photographers').select('*').order('created_at', { ascending: false })
@@ -54,6 +55,8 @@ export default function FotografenPage() {
     if (!error) {
       resetForm()
       load()
+      setSuccessMsg(true)
+      setTimeout(() => setSuccessMsg(false), 3000)
     }
   }
 
@@ -85,6 +88,12 @@ export default function FotografenPage() {
             {showForm ? (lang === 'de' ? 'Abbrechen' : 'Cancel') : (lang === 'de' ? '+ Fotograf hinzufügen' : '+ Add Photographer')}
           </button>
         </div>
+
+        {successMsg && (
+          <div style={{ padding: '14px 18px', background: 'rgba(68,255,136,0.1)', border: '1px solid #44ff88', borderRadius: 8, marginBottom: 24, color: '#44ff88', fontWeight: 700, fontSize: 14 }}>
+            {lang === 'de' ? '✅ Fotograf-Profil erstellt!' : '✅ Photographer profile created!'}
+          </div>
+        )}
 
         {showForm && (
           <div style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 8, padding: 24, marginBottom: 24 }}>
