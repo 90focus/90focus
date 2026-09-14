@@ -21,6 +21,7 @@ export default function FotografenPage() {
   const [experience, setExperience] = useState('')
   const [saving, setSaving] = useState(false)
   const [successMsg, setSuccessMsg] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
 
   const load = async () => {
     const { data } = await supabase.from('photographers').select('*').order('created_at', { ascending: false })
@@ -34,6 +35,7 @@ export default function FotografenPage() {
     setFirstName(''); setLastName(''); setEmail(''); setPhone(''); setLocation('')
     setEquipment(''); setSpecialization(''); setWorkAreas(''); setExperience('')
     setShowForm(false)
+    setEditingId(null)
   }
 
   const handleSave = async () => {
@@ -42,7 +44,8 @@ export default function FotografenPage() {
       return
     }
     setSaving(true)
-    const { error } = await supabase.from('photographers').insert({
+
+    const payload = {
       first_name: firstName,
       last_name: lastName,
       email,
@@ -52,7 +55,12 @@ export default function FotografenPage() {
       specialization,
       work_areas: workAreas,
       experience,
-    })
+    }
+
+    const { error } = editingId
+      ? await supabase.from('photographers').update(payload).eq('id', editingId)
+      : await supabase.from('photographers').insert(payload)
+
     setSaving(false)
     if (!error) {
       resetForm()
@@ -60,6 +68,20 @@ export default function FotografenPage() {
       setSuccessMsg(true)
       setTimeout(() => setSuccessMsg(false), 3000)
     }
+  }
+
+  const handleEdit = (p: any) => {
+    setEditingId(p.id)
+    setFirstName(p.first_name || '')
+    setLastName(p.last_name || '')
+    setEmail(p.email || '')
+    setPhone(p.phone || '')
+    setLocation(p.location || '')
+    setEquipment(p.equipment || '')
+    setSpecialization(p.specialization || '')
+    setWorkAreas(p.work_areas || '')
+    setExperience(p.experience || '')
+    setShowForm(true)
   }
 
   const handleDelete = async (id: string) => {
@@ -141,7 +163,7 @@ export default function FotografenPage() {
             </div>
             <button onClick={handleSave} disabled={saving}
               style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 6, padding: '12px 24px', fontWeight: 900, fontSize: 13, cursor: 'pointer', textTransform: 'uppercase' }}>
-              {saving ? (lang === 'de' ? 'Speichern...' : 'Saving...') : (lang === 'de' ? 'Speichern' : 'Save')}
+              {saving ? (lang === 'de' ? 'Speichern...' : 'Saving...') : editingId ? (lang === 'de' ? 'Änderungen speichern' : 'Save changes') : (lang === 'de' ? 'Speichern' : 'Save')}
             </button>
           </div>
         )}
@@ -158,10 +180,16 @@ export default function FotografenPage() {
                   <h3 style={{ fontSize: 16, fontWeight: 900, color: '#e8ff00', margin: 0 }}>
                     {p.first_name} {p.last_name}
                   </h3>
-                  <button onClick={() => handleDelete(p.id)}
-                    style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '4px 10px', fontSize: 11, cursor: 'pointer' }}>
-                    {lang === 'de' ? 'Löschen' : 'Delete'}
-                  </button>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={() => handleEdit(p)}
+                      style={{ background: 'transparent', color: '#e8ff00', border: '1px solid #e8ff00', borderRadius: 4, padding: '4px 10px', fontSize: 11, cursor: 'pointer' }}>
+                      {lang === 'de' ? 'Bearbeiten' : 'Edit'}
+                    </button>
+                    <button onClick={() => handleDelete(p.id)}
+                      style={{ background: 'transparent', color: '#ff4444', border: '1px solid #ff4444', borderRadius: 4, padding: '4px 10px', fontSize: 11, cursor: 'pointer' }}>
+                      {lang === 'de' ? 'Löschen' : 'Delete'}
+                    </button>
+                  </div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10, marginTop: 12, fontSize: 13 }}>
                   {p.email && <div><span style={{ color: '#8899aa' }}>Email: </span>{p.email}</div>}
