@@ -35,8 +35,15 @@ async function processOne(filename: string, fotoId: string) {
       .map(t => t.DetectedText)
       .join(', ') || ''
 
-    const faceResult = await rekognition.send(new DetectFacesCommand({ Image: { Bytes: buffer } }))
+    const faceResult = await rekognition.send(new DetectFacesCommand({ Image: { Bytes: buffer }, Attributes: ['ALL'] }))
     let colorHex = ''
+    let hasSunglasses = false
+    let hasEyeglasses = false
+
+    if (faceResult.FaceDetails && faceResult.FaceDetails.length > 0) {
+      hasSunglasses = faceResult.FaceDetails[0].Sunglasses?.Value || false
+      hasEyeglasses = faceResult.FaceDetails[0].Eyeglasses?.Value || false
+    }
     if (faceResult.FaceDetails && faceResult.FaceDetails.length > 0) {
       const box = faceResult.FaceDetails[0].BoundingBox
       const metadata = await sharp(buffer).metadata()
@@ -57,7 +64,12 @@ async function processOne(filename: string, fotoId: string) {
       }
     }
 
-    await supabase.from('event_fotos').update({ detected_bib_numbers: numbers, detected_colors: colorHex }).eq('id', fotoId)
+    await supabase.from('event_fotos').update({ 
+      detected_bib_numbers: numbers, 
+      detected_colors: colorHex,
+      has_sunglasses: hasSunglasses,
+      has_eyeglasses: hasEyeglasses,
+    }).eq('id', fotoId)
     return true
   } catch (e) {
     console.error(`Detect error for ${filename}:`, e)
