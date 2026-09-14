@@ -143,10 +143,14 @@ const loadEvents = async (userId: string) => {
           </div>
         </div>
 
-        <div style={{ marginBottom: 32 }}>
+        <div style={{ marginBottom: 32, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <button onClick={() => router.push('/admin')}
             style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '12px 24px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1, textTransform: 'uppercase' }}>
             {t.newEvent}
+          </button>
+          <button onClick={() => router.push('/organisator-anfragen')}
+            style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '12px 24px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1, textTransform: 'uppercase' }}>
+            {lang === 'de' ? '📋 Organisator-Anfragen' : '📋 Organizer Inquiries'}
           </button>
         </div>
 
