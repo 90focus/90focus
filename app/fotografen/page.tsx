@@ -18,6 +18,7 @@ export default function FotografenPage() {
   const [equipment, setEquipment] = useState('')
   const [specialization, setSpecialization] = useState('')
   const [workAreas, setWorkAreas] = useState('')
+  const [experience, setExperience] = useState('')
   const [saving, setSaving] = useState(false)
   const [successMsg, setSuccessMsg] = useState(false)
 
@@ -31,7 +32,7 @@ export default function FotografenPage() {
 
   const resetForm = () => {
     setFirstName(''); setLastName(''); setEmail(''); setPhone(''); setLocation('')
-    setEquipment(''); setSpecialization(''); setWorkAreas('')
+    setEquipment(''); setSpecialization(''); setWorkAreas(''); setExperience('')
     setShowForm(false)
   }
 
@@ -50,6 +51,7 @@ export default function FotografenPage() {
       equipment,
       specialization,
       work_areas: workAreas,
+      experience,
     })
     setSaving(false)
     if (!error) {
@@ -133,6 +135,10 @@ export default function FotografenPage() {
               <label style={labelStyle}>{lang === 'de' ? 'Orte für Arbeit' : 'Work areas'}</label>
               <textarea style={{ ...inputStyle, minHeight: 60, resize: 'vertical' as any }} value={workAreas} onChange={e => setWorkAreas(e.target.value)} />
             </div>
+            <div style={{ marginBottom: 14 }}>
+              <label style={labelStyle}>{lang === 'de' ? 'Erfahrung' : 'Experience'}</label>
+              <textarea style={{ ...inputStyle, minHeight: 60, resize: 'vertical' as any }} value={experience} onChange={e => setExperience(e.target.value)} />
+            </div>
             <button onClick={handleSave} disabled={saving}
               style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 6, padding: '12px 24px', fontWeight: 900, fontSize: 13, cursor: 'pointer', textTransform: 'uppercase' }}>
               {saving ? (lang === 'de' ? 'Speichern...' : 'Saving...') : (lang === 'de' ? 'Speichern' : 'Save')}
@@ -165,6 +171,7 @@ export default function FotografenPage() {
                 {p.equipment && <div style={{ marginTop: 10, fontSize: 13 }}><span style={{ color: '#8899aa' }}>Equipment: </span>{p.equipment}</div>}
                 {p.specialization && <div style={{ marginTop: 6, fontSize: 13 }}><span style={{ color: '#8899aa' }}>{lang === 'de' ? 'Spezialisiert: ' : 'Specialized: '}</span>{p.specialization}</div>}
                 {p.work_areas && <div style={{ marginTop: 6, fontSize: 13 }}><span style={{ color: '#8899aa' }}>{lang === 'de' ? 'Arbeitsorte: ' : 'Work areas: '}</span>{p.work_areas}</div>}
+                {p.experience && <div style={{ marginTop: 6, fontSize: 13 }}><span style={{ color: '#8899aa' }}>{lang === 'de' ? 'Erfahrung: ' : 'Experience: '}</span>{p.experience}</div>}
               </div>
             ))}
           </div>
