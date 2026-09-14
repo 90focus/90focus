@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
 
     await resend.emails.send({
       from: 'SportShot <onboarding@resend.dev>',
-      to: 'info@sport-shot.ch',
+      to: 'info@aktienakademie.ch',
       subject: `Neue Organisator-Anfrage: ${data.event_name}`,
       text: `
 Neue Organisator-Anfrage!
