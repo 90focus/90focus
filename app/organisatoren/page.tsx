@@ -169,7 +169,7 @@ export default function OrganisatorenPage() {
             {lang === 'de' ? '✅ Danke für deine Anfrage!' : '✅ Thanks for your inquiry!'}
           </h1>
           <p style={{ color: '#c5d0da', marginTop: 12, fontSize: 14 }}>
-            {lang === 'de' ? 'Wir melden uns bald mit einer Offerte bei dir.' : "We'll get back to you soon with an offer."}
+            {lang === 'de' ? 'Wir melden uns bald bei dir.' : "We'll get back to you soon."}
           </p>
         </div>
       </div>
