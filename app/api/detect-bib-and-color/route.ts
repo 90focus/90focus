@@ -67,12 +67,28 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    let faceCropBase64 = ''
+    if (faceResult.FaceDetails && faceResult.FaceDetails.length > 0) {
+      const box = faceResult.FaceDetails[0].BoundingBox
+      const metadata = await sharp(buffer).metadata()
+      const imgWidth = metadata.width || 1000
+      const imgHeight = metadata.height || 1000
+      if (box) {
+        const left = Math.max(0, Math.round(box.Left! * imgWidth) - 20)
+        const top = Math.max(0, Math.round(box.Top! * imgHeight) - 20)
+        const width = Math.min(imgWidth - left, Math.round(box.Width! * imgWidth) + 40)
+        const height = Math.min(imgHeight - top, Math.round((box.Height! * imgHeight) * 2))
+        const cropBuffer = await sharp(buffer).extract({ left, top, width, height }).jpeg().toBuffer()
+        faceCropBase64 = `data:image/jpeg;base64,${cropBuffer.toString('base64')}`
+      }
+    }
+
     await supabase
       .from('event_fotos')
       .update({ detected_bib_numbers: numbers, detected_colors: colorHex })
       .eq('id', fotoId)
 
-    return NextResponse.json({ success: true, numbers, colorHex })
+    return NextResponse.json({ success: true, numbers, colorHex, faceCropBase64 })
   } catch (error: any) {
     console.error('Detect bib/color error:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
