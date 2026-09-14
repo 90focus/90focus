@@ -152,6 +152,10 @@ const loadEvents = async (userId: string) => {
             style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '12px 24px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1, textTransform: 'uppercase' }}>
             {lang === 'de' ? '📋 Organisator-Anfragen' : '📋 Organizer Inquiries'}
           </button>
+          <button onClick={() => router.push('/fotografen')}
+            style={{ background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 4, padding: '12px 24px', fontWeight: 900, fontSize: 14, cursor: 'pointer', letterSpacing: 1, textTransform: 'uppercase' }}>
+            {lang === 'de' ? '📷 Fotografen' : '📷 Photographers'}
+          </button>
         </div>
 
         <div style={{ display: 'flex', gap: 16, marginBottom: 32, flexWrap: 'wrap' }}>
