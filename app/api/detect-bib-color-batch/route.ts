@@ -22,7 +22,12 @@ async function processOne(filename: string, fotoId: string) {
   try {
     const s3Url = `https://90focus-fotos-ireland.s3.eu-west-1.amazonaws.com/${encodeURIComponent(filename)}`
     const imgRes = await fetch(s3Url)
-    const buffer = Buffer.from(await imgRes.arrayBuffer())
+    const originalBuffer = Buffer.from(await imgRes.arrayBuffer())
+
+    const buffer = await sharp(originalBuffer)
+      .resize(1500, 1500, { fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 85 })
+      .toBuffer()
 
     const textResult = await rekognition.send(new DetectTextCommand({ Image: { Bytes: buffer } }))
     const numbers = textResult.TextDetections
