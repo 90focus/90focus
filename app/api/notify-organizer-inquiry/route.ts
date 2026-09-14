@@ -14,11 +14,19 @@ export async function POST(req: NextRequest) {
       text: `
 Neue Organisator-Anfrage!
 
+Kontakt: ${data.first_name} ${data.last_name}
+Email: ${data.email}
+Telefon: ${data.phone}
+
 Event: ${data.event_name}
 Von: ${data.date_from || '-'} Bis: ${data.date_to || '-'}
+Uhrzeit: ${data.time_from || '-'} - ${data.time_to || '-'}
 Ort: ${data.location}
 Teilnehmer: ${data.participant_count || '-'}
+
 Gewünschte Leistungen: ${data.services || '-'}
+Gewähltes Paket: ${data.selected_package || '-'}
+
 Bemerkungen: ${data.remarks || '-'}
       `,
     })
