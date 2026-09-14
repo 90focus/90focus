@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   try {
     const data = await req.json()
 
-    await resend.emails.send({
+    const result = await resend.emails.send({
       from: 'SportShot <onboarding@resend.dev>',
       to: 'info@aktienakademie.ch',
       subject: `Neue Organisator-Anfrage: ${data.event_name}`,
@@ -23,7 +23,12 @@ Bemerkungen: ${data.remarks || '-'}
       `,
     })
 
-    return NextResponse.json({ success: true })
+    if (result.error) {
+      console.error('Resend error:', result.error)
+      return NextResponse.json({ success: false, error: result.error }, { status: 500 })
+    }
+
+    return NextResponse.json({ success: true, id: result.data?.id })
   } catch (error: any) {
     console.error('Email send error:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
