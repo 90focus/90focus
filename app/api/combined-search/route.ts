@@ -95,16 +95,16 @@ export async function POST(req: NextRequest) {
 
     const scored = candidates.map(f => {
       let score = 0
-      if (profile.shirtColor && hexDistance(f.detected_colors, profile.shirtColor) < 25) score++
-      if (profile.shortsColor && hexDistance(f.shorts_color, profile.shortsColor) < 25) score++
-      if (profile.shoeColor && hexDistance(f.shoe_color, profile.shoeColor) < 25) score++
+      if (profile.shirtColor && hexDistance(f.detected_colors, profile.shirtColor) < 15) score++
+      if (profile.shortsColor && hexDistance(f.shorts_color, profile.shortsColor) < 15) score++
+      if (profile.shoeColor && hexDistance(f.shoe_color, profile.shoeColor) < 15) score++
       if (profile.hasSunglasses && f.has_sunglasses) score++
       if (profile.hasEyeglasses && f.has_eyeglasses) score++
       return { ...f, score }
     })
 
-    // Mindestens 2 Merkmale müssen übereinstimmen
-    const profileMatches = scored.filter(f => f.score >= 2).sort((a, b) => b.score - a.score)
+    // Mindestens 3 Merkmale müssen übereinstimmen, engere Farbtoleranz
+    const profileMatches = scored.filter(f => f.score >= 3).sort((a, b) => b.score - a.score)
 
     return NextResponse.json({
       faceMatches,
