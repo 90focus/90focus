@@ -6,16 +6,26 @@ import { useLanguage } from '@/app/context/LanguageContext'
 
 export default function OrganisatorenPage() {
   const { lang } = useLanguage()
+  const [step, setStep] = useState(1)
+
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+
+  const [services, setServices] = useState<string[]>([])
+
   const [eventName, setEventName] = useState('')
+  const [location, setLocation] = useState('')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   const [timeFrom, setTimeFrom] = useState('')
   const [timeTo, setTimeTo] = useState('')
-  const [location, setLocation] = useState('')
   const [participants, setParticipants] = useState('')
-  const [services, setServices] = useState<string[]>([])
+
   const [selectedPackage, setSelectedPackage] = useState<string>('')
   const [remarks, setRemarks] = useState('')
+
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -70,11 +80,42 @@ export default function OrganisatorenPage() {
   const daysCount = getDaysCount()
   const duration = getDuration()
 
-  const handleSubmit = async () => {
-    if (!eventName || !dateFrom || !dateTo || !timeFrom || !timeTo || !location || !participants || services.length === 0 || !selectedPackage) {
-      alert(lang === 'de' ? 'Bitte alle Felder ausfüllen' : 'Please fill in all fields')
+  const t = {
+    next: lang === 'de' ? 'Weiter' : 'Next',
+    back: lang === 'de' ? 'Zurück' : 'Back',
+    send: lang === 'de' ? 'Anfrage senden' : 'Send inquiry',
+    sending: lang === 'de' ? 'Senden...' : 'Sending...',
+    fillAll: lang === 'de' ? 'Bitte alle Felder ausfüllen' : 'Please fill in all fields',
+  }
+
+  const stepTitles = [
+    '',
+    lang === 'de' ? 'Deine Kontaktdaten' : 'Your Contact Details',
+    lang === 'de' ? 'Was möchtet ihr von uns?' : 'What do you need from us?',
+    lang === 'de' ? 'Details zum Event' : 'Event Details',
+    lang === 'de' ? 'Wähle ein Paket' : 'Choose a Package',
+    lang === 'de' ? 'Letzte Bemerkungen' : 'Final Remarks',
+  ]
+
+  const validateStep = (): boolean => {
+    if (step === 1) return !!(firstName && lastName && email && phone)
+    if (step === 2) return services.length > 0
+    if (step === 3) return !!(eventName && location && dateFrom && dateTo && timeFrom && timeTo && participants)
+    if (step === 4) return !!selectedPackage
+    return true
+  }
+
+  const handleNext = () => {
+    if (!validateStep()) {
+      alert(t.fillAll)
       return
     }
+    setStep(s => s + 1)
+  }
+
+  const handleBack = () => setStep(s => s - 1)
+
+  const handleSubmit = async () => {
     setLoading(true)
     const pkg = packages.find(p => p.key === selectedPackage)
     const { error } = await supabase.from('organizer_inquiries').insert({
@@ -84,7 +125,7 @@ export default function OrganisatorenPage() {
       location,
       participant_count: participants,
       services: services.join(', '),
-      remarks: `${remarks ? remarks + ' | ' : ''}Zeit: ${timeFrom}-${timeTo} | Paket: ${lang === 'de' ? pkg?.titleDe : pkg?.titleEn}`,
+      remarks: `${remarks ? remarks + ' | ' : ''}Zeit: ${timeFrom}-${timeTo} | Paket: ${lang === 'de' ? pkg?.titleDe : pkg?.titleEn} | Kontakt: ${firstName} ${lastName}, ${email}, ${phone}`,
     })
 
     if (!error) {
@@ -93,6 +134,10 @@ export default function OrganisatorenPage() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            first_name: firstName,
+            last_name: lastName,
+            email,
+            phone,
             event_name: eventName,
             date_from: dateFrom,
             date_to: dateTo,
@@ -133,125 +178,166 @@ export default function OrganisatorenPage() {
 
   return (
     <div style={{ background: '#070b0f', color: '#e8eef4', minHeight: '100vh', padding: '60px 24px', fontFamily: 'sans-serif' }}>
-      <div style={{ maxWidth: 700, margin: '0 auto' }}>
+      <div style={{ maxWidth: 600, margin: '0 auto' }}>
 
-        <h1 style={{ fontSize: 32, fontWeight: 900, textTransform: 'uppercase', marginBottom: 8 }}>
+        <h1 style={{ fontSize: 28, fontWeight: 900, textTransform: 'uppercase', marginBottom: 8 }}>
           {lang === 'de' ? 'Für Organisatoren' : 'For Organizers'}
         </h1>
-        <p style={{ color: '#8899aa', marginBottom: 40, fontSize: 15 }}>
-          {lang === 'de' ? 'Plant ihr ein Sport-Event? Wir kümmern uns um die Fotografie.' : 'Planning a sports event? We handle the photography.'}
-        </p>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-
-          <div>
-            <label style={labelStyle}>{lang === 'de' ? 'Name des Events *' : 'Event name *'}</label>
-            <input required style={inputStyle} value={eventName} onChange={e => setEventName(e.target.value)} />
-          </div>
-
-          <div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-              <div>
-                <label style={labelStyle}>{lang === 'de' ? 'Datum von *' : 'Date from *'}</label>
-                <input required type="date" style={inputStyle} value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
-              </div>
-              <div>
-                <label style={labelStyle}>{lang === 'de' ? 'Datum bis *' : 'Date to *'}</label>
-                <input required type="date" style={inputStyle} value={dateTo} onChange={e => setDateTo(e.target.value)} />
-              </div>
-            </div>
-            {daysCount && (
-              <div style={{ color: '#e8ff00', fontSize: 12, marginTop: 6 }}>
-                {daysCount} {daysCount === 1 ? (lang === 'de' ? 'Tag' : 'day') : (lang === 'de' ? 'Tage' : 'days')}
-              </div>
-            )}
-          </div>
-
-          <div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-              <div>
-                <label style={labelStyle}>{lang === 'de' ? 'Uhrzeit von *' : 'Time from *'}</label>
-                <input required type="time" style={inputStyle} value={timeFrom} onChange={e => setTimeFrom(e.target.value)} />
-              </div>
-              <div>
-                <label style={labelStyle}>{lang === 'de' ? 'Uhrzeit bis *' : 'Time to *'}</label>
-                <input required type="time" style={inputStyle} value={timeTo} onChange={e => setTimeTo(e.target.value)} />
-              </div>
-            </div>
-            {duration && (
-              <div style={{ color: '#e8ff00', fontSize: 12, marginTop: 6 }}>
-                {duration.hours > 0 && `${duration.hours} ${lang === 'de' ? 'Std' : 'hrs'} `}
-                {duration.mins > 0 && `${duration.mins} ${lang === 'de' ? 'Min' : 'min'}`}
-                {duration.hours === 0 && duration.mins === 0 && (lang === 'de' ? '0 Min' : '0 min')}
-              </div>
-            )}
-          </div>
-
-          <div>
-            <label style={labelStyle}>{lang === 'de' ? 'Ort des Events *' : 'Event location *'}</label>
-            <input required style={inputStyle} value={location} onChange={e => setLocation(e.target.value)} />
-          </div>
-
-          <div>
-            <label style={labelStyle}>{lang === 'de' ? 'Geplante Teilnehmerzahl *' : 'Expected number of participants *'}</label>
-            <input required style={inputStyle} value={participants} onChange={e => setParticipants(e.target.value)} />
-          </div>
-
-          <div>
-            <label style={labelStyle}>{lang === 'de' ? 'Was möchtet ihr von uns? *' : 'What do you need from us? *'}</label>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 6 }}>
-              {[
-                { key: 'participants', de: 'Teilnehmer fotografieren', en: 'Photograph participants' },
-                { key: 'podium', de: 'Podium fotografieren', en: 'Photograph podium' },
-                { key: 'audience', de: 'Publikum fotografieren', en: 'Photograph audience' },
-                { key: 'video', de: 'Video/Highlights', en: 'Video/Highlights' },
-              ].map(s => (
-                <button key={s.key} type="button" onClick={() => toggleService(lang === 'de' ? s.de : s.en)}
-                  style={{
-                    padding: '8px 14px', borderRadius: 20, fontSize: 13, cursor: 'pointer',
-                    border: services.includes(lang === 'de' ? s.de : s.en) ? '1px solid #e8ff00' : '1px solid #1c2a38',
-                    background: services.includes(lang === 'de' ? s.de : s.en) ? 'rgba(232,255,0,0.1)' : 'transparent',
-                    color: services.includes(lang === 'de' ? s.de : s.en) ? '#e8ff00' : '#c5d0da',
-                  }}>
-                  {lang === 'de' ? s.de : s.en}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label style={labelStyle}>{lang === 'de' ? 'Welches Paket interessiert euch? *' : 'Which package interests you? *'}</label>
-            <div style={{ display: 'grid', gap: 12, marginTop: 6 }}>
-              {packages.map(p => (
-                <div key={p.key} onClick={() => setSelectedPackage(p.key)}
-                  style={{
-                    padding: 18, borderRadius: 8, cursor: 'pointer',
-                    border: selectedPackage === p.key ? '2px solid #e8ff00' : '1px solid #1c2a38',
-                    background: selectedPackage === p.key ? 'rgba(232,255,0,0.08)' : '#0d1219',
-                  }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                    <div style={{ width: 18, height: 18, borderRadius: '50%', border: '1px solid #445566', background: selectedPackage === p.key ? '#e8ff00' : 'transparent', flexShrink: 0 }} />
-                    <h3 style={{ color: '#e8ff00', fontSize: 14, margin: 0 }}>{lang === 'de' ? p.titleDe : p.titleEn}</h3>
-                  </div>
-                  <p style={{ fontSize: 13, color: '#c5d0da', lineHeight: 1.5, margin: 0, marginLeft: 28 }}>
-                    {lang === 'de' ? p.descDe : p.descEn}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label style={labelStyle}>{lang === 'de' ? 'Bemerkungen' : 'Remarks'}</label>
-            <textarea style={{ ...inputStyle, minHeight: 100, resize: 'vertical' as any }} value={remarks} onChange={e => setRemarks(e.target.value)} />
-          </div>
-
-          <button onClick={handleSubmit} disabled={loading}
-            style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 6, padding: '14px', fontWeight: 900, fontSize: 14, cursor: 'pointer', textTransform: 'uppercase', marginTop: 12 }}>
-            {loading ? (lang === 'de' ? 'Senden...' : 'Sending...') : (lang === 'de' ? 'Anfrage senden' : 'Send inquiry')}
-          </button>
-
+        <div style={{ display: 'flex', gap: 6, marginBottom: 24 }}>
+          {[1, 2, 3, 4, 5].map(n => (
+            <div key={n} style={{ flex: 1, height: 4, borderRadius: 2, background: n <= step ? '#e8ff00' : '#1c2a38' }} />
+          ))}
         </div>
+
+        <h2 style={{ fontSize: 18, fontWeight: 900, marginBottom: 24 }}>{stepTitles[step]}</h2>
+
+        {step === 1 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div>
+                <label style={labelStyle}>{lang === 'de' ? 'Vorname *' : 'First name *'}</label>
+                <input style={inputStyle} value={firstName} onChange={e => setFirstName(e.target.value)} />
+              </div>
+              <div>
+                <label style={labelStyle}>{lang === 'de' ? 'Nachname *' : 'Last name *'}</label>
+                <input style={inputStyle} value={lastName} onChange={e => setLastName(e.target.value)} />
+              </div>
+            </div>
+            <div>
+              <label style={labelStyle}>{lang === 'de' ? 'Email *' : 'Email *'}</label>
+              <input type="email" style={inputStyle} value={email} onChange={e => setEmail(e.target.value)} />
+            </div>
+            <div>
+              <label style={labelStyle}>{lang === 'de' ? 'Telefonnummer *' : 'Phone number *'}</label>
+              <input type="tel" style={inputStyle} value={phone} onChange={e => setPhone(e.target.value)} />
+            </div>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+            {[
+              { key: 'participants', de: 'Teilnehmer fotografieren', en: 'Photograph participants' },
+              { key: 'podium', de: 'Podium fotografieren', en: 'Photograph podium' },
+              { key: 'audience', de: 'Publikum fotografieren', en: 'Photograph audience' },
+              { key: 'video', de: 'Video/Highlights', en: 'Video/Highlights' },
+            ].map(s => (
+              <button key={s.key} type="button" onClick={() => toggleService(lang === 'de' ? s.de : s.en)}
+                style={{
+                  padding: '12px 18px', borderRadius: 20, fontSize: 14, cursor: 'pointer',
+                  border: services.includes(lang === 'de' ? s.de : s.en) ? '1px solid #e8ff00' : '1px solid #1c2a38',
+                  background: services.includes(lang === 'de' ? s.de : s.en) ? 'rgba(232,255,0,0.1)' : 'transparent',
+                  color: services.includes(lang === 'de' ? s.de : s.en) ? '#e8ff00' : '#c5d0da',
+                }}>
+                {lang === 'de' ? s.de : s.en}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {step === 3 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            <div>
+              <label style={labelStyle}>{lang === 'de' ? 'Name des Events *' : 'Event name *'}</label>
+              <input style={inputStyle} value={eventName} onChange={e => setEventName(e.target.value)} />
+            </div>
+            <div>
+              <label style={labelStyle}>{lang === 'de' ? 'Ort des Events *' : 'Event location *'}</label>
+              <input style={inputStyle} value={location} onChange={e => setLocation(e.target.value)} />
+            </div>
+            <div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={labelStyle}>{lang === 'de' ? 'Datum von *' : 'Date from *'}</label>
+                  <input type="date" style={inputStyle} value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
+                </div>
+                <div>
+                  <label style={labelStyle}>{lang === 'de' ? 'Datum bis *' : 'Date to *'}</label>
+                  <input type="date" style={inputStyle} value={dateTo} onChange={e => setDateTo(e.target.value)} />
+                </div>
+              </div>
+              {daysCount && (
+                <div style={{ color: '#e8ff00', fontSize: 12, marginTop: 6 }}>
+                  {daysCount} {daysCount === 1 ? (lang === 'de' ? 'Tag' : 'day') : (lang === 'de' ? 'Tage' : 'days')}
+                </div>
+              )}
+            </div>
+            <div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={labelStyle}>{lang === 'de' ? 'Uhrzeit von *' : 'Time from *'}</label>
+                  <input type="time" style={inputStyle} value={timeFrom} onChange={e => setTimeFrom(e.target.value)} />
+                </div>
+                <div>
+                  <label style={labelStyle}>{lang === 'de' ? 'Uhrzeit bis *' : 'Time to *'}</label>
+                  <input type="time" style={inputStyle} value={timeTo} onChange={e => setTimeTo(e.target.value)} />
+                </div>
+              </div>
+              {duration && (
+                <div style={{ color: '#e8ff00', fontSize: 12, marginTop: 6 }}>
+                  {duration.hours > 0 && `${duration.hours} ${lang === 'de' ? 'Std' : 'hrs'} `}
+                  {duration.mins > 0 && `${duration.mins} ${lang === 'de' ? 'Min' : 'min'}`}
+                  {duration.hours === 0 && duration.mins === 0 && (lang === 'de' ? '0 Min' : '0 min')}
+                </div>
+              )}
+            </div>
+            <div>
+              <label style={labelStyle}>{lang === 'de' ? 'Geplante Teilnehmerzahl *' : 'Expected number of participants *'}</label>
+              <input style={inputStyle} value={participants} onChange={e => setParticipants(e.target.value)} />
+            </div>
+          </div>
+        )}
+
+        {step === 4 && (
+          <div style={{ display: 'grid', gap: 12 }}>
+            {packages.map(p => (
+              <div key={p.key} onClick={() => setSelectedPackage(p.key)}
+                style={{
+                  padding: 18, borderRadius: 8, cursor: 'pointer',
+                  border: selectedPackage === p.key ? '2px solid #e8ff00' : '1px solid #1c2a38',
+                  background: selectedPackage === p.key ? 'rgba(232,255,0,0.08)' : '#0d1219',
+                }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                  <div style={{ width: 18, height: 18, borderRadius: '50%', border: '1px solid #445566', background: selectedPackage === p.key ? '#e8ff00' : 'transparent', flexShrink: 0 }} />
+                  <h3 style={{ color: '#e8ff00', fontSize: 14, margin: 0 }}>{lang === 'de' ? p.titleDe : p.titleEn}</h3>
+                </div>
+                <p style={{ fontSize: 13, color: '#c5d0da', lineHeight: 1.5, margin: 0, marginLeft: 28 }}>
+                  {lang === 'de' ? p.descDe : p.descEn}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {step === 5 && (
+          <div>
+            <label style={labelStyle}>{lang === 'de' ? 'Bemerkungen (optional)' : 'Remarks (optional)'}</label>
+            <textarea style={{ ...inputStyle, minHeight: 120, resize: 'vertical' as any }} value={remarks} onChange={e => setRemarks(e.target.value)} />
+          </div>
+        )}
+
+        <div style={{ display: 'flex', gap: 12, marginTop: 32 }}>
+          {step > 1 && (
+            <button onClick={handleBack}
+              style={{ flex: 1, background: 'transparent', color: '#e8eef4', border: '1px solid #1c2a38', borderRadius: 6, padding: '14px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+              {t.back}
+            </button>
+          )}
+          {step < 5 && (
+            <button onClick={handleNext}
+              style={{ flex: 2, background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 6, padding: '14px', fontWeight: 900, fontSize: 14, cursor: 'pointer', textTransform: 'uppercase' }}>
+              {t.next}
+            </button>
+          )}
+          {step === 5 && (
+            <button onClick={handleSubmit} disabled={loading}
+              style={{ flex: 2, background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 6, padding: '14px', fontWeight: 900, fontSize: 14, cursor: 'pointer', textTransform: 'uppercase' }}>
+              {loading ? t.sending : t.send}
+            </button>
+          )}
+        </div>
+
       </div>
     </div>
   )
