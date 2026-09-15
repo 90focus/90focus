@@ -333,7 +333,7 @@ export default function OrganisatorenPage() {
 
         {step === 5 && (
           <div>
-            <label style={labelStyle}>{lang === 'de' ? 'Bemerkungen (optional)' : 'Remarks (optional)'}</label>
+            <label style={labelStyle}>{lang === 'de' ? 'Bemerkungen/Fragen (optional)' : 'Remarks/Questions (optional)'}</label>
             <textarea style={{ ...inputStyle, minHeight: 120, resize: 'vertical' as any }} value={remarks} onChange={e => setRemarks(e.target.value)} />
           </div>
         )}
