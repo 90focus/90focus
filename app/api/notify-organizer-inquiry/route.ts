@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     const data = await req.json()
 
     const result = await resend.emails.send({
-      from: 'SportShot <onboarding@resend.dev>',
+      from: 'SportShot <noreply@sport-shot.ch>',
       to: 'info@sport-shot.ch',
       subject: `Neue Organisator-Anfrage: ${data.event_name}`,
       text: `
