@@ -24,6 +24,7 @@ export default function OrganisatorenPage() {
   const [participants, setParticipants] = useState('')
 
   const [selectedPackage, setSelectedPackage] = useState<string>('')
+  const [wantsLogo, setWantsLogo] = useState(false)
   const [remarks, setRemarks] = useState('')
 
   const [submitted, setSubmitted] = useState(false)
@@ -32,6 +33,37 @@ export default function OrganisatorenPage() {
   const toggleService = (s: string) => {
     setServices(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s])
   }
+
+  const packages = [
+    {
+      key: 'package1',
+      titleDe: 'Paket 1 — Free Download für Teilnehmer',
+      titleEn: 'Package 1 — Free Download for Participants',
+      descDe: 'Wir fotografieren euer Event. Fotos sind online, Teilnehmer können sie per Selfie-/Startnummer-Suche kostenlos herunterladen.',
+      descEn: 'We photograph your event. Photos go online, participants can find and download them for free via selfie/bib-number search.',
+    },
+    {
+      key: 'package2',
+      titleDe: 'Paket 2 — Kostenlose Fotografie + Social Media Paket',
+      titleEn: 'Package 2 — Free Photography + Social Media Package',
+      descDe: 'Wir fotografieren kostenlos für euch. Ihr bekommt ein Paket Fotos (z.B. 50) für eure Social Media Kanäle. Im Gegenzug dürfen wir die Fotos online an Teilnehmer verkaufen (kein Gewinnanteil für den Organisator).',
+      descEn: "We photograph for free. You get a package of photos (e.g. 50) for your social media channels. In exchange, we may sell the photos online to participants (no profit share for the organizer).",
+    },
+    {
+      key: 'package3',
+      titleDe: 'Paket 3 — Eigene Fotos, kostenloser Download für Teilnehmer',
+      titleEn: 'Package 3 — Your Own Photos, Free Download for Participants',
+      descDe: 'Ihr ladet eure eigenen Fotos bei uns hoch, Teilnehmer können sie finden und kostenlos herunterladen. Einmaliger Preis: ca. 100€.',
+      descEn: 'You upload your own photos to us, participants can find and download them for free. One-time price: approx. €100.',
+    },
+    {
+      key: 'package4',
+      titleDe: 'Paket 4 — Eigene Fotos, Verkauf über uns',
+      titleEn: 'Package 4 — Your Own Photos, Sold Through Us',
+      descDe: 'Ihr ladet eure eigenen Fotos hoch und verkauft sie über unsere Plattform. Ihr gebt 20% vom Gewinn ab (Photohawk-Gebühr).',
+      descEn: 'You upload your own photos and sell them through our platform. You give up 20% of profit (Photohawk fee).',
+    },
+  ]
 
   const getDaysCount = () => {
     if (!dateFrom || !dateTo) return null
@@ -101,7 +133,7 @@ export default function OrganisatorenPage() {
       location,
       participant_count: participants,
       services: services.join(', '),
-      remarks: `${remarks ? remarks + ' | ' : ''}Zeit: ${timeFrom}-${timeTo} | Paket: ${lang === 'de' ? pkg?.titleDe : pkg?.titleEn} | Kontakt: ${firstName} ${lastName}, ${email}, ${phone}`,
+      remarks: `${remarks ? remarks + ' | ' : ''}Zeit: ${timeFrom}-${timeTo} | Paket: ${lang === 'de' ? pkg?.titleDe : pkg?.titleEn} | Logo-Wunsch: ${wantsLogo ? 'Ja' : 'Nein'} | Kontakt: ${firstName} ${lastName}, ${email}, ${phone}`,
     })
 
     if (!error) {
@@ -123,7 +155,7 @@ export default function OrganisatorenPage() {
             participant_count: participants,
             services: services.join(', '),
             selected_package: lang === 'de' ? pkg?.titleDe : pkg?.titleEn,
-            remarks,
+            remarks: `${remarks || ''} | Logo-Wunsch: ${wantsLogo ? 'Ja' : 'Nein'}`,
           }),
         })
       } catch (e) {
@@ -283,6 +315,19 @@ export default function OrganisatorenPage() {
                 </p>
               </div>
             ))}
+
+            <div onClick={() => setWantsLogo(!wantsLogo)}
+              style={{
+                padding: 14, borderRadius: 8, cursor: 'pointer', marginTop: 8,
+                border: wantsLogo ? '2px solid #ff88ff' : '1px solid #1c2a38',
+                background: wantsLogo ? 'rgba(255,136,255,0.08)' : '#0d1219',
+                display: 'flex', alignItems: 'center', gap: 10,
+              }}>
+              <div style={{ width: 18, height: 18, borderRadius: 4, border: '1px solid #445566', background: wantsLogo ? '#ff88ff' : 'transparent', flexShrink: 0 }} />
+              <span style={{ fontSize: 13, color: wantsLogo ? '#ff88ff' : '#c5d0da' }}>
+                {lang === 'de' ? '+ Extra: Sponsor-/Event-Logo dauerhaft im Foto (unten)' : '+ Extra: Sponsor/event logo permanently in photo (bottom)'}
+              </span>
+            </div>
           </div>
         )}
 
