@@ -33,29 +33,7 @@ export default function OrganisatorenPage() {
     setServices(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s])
   }
 
-  const packages = [
-    {
-      key: 'package1',
-      titleDe: 'Paket 1 — Free Promo',
-      titleEn: 'Package 1 — Free Promo',
-      descDe: 'Ihr bekommt kostenlose Fotos für Social Media & Promotion. Wir dürfen die Fotos an Teilnehmer verkaufen.',
-      descEn: 'You get free photos for social media & promotion. We may sell the photos to participants.',
-    },
-    {
-      key: 'package2',
-      titleDe: 'Paket 2 — Ihr verkauft',
-      titleEn: 'Package 2 — You Sell',
-      descDe: 'Ihr bezahlt uns und verkauft die Fotos selbst über unsere Website. Wir nehmen 5-10% vom Verkauf.',
-      descEn: 'You pay us and sell the photos yourself through our website. We take 5-10% of sales.',
-    },
-    {
-      key: 'package3',
-      titleDe: 'Paket 3 — Alles gratis',
-      titleEn: 'Package 3 — All Free',
-      descDe: 'Ihr bezahlt uns, bekommt die Fotos und könnt sie kostenlos an Teilnehmer weitergeben.',
-      descEn: 'You pay us, get the photos, and can offer them free to participants.',
-    },
-  ]
+v
 
   const getDaysCount = () => {
     if (!dateFrom || !dateTo) return null
