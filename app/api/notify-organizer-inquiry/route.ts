@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
 
     const result = await resend.emails.send({
       from: 'SportShot <onboarding@resend.dev>',
-      to: 'matej.brzovic@gmx.ch',
+      to: 'info@sport-shot.ch',
       subject: `Neue Organisator-Anfrage: ${data.event_name}`,
       text: `
 Neue Organisator-Anfrage!
