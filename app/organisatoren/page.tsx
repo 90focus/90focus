@@ -298,7 +298,7 @@ export default function OrganisatorenPage() {
         )}
 
         {step === 4 && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+          <div style={{ display: 'grid', gap: 12 }}>
             {packages.map(p => (
               <div key={p.key} onClick={() => setSelectedPackage(p.key)}
                 style={{
@@ -310,7 +310,7 @@ export default function OrganisatorenPage() {
                   <div style={{ width: 18, height: 18, borderRadius: '50%', border: '1px solid #445566', background: selectedPackage === p.key ? '#e8ff00' : 'transparent', flexShrink: 0 }} />
                   <h3 style={{ color: '#e8ff00', fontSize: 14, margin: 0 }}>{lang === 'de' ? p.titleDe : p.titleEn}</h3>
                 </div>
-                <p style={{ fontSize: 13, color: '#c5d0da', lineHeight: 1.5, margin: 0 }}>
+                <p style={{ fontSize: 13, color: '#c5d0da', lineHeight: 1.5, margin: 0, marginLeft: 28 }}>
                   {lang === 'de' ? p.descDe : p.descEn}
                 </p>
               </div>
