@@ -298,7 +298,7 @@ export default function OrganisatorenPage() {
         )}
 
         {step === 4 && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
             {packages.map(p => (
               <div key={p.key} onClick={() => setSelectedPackage(p.key)}
                 style={{
