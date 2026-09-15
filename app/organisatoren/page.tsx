@@ -33,8 +33,6 @@ export default function OrganisatorenPage() {
     setServices(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s])
   }
 
-v
-
   const getDaysCount = () => {
     if (!dateFrom || !dateTo) return null
     const from = new Date(dateFrom)
