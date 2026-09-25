@@ -366,10 +366,9 @@ const { error } = await supabase.from('events').update({
             <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4', fontSize: 16 }}>PhotoHawk</h3>
             <input type="text" placeholder="PhotoHawk Link (z.B. https://photos.sport-shot.ch/galleries/...)" value={photohawkUrl} onChange={(e) => setPhotohawkUrl(e.target.value)}
               style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, cursor: 'pointer' }}>
-              <input type="checkbox" checked={bilderOnline} onChange={(e) => setBilderOnline(e.target.checked)} />
-              <span style={{ color: '#e8eef4', fontSize: 14 }}>Bilder sind online (Event-Card leitet zu PhotoHawk weiter)</span>
-            </label>
+            <p style={{ color: '#667788', fontSize: 12, margin: '4px 0 0 0' }}>
+              Leitet weiter, sobald "Fotos freigegeben" (oben) aktiviert ist.
+            </p>
           </div>
 
           <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>

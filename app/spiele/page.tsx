@@ -16,13 +16,18 @@ const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const router = useRouter()
 const { lang } = useLanguage()
   const [notFinishedModal, setNotFinishedModal] = useState(false)
+  const [photosNotReadyModal, setPhotosNotReadyModal] = useState(false)
   const today = new Date().toISOString().split('T')[0]
 
   const handleEventClick = (ev: any) => {
     if (ev.date > today) {
       setNotFinishedModal(true)
-    } else {
+    } else if (ev.fotos_freigegeben && ev.photohawk_url) {
+      window.location.href = ev.photohawk_url
+    } else if (ev.fotos_freigegeben) {
       router.push(`/suche?eventId=${ev.id}`)
+    } else {
+      setPhotosNotReadyModal(true)
     }
   }
 
@@ -135,6 +140,24 @@ onClick={() => handleEventClick(ev)}>
           </div>
         )}
 </section>
+
+      {photosNotReadyModal && (
+        <div onClick={() => setPhotosNotReadyModal(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: '#0d1219', border: '1px solid #1c2a38', borderRadius: 12, padding: '32px 28px', maxWidth: 380, textAlign: 'center' }}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>⏳</div>
+            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 8 }}>
+              {lang === 'de' ? 'Bilder noch nicht verfügbar' : 'Photos not available yet'}
+            </div>
+            <p style={{ color: '#8899aa', fontSize: 14, marginBottom: 20, lineHeight: 1.5 }}>
+              {lang === 'de' ? 'Die Fotos werden gerade hochgeladen und stehen innerhalb von 48h nach dem Event zur Verfügung. Schau später nochmal vorbei!' : 'Photos are being uploaded and will be available within 48h after the event. Please check back later!'}
+            </p>
+            <button onClick={() => setPhotosNotReadyModal(false)}
+              style={{ background: '#e8ff00', color: '#070b0f', border: 'none', borderRadius: 4, padding: '10px 28px', fontWeight: 900, fontSize: 13, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1 }}>
+              {lang === 'de' ? 'Verstanden' : 'Got it'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {notFinishedModal && (
         <div onClick={() => setNotFinishedModal(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
