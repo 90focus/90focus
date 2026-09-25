@@ -22,6 +22,8 @@ const [ort, setOrt] = useState('')
   const [tier3Max, setTier3Max] = useState('30')
   const [tier3Preis, setTier3Preis] = useState('45')
   const [sponsorName, setSponsorName] = useState('')
+  const [photohawkUrl, setPhotohawkUrl] = useState('')
+  const [bilderOnline, setBilderOnline] = useState(false)
   const [sponsorLogo, setSponsorLogo] = useState<File | null>(null)
   const [sponsorLogoPreview, setSponsorLogoPreview] = useState<string | null>(null)
   const [sponsorLogoName, setSponsorLogoName] = useState('')
@@ -102,6 +104,8 @@ setOrt(data.ort || '')
     setTier3Max(data.tier3_max ? String(data.tier3_max) : '30')
     setTier3Preis(data.tier3_preis ? String(data.tier3_preis) : '45')
     setSponsorName(data.sponsor_name || '')
+    setPhotohawkUrl(data.photohawk_url || '')
+    setBilderOnline(data.bilder_online || false)
     setCurrentLogoUrl(data.sponsor_logo_url || null)
     setCurrentBildUrl(data.bild_url || null)
   }
@@ -137,6 +141,8 @@ const { error } = await supabase.from('events').update({
       sponsor_name: sponsorName, sponsor_logo_url: sponsorLogoUrl, bild_url: bildUrl,
       preis: parseFloat(preis) || 19.90,
       fotos_freigegeben: fotosFreigegeben,
+      photohawk_url: photohawkUrl,
+      bilder_online: bilderOnline,
       tier1_max: parseInt(tier1Max) || 12,
       tier1_preis: parseFloat(tier1Preis) || 25,
       tier2_max: parseInt(tier2Max) || 20,
@@ -354,6 +360,16 @@ const { error } = await supabase.from('events').update({
             {sponsorLogoPreview && (
               <img src={sponsorLogoPreview} alt="Preview" style={{ height: 50, marginTop: 8, objectFit: 'contain', background: '#131e2a', padding: 4, borderRadius: 4 }} />
             )}
+          </div>
+
+          <div style={{ borderTop: '1px solid #1c2a38', marginTop: '16px', paddingTop: '16px' }}>
+            <h3 style={{ margin: '0 0 12px 0', color: '#e8eef4', fontSize: 16 }}>PhotoHawk</h3>
+            <input type="text" placeholder="PhotoHawk Link (z.B. https://photos.sport-shot.ch/galleries/...)" value={photohawkUrl} onChange={(e) => setPhotohawkUrl(e.target.value)}
+              style={{ width: '100%', padding: '12px', margin: '8px 0', fontSize: '16px', boxSizing: 'border-box' as any, background: '#131e2a', border: '1px solid #1c2a38', borderRadius: '6px', color: '#e8eef4' }} />
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, cursor: 'pointer' }}>
+              <input type="checkbox" checked={bilderOnline} onChange={(e) => setBilderOnline(e.target.checked)} />
+              <span style={{ color: '#e8eef4', fontSize: 14 }}>Bilder sind online (Event-Card leitet zu PhotoHawk weiter)</span>
+            </label>
           </div>
 
           <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
