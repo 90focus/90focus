@@ -25,6 +25,10 @@ const [hoveredAlleSpiele2, setHoveredAlleSpiele2] = useState(false)
   const today = new Date().toISOString().split('T')[0]
 
   const handleEventClick = (ev: any) => {
+    if (ev.photohawk_url) {
+      window.location.href = ev.photohawk_url
+      return
+    }
     if (ev.date > today) {
       setNotFinishedModal(true)
     } else {
