@@ -128,6 +128,7 @@ const handleLogout = () => {
               <button style={navBtn('/')} onClick={() => go('/')}>{lang === 'de' ? 'Home' : 'Home'}</button>
               <button style={navBtn('/spiele')} onClick={() => go('/spiele')}>{lang === 'de' ? 'Alle Events' : 'All Events'}</button>
               <button style={navBtn('/kontakt')} onClick={() => go('/kontakt')}>{lang === 'de' ? 'Kontakt' : 'Contact'}</button>
+              {/* Login/Sign-up/Dashboard ausgeblendet - Code bleibt fuer spaeter erhalten
               {user ? (
                 <>
                   <button style={navBtn('/kunden-dashboard')} onClick={() => go('/kunden-dashboard')}>{lang === 'de' ? 'Meine Fotos' : 'My Photos'}</button>
@@ -141,6 +142,7 @@ const handleLogout = () => {
                   <button style={navBtn('/register')} onClick={() => go('/register')}>Sign Up</button>
                 </>
               )}
+              */}
             </>
           )}
 
