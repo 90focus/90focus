@@ -20,10 +20,13 @@ const { lang } = useLanguage()
   const today = new Date().toISOString().split('T')[0]
 
   const handleEventClick = (ev: any) => {
+    console.log('DEBUG Event:', ev.home_team, 'photohawk_url:', ev.photohawk_url, 'fotos_freigegeben:', ev.fotos_freigegeben)
+    if (ev.photohawk_url) {
+      window.location.href = ev.photohawk_url
+      return
+    }
     if (ev.date > today) {
       setNotFinishedModal(true)
-    } else if (ev.fotos_freigegeben && ev.photohawk_url) {
-      window.location.href = ev.photohawk_url
     } else if (ev.fotos_freigegeben) {
       router.push(`/suche?eventId=${ev.id}`)
     } else {
